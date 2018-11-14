@@ -1,0 +1,25 @@
+apply plugin: 'java'
+apply plugin: 'com.moowork.node'
+apply plugin: 'com.viktor.npm-plugin'
+group = 'com.viktor.timeoff'
+version = '1.0-SNAPSHOT'
+
+sourceCompatibility = 1.5
+targetCompatibility = 1.5
+repositories{
+    mavenLocal()
+}
+buildscript {
+    repositories {
+        mavenLocal()
+        mavenCentral()
+        maven {
+            url "https://plugins.gradle.org/m2/"
+        }
+    }
+
+    dependencies {
+        classpath "com.moowork.gradle:gradle-node-plugin:1.1.1"
+        classpath "com.viktor:gradle-npm:1.0"
+    }
+}
