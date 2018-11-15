@@ -6,6 +6,7 @@ import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.Select;
 
 public class SignupPage {
+    private String baseURL = "http://localhost:3000/register/";
     private WebDriver driver;
     private WebElement companyName;
     private WebElement firstName;
@@ -18,8 +19,8 @@ public class SignupPage {
     private WebElement createButton;
     public SignupPage(WebDriver driver) {
         this.driver = driver;
-        if (!this.driver.getCurrentUrl().equalsIgnoreCase("http://localhost:3000/register/")){
-            this.driver.get("http://localhost:3000/register/");
+        if (!this.driver.getCurrentUrl().equalsIgnoreCase(baseURL)){
+            this.driver.get(baseURL);
         }
         this.companyName = this.driver.findElement(By.id("company_name_inp"));
         this.firstName = this.driver.findElement(By.id("name_inp"));
@@ -30,6 +31,9 @@ public class SignupPage {
         this.country = new Select(this.driver.findElement(By.id("country_inp")));
         this.timezone = new Select(this.driver.findElement(By.id("timezone_inp")));
         this.createButton = this.driver.findElement(By.id("submit_registration"));
+    }
+    public String getBaseURL() {
+        return baseURL;
     }
     public SignupPage fillCompanyName(String value){
         fillInputFeld(this.companyName, value);
@@ -71,14 +75,20 @@ public class SignupPage {
         return this;
     }
 
-    public CalendarPage clickCreateButton(){
+    public CalendarPage clickCreateButtonExpectingSuccess(){
         this.createButton.click();
         return new CalendarPage(this.driver);
+    }
+
+    public SignupPage clickCreateButtonExpectingFailure(){
+        this.createButton.click();
+        return this;
     }
 
     private void fillInputFeld(WebElement element, String value){
         element.clear();
         element.sendKeys(value);
     }
+
 
 }

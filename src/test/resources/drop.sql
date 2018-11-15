@@ -1,0 +1,1 @@
+drop table "BankHolidays", "Leaves",  "Companies", "DepartmentSupervisor", "Departments", "EmailAudit", "LeaveTypes", "Sessions", "UserFeeds", "Users", "schedule", "user_allowance_adjustment"  cascade;
