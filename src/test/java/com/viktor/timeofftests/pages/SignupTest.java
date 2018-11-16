@@ -26,7 +26,7 @@ public class SignupTest {
 
 
     @Test
-    void signupAsNewUser(){
+    void signupAsNewUser() throws Exception {
         SignupPage signupPage = new SignupPage(this.driver);
         CalendarPage calendarPage = signupPage
                 .fillCompanyName("TestCompany")
@@ -35,8 +35,8 @@ public class SignupTest {
                 .fillEmail("email@email.tes")
                 .fillPassword("1234")
                 .fillPasswordConfirmation("1234")
-                .selectCountry("GB: United Kingdom")
-                .selectTimeZone("Europe/London")
+                .selectCountry("CU: Cuba123123")
+                .selectTimeZone("Europe/Kirov")
                 .clickCreateButtonExpectingSuccess();
         String alertMessage = calendarPage.getAlertMessage();
         String employeeGreeting = calendarPage.getEmployeeGreeting();
