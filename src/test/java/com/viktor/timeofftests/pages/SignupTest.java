@@ -1,8 +1,11 @@
 package com.viktor.timeofftests.pages;
 
+import org.apache.commons.codec.digest.DigestUtils;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 
 import static org.junit.Assert.assertEquals;
 
@@ -89,6 +92,14 @@ public class SignupTest extends BaseTest {
                 .fillPassword("Password")
                 .clickCreateButtonExpectingFailure();
         assertEquals(signupPage.getBaseURL(),getDriver().getCurrentUrl());
+    }
+
+    @Test
+    public void testing() throws NoSuchAlgorithmException {
+        MessageDigest digest = MessageDigest.getInstance("MD5");
+        String pwf = "1234!2~`HswpPPLa22+=±§sdq qwe,appp qwwokDF_";
+        String t = DigestUtils.md5Hex(pwf.getBytes());
+        System.out.println(t);
     }
 
 }

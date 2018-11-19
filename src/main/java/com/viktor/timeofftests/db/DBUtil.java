@@ -16,7 +16,7 @@ public class DBUtil {
         try{
             Connection connection = DriverManager.getConnection(url,user,password);
             Statement statement = connection.createStatement();
-            String sql = "truncate table \"BankHolidays\", \"Leaves\",  \"Companies\", \"DepartmentSupervisor\", \"Departments\", \"EmailAudit\", \"LeaveTypes\", \"Sessions\", \"UserFeeds\", \"Users\", \"schedule\", \"user_allowance_adjustment\"  cascade;";
+            String sql = "drop table \"BankHolidays\", \"Leaves\",  \"Companies\", \"DepartmentSupervisor\", \"Departments\", \"EmailAudit\", \"LeaveTypes\", \"Sessions\", \"UserFeeds\", \"Users\", \"schedule\", \"user_allowance_adjustment\"  cascade;";
             statement.execute(sql);
         } catch (SQLException exception){
             exception.printStackTrace();
