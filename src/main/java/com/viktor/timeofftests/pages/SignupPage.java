@@ -6,7 +6,7 @@ import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.ui.Select;
 
-public class SignupPage extends PageObject{
+public class SignupPage extends BasePage{
     private String baseURL = "http://localhost:3000/register/";
     @FindBy(id="company_name_inp")
     private WebElement companyName;
@@ -26,20 +26,17 @@ public class SignupPage extends PageObject{
     @FindBy(id="confirm_pass_inp")
     private WebElement confirmPassword;
 
+    @FindBy(id="country_inp")
+    private WebElement country;
 
-    private Select country;
-    private Select timezone;
+    @FindBy(id="timezone_inp")
+    private WebElement timezone;
 
     @FindBy(id="submit_registration")
     private WebElement createButton;
 
     public SignupPage(WebDriver driver) {
         super(driver);
-        if (!this.driver.getCurrentUrl().equalsIgnoreCase(baseURL)) {
-            this.driver.get(baseURL);
-        }
-        this.country = new Select(this.driver.findElement(By.id("country_inp")));
-        this.timezone = new Select(this.driver.findElement(By.id("timezone_inp")));
     }
     public String getBaseURL() {
         return baseURL;
@@ -75,19 +72,19 @@ public class SignupPage extends PageObject{
         return this;
     }
 
-    public SignupPage selectCountry(String value) throws Exception {
-        selectOption (this.country, value);
+    public SignupPage selectCountry(String value) {
+        selectOption(this.country, value);
         return this;
     }
 
-    public SignupPage selectTimeZone(String value) throws Exception {
+    public SignupPage selectTimeZone(String value){
         selectOption(this.timezone, value);
         return this;
     }
 
     public CalendarPage clickCreateButtonExpectingSuccess(){
         this.createButton.click();
-        return new CalendarPage(this.driver);
+        return new CalendarPage(getDriver());
     }
 
     public SignupPage clickCreateButtonExpectingFailure(){
