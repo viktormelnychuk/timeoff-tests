@@ -1,5 +1,7 @@
 package com.viktor.timeofftests.pages;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
@@ -7,6 +9,7 @@ import org.openqa.selenium.support.FindBy;
 
 public class SignupPage extends BasePage{
     private WebDriver driver;
+    private Logger logger = LogManager.getLogger(SignupPage.class);
     @FindBy(id="company_name_inp")
     private WebElement companyName;
 
@@ -48,7 +51,6 @@ public class SignupPage extends BasePage{
     }
 
     public SignupPage fillCompanyName(String value){
-
         fillInputField(this.companyName, value);
         return this;
     }
@@ -89,12 +91,12 @@ public class SignupPage extends BasePage{
     }
 
     public CalendarPage clickCreateButtonExpectingSuccess(){
-        this.createButton.click();
+        clickButton(this.createButton);
         return new CalendarPage(getDriver());
     }
 
     public SignupPage clickCreateButtonExpectingFailure(){
-        this.createButton.click();
+        clickButton(this.createButton);
         return this;
     }
 

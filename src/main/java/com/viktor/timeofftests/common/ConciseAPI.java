@@ -10,14 +10,4 @@ public abstract class ConciseAPI {
     public void open(String url){
         getDriver().get(url);
     }
-
-    public void fillInputField(WebElement element, String value){
-        element.clear();
-        element.sendKeys(value);
-    }
-
-    public void selectOption(WebElement element, String text){
-        Select select = new Select(element);
-        select.selectByVisibleText(text);
-    }
 }

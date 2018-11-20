@@ -102,7 +102,7 @@ public class SignupTest extends BaseTest {
     }
 
     @Test
-    public void testing() throws NoSuchAlgorithmException {
+    public void testing() {
         Company comp = new Company.Builder()
                 .withName("name")
                 .withCompanyWideMessage("Message")
