@@ -50,6 +50,7 @@ public class Department {
 
         public Department buildAndStore(){
             // TODO: Finish this!!!!!
+            //  Executing (default): UPDATE "Departments" SET "bossId"=4,"updatedAt"='2018-11-20 19:04:43.380 +00:00' WHERE "id" = 4
             Department department = new Department();
             return department;
         }
