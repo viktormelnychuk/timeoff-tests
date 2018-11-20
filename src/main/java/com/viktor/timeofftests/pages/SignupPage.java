@@ -4,10 +4,9 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
-import org.openqa.selenium.support.ui.Select;
 
 public class SignupPage extends BasePage{
-    private String baseURL = "http://localhost:3000/register/";
+    private WebDriver driver;
     @FindBy(id="company_name_inp")
     private WebElement companyName;
 
@@ -37,10 +36,17 @@ public class SignupPage extends BasePage{
 
     public SignupPage(WebDriver driver) {
         super(driver);
+        this.driver = driver;
     }
-    public String getBaseURL() {
-        return baseURL;
+
+    public String getBaseUrl() {
+        return "http://localhost:3000/register/";
     }
+    @Override
+    public void open(String url){
+        super.open(url);
+    }
+
     public SignupPage fillCompanyName(String value){
 
         fillInputField(this.companyName, value);
@@ -93,4 +99,8 @@ public class SignupPage extends BasePage{
     }
 
 
+    @Override
+    public WebDriver getDriver() {
+        return driver;
+    }
 }

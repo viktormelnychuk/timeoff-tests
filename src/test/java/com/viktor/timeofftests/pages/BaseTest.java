@@ -9,18 +9,20 @@ import org.junit.BeforeClass;
 import org.openqa.selenium.WebDriver;
 
 public class BaseTest extends ConciseAPI {
+    private WebDriver driver;
     @Override
     public WebDriver getDriver() {
-        return DriverUtil.getDriver(DriverEnum.CHROME);
+        this.driver = DriverUtil.getDriver(DriverEnum.CHROME);
+        return this.driver;
     }
     @BeforeClass
    public static void cleanDB(){
-        //DBUtil.cleanDB();
+        DBUtil.cleanDB();
     }
 
     @After
     public void tearDown(){
-        getDriver().quit();
+        this.driver.quit();
     }
 
 }

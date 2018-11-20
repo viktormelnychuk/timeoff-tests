@@ -14,7 +14,7 @@ public class SignupTest extends BaseTest {
     @Test
     public void signupAsNewUser(){
         SignupPage signupPage = new SignupPage(getDriver());
-        signupPage.open("http://localhost:3000/register");
+        signupPage.open();
         CalendarPage calendarPage = signupPage
                 .fillCompanyName("TestCompany")
                 .fillFirstName("First Name")
@@ -36,54 +36,60 @@ public class SignupTest extends BaseTest {
     @Test
     public void verifyCompanyNameRequired(){
         SignupPage signupPage = new SignupPage(getDriver());
+        signupPage.open();
         signupPage = signupPage.clickCreateButtonExpectingFailure();
-        assertEquals(signupPage.getBaseURL(),getDriver().getCurrentUrl());
+        assertEquals(signupPage.getBaseUrl(),signupPage.getDriver().getCurrentUrl());
     }
     @Test
     public void verifyFirstNameRequired(){
         SignupPage signupPage = new SignupPage(getDriver());
+        signupPage.open();
         signupPage = signupPage
                 .fillCompanyName("Company")
                 .clickCreateButtonExpectingFailure();
-        assertEquals(signupPage.getBaseURL(),getDriver().getCurrentUrl());
+        assertEquals(signupPage.getBaseUrl(),signupPage.getDriver().getCurrentUrl());
     }
 
     @Test
     public void verifyLastNameRequired(){
         SignupPage signupPage = new SignupPage(getDriver());
+        signupPage.open();
         signupPage = signupPage
                 .fillCompanyName("Company")
                 .fillFirstName("First Name")
                 .clickCreateButtonExpectingFailure();
-        assertEquals(signupPage.getBaseURL(),getDriver().getCurrentUrl());
+        assertEquals(signupPage.getBaseUrl(),signupPage.getDriver().getCurrentUrl());
     }
 
     @Test
     public void verifyEmailRequired(){
         SignupPage signupPage = new SignupPage(getDriver());
+        signupPage.open();
         signupPage = signupPage
                 .fillCompanyName("Test")
                 .fillFirstName("Some test")
                 .fillLastName("Some test2")
                 .clickCreateButtonExpectingFailure();
-        assertEquals(signupPage.getBaseURL(),getDriver().getCurrentUrl());
+        assertEquals(signupPage.getBaseUrl(),signupPage.getDriver().getCurrentUrl());
     }
 
     @Test
     public void verifyPasswordRequired(){
         SignupPage signupPage = new SignupPage(getDriver());
+        signupPage.open();
         signupPage = signupPage
                 .fillCompanyName("Test")
                 .fillFirstName("some test")
                 .fillLastName("Another test")
                 .fillEmail("email@email.com")
                 .clickCreateButtonExpectingFailure();
-        assertEquals(signupPage.getBaseURL(),getDriver().getCurrentUrl());
+        assertEquals(signupPage.getBaseUrl(),signupPage.getDriver().getCurrentUrl());
     }
 
     @Test
     public void verifyPasswordConfirmationRequired(){
         SignupPage signupPage = new SignupPage(getDriver());
+        signupPage.open();
         signupPage = signupPage
                 .fillCompanyName("Some comp")
                 .fillFirstName("Test")
@@ -91,15 +97,12 @@ public class SignupTest extends BaseTest {
                 .fillEmail("email@email.em")
                 .fillPassword("Password")
                 .clickCreateButtonExpectingFailure();
-        assertEquals(signupPage.getBaseURL(),getDriver().getCurrentUrl());
+        assertEquals(signupPage.getBaseUrl(),signupPage.getDriver().getCurrentUrl());
     }
 
     @Test
     public void testing() throws NoSuchAlgorithmException {
-        MessageDigest digest = MessageDigest.getInstance("MD5");
-        String pwf = "1234!2~`HswpPPLa22+=±§sdq qwe,appp qwwokDF_";
-        String t = DigestUtils.md5Hex(pwf.getBytes());
-        System.out.println(t);
+
     }
 
 }
