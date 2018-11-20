@@ -27,16 +27,20 @@ public class Company {
         Logger logger = LogManager.getLogger(Company.Builder.class);
         private int id;
         private String name;
-        private String country;
-        private int startOfNewYear;
-        private boolean shareAllAbsences;
-        private boolean ldapAuthEnabled;
-        private String ldapAuthConfig;
-        private String dateFormat;
-        private String companyWideMessage;
-        private int mode;
-        private String timezone;
+        private String country = "CA";
+        private int startOfNewYear = 1;
+        private boolean shareAllAbsences = false;
+        private boolean ldapAuthEnabled = false;
+        private String ldapAuthConfig = "Config";
+        private String dateFormat = "YYYY-MM-DD";
+        private String companyWideMessage = "Message";
+        private int mode = 1;
+        private String timezone = "Europe/Kiev";
 
+        public Builder withId(int id){
+            this.id = id;
+            return this;
+        }
         public Builder withName(String name){
             this.name = name;
             return this;
@@ -97,6 +101,7 @@ public class Company {
             company.companyWideMessage = this.companyWideMessage;
             company.mode = this.mode;
             company.timezone = this.timezone;
+            company.id = this.id;
             return company;
         }
 

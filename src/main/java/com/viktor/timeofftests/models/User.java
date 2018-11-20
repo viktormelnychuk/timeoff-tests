@@ -1,5 +1,6 @@
 package com.viktor.timeofftests.models;
 
+import com.viktor.timeofftests.services.CompanyService;
 import lombok.Data;
 import org.apache.commons.codec.digest.DigestUtils;
 import java.util.Date;
@@ -30,6 +31,8 @@ public class User {
         private boolean autoApprove = true;
         private Date startDate = new Date();
         private Date endDate = new Date();
+        private int companyID;
+        private int departmentID;
 
         public Builder withEmail (String email){
             this.email = email;
@@ -53,7 +56,13 @@ public class User {
         }
 
         public Builder inCompany(Company company){
-            // TODO: Add company here
+            this.companyID = company.getId();
+            return this;
+        }
+
+        public Builder inCompany(String companyName){
+            Company company = CompanyService.getInstance().getOrCreateCompanyWithName(companyName);
+            this.companyID = company.getId();
             return this;
         }
 

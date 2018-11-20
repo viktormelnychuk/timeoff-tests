@@ -1,6 +1,7 @@
 package com.viktor.timeofftests.pages;
 
 import com.viktor.timeofftests.models.Company;
+import com.viktor.timeofftests.models.User;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -103,18 +104,23 @@ public class SignupTest extends BaseTest {
 
     @Test
     public void testing() {
-        Company comp = new Company.Builder()
+//        Company comp = new Company.Builder()
+//                .withName("name")
+//                .withCompanyWideMessage("Message")
+//                .withCountry("CA")
+//                .withStartOfNewYear(1)
+//                .shareAllAbsences(false)
+//                .ldapAuthEnabled(false)
+//                .ldapAuthConfig("")
+//                .withDateFormat("YYYYY")
+//                .withMode(1)
+//                .withTimeZone("Europe/Kiev")
+//                .buildAndSave();
+        User user = new User.Builder()
+                .withEmail("email@er.re")
                 .withName("name")
-                .withCompanyWideMessage("Message")
-                .withCountry("CA")
-                .withStartOfNewYear(1)
-                .shareAllAbsences(false)
-                .ldapAuthEnabled(false)
-                .ldapAuthConfig("")
-                .withDateFormat("YYYYY")
-                .withMode(1)
-                .withTimeZone("Europe/Kiev")
-                .buildAndSave();
+                .inCompany("Test Company")
+                .build();
     }
 
 }
