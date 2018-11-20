@@ -17,7 +17,7 @@ public class BaseTest extends ConciseAPI {
     }
     @BeforeClass
    public static void cleanDB(){
-        DBUtil.cleanDB();
+      //  DBUtil.cleanDB();
     }
 
     @After

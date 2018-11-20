@@ -2,8 +2,6 @@ package com.viktor.timeofftests.models;
 
 import lombok.Data;
 import org.apache.commons.codec.digest.DigestUtils;
-
-import java.security.MessageDigest;
 import java.util.Date;
 
 @Data

@@ -1,5 +1,6 @@
 package com.viktor.timeofftests.pages;
 
+import com.viktor.timeofftests.models.Company;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -102,7 +103,18 @@ public class SignupTest extends BaseTest {
 
     @Test
     public void testing() throws NoSuchAlgorithmException {
-
+        Company comp = new Company.Builder()
+                .withName("name")
+                .withCompanyWideMessage("Message")
+                .withCountry("CA")
+                .withStartOfNewYear(1)
+                .shareAllAbsences(false)
+                .ldapAuthEnabled(false)
+                .ldapAuthConfig("")
+                .withDateFormat("YYYYY")
+                .withMode(1)
+                .withTimeZone("Europe/Kiev")
+                .buildAndSave();
     }
 
 }

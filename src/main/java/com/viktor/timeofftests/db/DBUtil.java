@@ -14,7 +14,7 @@ public class DBUtil {
         String password = "1234";
 
         try{
-            Connection connection = DriverManager.getConnection(url,user,password);
+            Connection connection = DbConnection.getConnection();
             Statement statement = connection.createStatement();
             String sql = "truncate table \"BankHolidays\", \"Leaves\",  \"Companies\", \"DepartmentSupervisor\", \"Departments\", \"EmailAudit\", \"LeaveTypes\", \"Sessions\", \"UserFeeds\", \"Users\", \"schedule\", \"user_allowance_adjustment\";";
             statement.execute(sql);
