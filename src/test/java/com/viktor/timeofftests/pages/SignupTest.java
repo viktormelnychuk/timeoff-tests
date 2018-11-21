@@ -1,5 +1,6 @@
 package com.viktor.timeofftests.pages;
 
+import com.viktor.timeofftests.common.Constants;
 import com.viktor.timeofftests.models.Company;
 import com.viktor.timeofftests.models.User;
 import com.viktor.timeofftests.services.UserService;
@@ -7,6 +8,8 @@ import org.apache.commons.codec.digest.DigestUtils;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
+import sun.rmi.runtime.Log;
+
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
@@ -119,5 +122,18 @@ public class SignupTest extends BaseTest {
         signupPage.open();
         signupPage = signupPage.signupWithUserExpectingFailure(user);
         assertEquals("Failed to register user please contact customer service. Error: Email is already used", signupPage.getAlertMessage());
+    }
+
+    @Test
+    public void verifyCanLoginAfterRegistration(){
+        SignupPage signupPage = new SignupPage(getDriver());
+        signupPage.open();
+        CalendarPage calendarPage = signupPage.signupAsDefaultUser();
+        LoginPage loginPage = calendarPage.menuBar.logout();
+        calendarPage = loginPage.loginWithDefaultUser();
+        assertEquals(calendarPage.getBaseUrl(), calendarPage.getDriver().getCurrentUrl());
+        String expectedEmployeeGreeting = Constants.DEFAULT_USER_NAME + " " +Constants.DEFAULT_USER_LAST_NAME + "'s calendar for 2018";
+        assertEquals(expectedEmployeeGreeting, calendarPage.getEmployeeGreeting());
+
     }
 }

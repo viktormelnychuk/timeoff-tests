@@ -1,6 +1,7 @@
 package com.viktor.timeofftests.pages;
 
 import com.viktor.timeofftests.common.ConciseAPI;
+import com.viktor.timeofftests.common.partials.MenuBar;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.openqa.selenium.WebDriver;
@@ -11,11 +12,13 @@ import org.openqa.selenium.support.ui.Select;
 public abstract class BasePage extends ConciseAPI {
 
     private WebDriver driver;
+    protected MenuBar menuBar;
 
     public abstract String getBaseUrl();
 
     public BasePage(WebDriver driver){
         this.driver = driver;
+        menuBar = new MenuBar(driver);
         PageFactory.initElements(driver, this);
     }
 

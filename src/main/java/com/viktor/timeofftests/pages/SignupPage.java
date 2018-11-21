@@ -1,5 +1,6 @@
 package com.viktor.timeofftests.pages;
 
+import com.viktor.timeofftests.common.Constants;
 import com.viktor.timeofftests.models.User;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -106,6 +107,18 @@ public class SignupPage extends BasePage{
     }
     public String getAlertMessage(){
         return this.alert.getText();
+    }
+
+    public CalendarPage signupAsDefaultUser(){
+        fillCompanyName(Constants.DEFAULT_COMPANY_NAME);
+        fillEmail(Constants.DEFAULT_USER_EMAIL);
+        fillFirstName(Constants.DEFAULT_USER_NAME);
+        fillLastName(Constants.DEFAULT_USER_LAST_NAME);
+        fillPassword(Constants.DEFAULT_USER_PASSWORD);
+        fillPasswordConfirmation(Constants.DEFAULT_USER_PASSWORD);
+        selectCountry(Constants.DEFAULT_COMPANY_COUNTRY);
+        selectTimeZone(Constants.DEFAULT_COMPANY_TIMEZONE);
+        return clickCreateButtonExpectingSuccess();
     }
 
     public SignupPage signupWithUserExpectingFailure(User user){
