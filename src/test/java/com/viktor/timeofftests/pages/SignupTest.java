@@ -119,8 +119,11 @@ public class SignupTest extends BaseTest {
         User user = new User.Builder()
                 .withEmail("email@er.re")
                 .withName("name")
+                .withLastName("lastname")
+                .withPassword("1234")
                 .inCompany("Test Company")
-                .build();
+                .inDepartment("Department1")
+                .buildAndStore();
     }
 
 }
