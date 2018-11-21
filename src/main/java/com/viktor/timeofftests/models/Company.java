@@ -31,9 +31,9 @@ public class Company {
         private int startOfNewYear = 1;
         private boolean shareAllAbsences = false;
         private boolean ldapAuthEnabled = false;
-        private String ldapAuthConfig = "Config";
+        private String ldapAuthConfig;
         private String dateFormat = "YYYY-MM-DD";
-        private String companyWideMessage = "Message";
+        private String companyWideMessage;
         private int mode = 1;
         private String timezone = "Europe/Kiev";
 

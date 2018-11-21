@@ -2,6 +2,7 @@ package com.viktor.timeofftests.pages;
 
 import com.viktor.timeofftests.models.Company;
 import com.viktor.timeofftests.models.User;
+import com.viktor.timeofftests.services.UserService;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -103,19 +104,7 @@ public class SignupTest extends BaseTest {
     }
 
     @Test
-    public void testing() {
-//        Company comp = new Company.Builder()
-//                .withName("name")
-//                .withCompanyWideMessage("Message")
-//                .withCountry("CA")
-//                .withStartOfNewYear(1)
-//                .shareAllAbsences(false)
-//                .ldapAuthEnabled(false)
-//                .ldapAuthConfig("")
-//                .withDateFormat("YYYYY")
-//                .withMode(1)
-//                .withTimeZone("Europe/Kiev")
-//                .buildAndSave();
+    public void verifyCannotLoginWithExistingUser(){
         User user = new User.Builder()
                 .withEmail("email@er.re")
                 .withName("name")
@@ -124,6 +113,11 @@ public class SignupTest extends BaseTest {
                 .inCompany("Test Company")
                 .inDepartment("Department1")
                 .buildAndStore();
-    }
 
+        UserService.getInstance().makeDepartmentAdmin(user);
+        SignupPage signupPage = new SignupPage(getDriver());
+        signupPage.open();
+        signupPage = signupPage.signupWithUserExpectingFailure(user);
+        assertEquals("Failed to register user please contact customer service. Error: Email is already used", signupPage.getAlertMessage());
+    }
 }

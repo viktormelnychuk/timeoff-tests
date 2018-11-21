@@ -1,5 +1,6 @@
 package com.viktor.timeofftests.pages;
 
+import com.viktor.timeofftests.models.User;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.openqa.selenium.By;
@@ -10,6 +11,10 @@ import org.openqa.selenium.support.FindBy;
 public class SignupPage extends BasePage{
     private WebDriver driver;
     private Logger logger = LogManager.getLogger(SignupPage.class);
+
+    @FindBy(xpath = "//div[@role='alert' and @class='alert alert-danger']")
+    private WebElement alert;
+
     @FindBy(id="company_name_inp")
     private WebElement companyName;
 
@@ -98,6 +103,19 @@ public class SignupPage extends BasePage{
     public SignupPage clickCreateButtonExpectingFailure(){
         clickButton(this.createButton);
         return this;
+    }
+    public String getAlertMessage(){
+        return this.alert.getText();
+    }
+
+    public SignupPage signupWithUserExpectingFailure(User user){
+        fillCompanyName("company");
+        fillEmail(user.getEmail());
+        fillFirstName(user.getName());
+        fillLastName(user.getLastName());
+        fillPassword("1234");
+        fillPasswordConfirmation("1234");
+        return clickCreateButtonExpectingFailure();
     }
 
 
