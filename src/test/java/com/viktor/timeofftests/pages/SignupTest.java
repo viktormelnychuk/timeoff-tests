@@ -1,22 +1,20 @@
 package com.viktor.timeofftests.pages;
 
 import com.viktor.timeofftests.common.Constants;
-import com.viktor.timeofftests.models.Company;
 import com.viktor.timeofftests.models.User;
 import com.viktor.timeofftests.services.UserService;
-import org.apache.commons.codec.digest.DigestUtils;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
-import sun.rmi.runtime.Log;
 
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
+import static org.hamcrest.CoreMatchers.*;
+import static org.junit.Assert.assertThat;
 
-import static org.junit.Assert.assertEquals;
+//TODO: Refactor all assertions to AssertThat;
 
 @RunWith(JUnit4.class)
 public class SignupTest extends BaseTest {
+    UserService userService = UserService.getInstance();
     @Test
     public void signupAsNewUser(){
         SignupPage signupPage = new SignupPage(getDriver());
@@ -34,8 +32,8 @@ public class SignupTest extends BaseTest {
         String alertMessage = calendarPage.getAlertMessage();
         String employeeGreeting = calendarPage.getEmployeeGreeting();
         String expectedEmployeeGreeting = "First Name Last Name's calendar for 2018";
-
         assertEquals("Registration is complete.", alertMessage);
+        assertTrue("User is not an admin", userService.userIsAdmin("email@email.tes"));
         assertEquals(expectedEmployeeGreeting, employeeGreeting);
     }
 
@@ -116,7 +114,6 @@ public class SignupTest extends BaseTest {
                 .inCompany("Test Company")
                 .inDepartment("Department1")
                 .buildAndStore();
-
         UserService.getInstance().makeDepartmentAdmin(user);
         SignupPage signupPage = new SignupPage(getDriver());
         signupPage.open();

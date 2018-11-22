@@ -8,6 +8,7 @@ import org.apache.logging.log4j.Logger;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.Timestamp;
 import java.util.Date;
 
@@ -23,20 +24,7 @@ public class UserService {
     }
     private UserService(){}
 
-
-    public User createNewUser(String email, String password){
-        User user = new User.Builder()
-                .withEmail(email)
-                .withPassword(password)
-                .withName("User1")
-                .withLastName("User2")
-                .build();
-        return user;
-    }
-
-
     public void makeDepartmentAdmin(User user){
-        // Executing (default): UPDATE "Departments" SET "bossId"=4,"updatedAt"='2018-11-20 19:04:43.380 +00:00' WHERE "id" = 4
         Connection connection = DbConnection.getConnection();
         String sql = "UPDATE \"Departments\" SET \"bossId\"=?, \"updatedAt\"=? WHERE id=(SELECT \"DepartmentId\" FROM \"Users\" WHERE id=?);";
         try {
@@ -52,4 +40,22 @@ public class UserService {
         }
 
     }
+
+    public boolean userIsAdmin (String  userEmail){
+        Connection connection = DbConnection.getConnection();
+        String sql = "SELECT \"admin\" FROM \"Users\" WHERE email=? LIMIT 1";
+        try {
+            log.info("Validating user with email {} is admin", userEmail);
+            PreparedStatement selectUser = connection.prepareStatement(sql);
+            selectUser.setString(1, userEmail);
+            log.info("Executing {}", selectUser.toString());
+            ResultSet resultSet = selectUser.executeQuery();
+            resultSet.next();
+            return resultSet.getBoolean("admin");
+        } catch (Exception e){
+            log.error("Error fetching user", e);
+            return false;
+        }
+    }
+
 }
