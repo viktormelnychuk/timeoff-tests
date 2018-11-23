@@ -140,7 +140,8 @@ public class SignupTest extends BaseTest {
         loginPage.open();
         loginPage.
                 fillEmail("email@email.ea")
-                .fillPassword("Password");
+                .fillPassword("Password")
+                .clickLoginButtonExpectingSuccess();
         System.out.println("test");
     }
 }

@@ -1,8 +1,9 @@
 package com.viktor.timeofftests.common;
 
 import com.google.common.base.Function;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.openqa.selenium.*;
-import org.openqa.selenium.support.ui.Select;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
 import java.lang.reflect.InvocationHandler;
@@ -21,8 +22,7 @@ public abstract class ConciseAPI {
     public void open(String url){
         getDriver().get(url);
     }
-
-
+    private final Logger logger = LogManager.getLogger(ConciseAPI.class);
     class ProxiedWebElement implements WebElement {
 
         public void click() {
@@ -111,6 +111,7 @@ public abstract class ConciseAPI {
     }
 
     protected WebElement findOne(By locator){
+        logger.debug("Waiting for visibility of element by {}", locator);
         return (WebElement) newElementFinderProxyInstance(new ProxiedWebElement(), locator);
     }
 
@@ -227,7 +228,7 @@ public abstract class ConciseAPI {
         }
     }
 
-    private Object newElementsFinderProxyInstnace (Object obj, By elementsLocator){
+    private Object newElementsFinderProxyInstance(Object obj, By elementsLocator){
         return java.lang.reflect.Proxy.newProxyInstance(
                 obj.getClass().getClassLoader(),
                 obj.getClass().getInterfaces(),
@@ -236,7 +237,7 @@ public abstract class ConciseAPI {
     }
 
     protected List<WebElement> findAllBy(By locator){
-        return (List<WebElement>) newElementsFinderProxyInstnace(new ListOfWebElementsBait(), locator);
+        return (List<WebElement>) newElementsFinderProxyInstance(new ListOfWebElementsBait(), locator);
     }
 
     protected <V> V waitUntil (Function<? super WebDriver, V> condition, int timeout){

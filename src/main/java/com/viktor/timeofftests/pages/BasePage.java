@@ -4,6 +4,7 @@ import com.viktor.timeofftests.common.ConciseAPI;
 import com.viktor.timeofftests.common.partials.MenuBar;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.PageFactory;
@@ -19,7 +20,6 @@ public abstract class BasePage extends ConciseAPI {
     public BasePage(WebDriver driver){
         this.driver = driver;
         menuBar = new MenuBar(driver);
-        PageFactory.initElements(driver, this);
     }
 
     public void open(){
@@ -31,32 +31,34 @@ public abstract class BasePage extends ConciseAPI {
         return this.driver;
     }
 
-    public void fillInputField(WebElement element, String value){
-        this.logInput(element,value);
+    public void fillInputField(By locator, String value){
+        WebElement element = findOne(locator);
         element.clear();
         element.sendKeys(value);
+        this.logInput(element,locator, value);
     }
 
-    public void selectOption(WebElement element, String text){
-        this.logInput(element,text);
+    public void selectOption(By locator, String text){
+        WebElement element = findOne(locator);
         Select select = new Select(element);
         select.selectByVisibleText(text);
+        this.logInput(element, locator ,text);
     }
 
-    public void clickButton(WebElement element){
-        logClick(element);
+    public void clickButton(By locator){
+        WebElement element = findOne(locator);
         element.click();
+        logClick(element, locator);
     }
 
-    private void logInput(WebElement element, String value){
+    private void logInput(WebElement element, By locator, String value){
         Logger logger = LogManager.getLogger(this.getClass());
-        String logMessage = "Filling " + element.getTagName() + " field" + " with value \"" + value + "\"";
-        logger.debug(logMessage);
+        logger.debug("Filling [{}] found [{}] with value '{}'", element.getTagName(), locator.toString(), value);
     }
 
-    private void logClick(WebElement element){
+    private void logClick(WebElement element, By locator){
         Logger logger = LogManager.getLogger(this.getClass());
-        logger.debug("Clicking on the <"+ element.getTagName() + "> with text \""+element.getText()+"\"");
+        logger.debug("Clicking on the <{}> found by [{}]", element.getTagName(), locator);
     }
 
 }

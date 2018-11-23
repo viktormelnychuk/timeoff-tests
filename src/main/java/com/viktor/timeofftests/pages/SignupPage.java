@@ -13,35 +13,16 @@ public class SignupPage extends BasePage{
     private WebDriver driver;
     private Logger logger = LogManager.getLogger(SignupPage.class);
 
-    @FindBy(xpath = "//div[@role='alert' and @class='alert alert-danger']")
-    private WebElement alert;
-
-    @FindBy(id="company_name_inp")
-    private WebElement companyName;
-
-    @FindBy(id="name_inp")
-    private WebElement firstName;
-
-    @FindBy(id="lastname_inp")
-    private WebElement lastName;
-
-    @FindBy(id="email_inp")
-    private WebElement email;
-
-    @FindBy(id="pass_inp")
-    private WebElement password;
-
-    @FindBy(id="confirm_pass_inp")
-    private WebElement confirmPassword;
-
-    @FindBy(id="country_inp")
-    private WebElement country;
-
-    @FindBy(id="timezone_inp")
-    private WebElement timezone;
-
-    @FindBy(id="submit_registration")
-    private WebElement createButton;
+    private By alert = By.xpath("//div[@role='alert' and @class='alert alert-danger']");
+    private By companyName = By.id("company_name_inp");
+    private By firstName= By.id("name_inp");
+    private By lastName = By.id("lastname_inp");
+    private By email = By.id("email_inp");
+    private By password = By.id("pass_inp");
+    private By confirmPassword = By.id("confirm_pass_inp");
+    private By country = By.id("country_inp");
+    private By timezone = By.id("timezone_inp");
+    private By createButton = By.id("submit_registration");
 
     public SignupPage(WebDriver driver) {
         super(driver);
@@ -106,7 +87,7 @@ public class SignupPage extends BasePage{
         return this;
     }
     public String getAlertMessage(){
-        return this.alert.getText();
+        return findOne(this.alert).getText();
     }
 
     public CalendarPage signupAsDefaultUser(){

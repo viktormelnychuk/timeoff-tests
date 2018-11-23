@@ -8,15 +8,9 @@ import org.openqa.selenium.support.FindBy;
 
 public class LoginPage extends BasePage {
     private WebDriver driver;
-
-    @FindBy(id= "email_inp")
-    private WebElement emailInput;
-
-    @FindBy(id= "pass_inp")
-    private WebElement passwordInput;
-
-    @FindBy(id="submit_login")
-    private WebElement loginButton;
+    private By emailInput = By.id("email_inp");
+    private By passwordInput = By.id("pass_inp");
+    private By loginButton = By.id("submit_login");
 
     public LoginPage(WebDriver driver){
         super(driver);
@@ -28,10 +22,8 @@ public class LoginPage extends BasePage {
     }
 
     public LoginPage fillEmail(String value){
-        findOne(By.id("email_inp")).sendKeys(value);
+        fillInputField(this.emailInput, value);
         return this;
-        //fillInputField(this.emailInput, value);
-        //return this;
     }
 
     public LoginPage fillPassword (String value){

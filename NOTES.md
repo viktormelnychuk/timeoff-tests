@@ -5,3 +5,7 @@
     * Login as admin (verify admin site loads)
     * Login as non-admin (verify admin site loads)
     * Try to login as deactivated user
+
+
+# Issues:
+1. Process does not recognize button was found and clicked. For some reason element is looked after it was already clicked
