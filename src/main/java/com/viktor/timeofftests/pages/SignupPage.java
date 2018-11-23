@@ -2,14 +2,11 @@ package com.viktor.timeofftests.pages;
 
 import com.viktor.timeofftests.common.Constants;
 import com.viktor.timeofftests.models.User;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 
 public class SignupPage extends BasePage{
     private WebDriver driver;
-    private Logger logger = LogManager.getLogger(SignupPage.class);
 
     private By alert = By.xpath("//div[@role='alert' and @class='alert alert-danger']");
     private By companyName = By.id("company_name_inp");
