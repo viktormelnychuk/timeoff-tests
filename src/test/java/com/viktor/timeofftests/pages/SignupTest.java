@@ -133,4 +133,14 @@ public class SignupTest extends BaseTest {
         assertEquals(expectedEmployeeGreeting, calendarPage.getEmployeeGreeting());
 
     }
+
+    @Test
+    public void testing (){
+        LoginPage loginPage = new LoginPage(getDriver());
+        loginPage.open();
+        loginPage.
+                fillEmail("email@email.ea")
+                .fillPassword("Password");
+        System.out.println("test");
+    }
 }

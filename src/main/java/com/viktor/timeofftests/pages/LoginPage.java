@@ -1,6 +1,7 @@
 package com.viktor.timeofftests.pages;
 
 import com.viktor.timeofftests.common.Constants;
+import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
@@ -27,8 +28,10 @@ public class LoginPage extends BasePage {
     }
 
     public LoginPage fillEmail(String value){
-        fillInputField(this.emailInput, value);
+        findOne(By.id("email_inp")).sendKeys(value);
         return this;
+        //fillInputField(this.emailInput, value);
+        //return this;
     }
 
     public LoginPage fillPassword (String value){
