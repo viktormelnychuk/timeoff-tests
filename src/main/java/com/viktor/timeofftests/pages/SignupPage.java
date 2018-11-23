@@ -6,8 +6,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebElement;
-import org.openqa.selenium.support.FindBy;
 
 public class SignupPage extends BasePage{
     private WebDriver driver;
@@ -24,7 +22,7 @@ public class SignupPage extends BasePage{
     private By timezone = By.id("timezone_inp");
     private By createButton = By.id("submit_registration");
 
-    public SignupPage(WebDriver driver) {
+    SignupPage(WebDriver driver) {
         super(driver);
         this.driver = driver;
     }
@@ -37,60 +35,60 @@ public class SignupPage extends BasePage{
         super.open(url);
     }
 
-    public SignupPage fillCompanyName(String value){
+    SignupPage fillCompanyName(String value){
         fillInputField(this.companyName, value);
         return this;
     }
 
-    public SignupPage fillFirstName(String value){
+    SignupPage fillFirstName(String value){
         fillInputField(this.firstName, value);
         return this;
     }
 
-    public SignupPage fillLastName(String value){
+    SignupPage fillLastName(String value){
         fillInputField(this.lastName, value);
         return this;
     }
 
-    public SignupPage fillEmail(String value){
+    SignupPage fillEmail(String value){
         fillInputField(this.email, value);
         return this;
     }
 
-    public SignupPage fillPassword (String value){
+    SignupPage fillPassword(String value){
         fillInputField(this.password, value);
         return this;
     }
 
-    public SignupPage fillPasswordConfirmation(String value){
+    SignupPage fillPasswordConfirmation(String value){
         fillInputField(this.confirmPassword, value);
         return this;
     }
 
-    public SignupPage selectCountry(String value) {
+    SignupPage selectCountry(String value) {
         selectOption(this.country, value);
         return this;
     }
 
-    public SignupPage selectTimeZone(String value){
+    SignupPage selectTimeZone(String value){
         selectOption(this.timezone, value);
         return this;
     }
 
-    public CalendarPage clickCreateButtonExpectingSuccess(){
+    CalendarPage clickCreateButtonExpectingSuccess(){
         clickButton(this.createButton);
-        return new CalendarPage(getDriver());
+        return new CalendarPage(this.driver);
     }
 
-    public SignupPage clickCreateButtonExpectingFailure(){
+    SignupPage clickCreateButtonExpectingFailure(){
         clickButton(this.createButton);
         return this;
     }
-    public String getAlertMessage(){
+    String getAlertMessage(){
         return findOne(this.alert).getText();
     }
 
-    public CalendarPage signupAsDefaultUser(){
+    CalendarPage signupAsDefaultUser(){
         fillCompanyName(Constants.DEFAULT_COMPANY_NAME);
         fillEmail(Constants.DEFAULT_USER_EMAIL);
         fillFirstName(Constants.DEFAULT_USER_NAME);
@@ -102,7 +100,7 @@ public class SignupPage extends BasePage{
         return clickCreateButtonExpectingSuccess();
     }
 
-    public SignupPage signupWithUserExpectingFailure(User user){
+    SignupPage signupWithUserExpectingFailure(User user){
         fillCompanyName("company");
         fillEmail(user.getEmail());
         fillFirstName(user.getName());
