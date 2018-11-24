@@ -2,10 +2,12 @@ package com.viktor.timeofftests.models;
 
 import com.viktor.timeofftests.db.DbConnection;
 import lombok.Data;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import lombok.extern.log4j.Log4j2;
 
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.Timestamp;
 
 @Data
 public class Company {
@@ -22,9 +24,8 @@ public class Company {
     private String timezone;
 
     private Company(){}
-
+    @Log4j2
     public static class Builder{
-        Logger logger = LogManager.getLogger(Company.Builder.class);
         private int id;
         private String name;
         private String country = "CA";
@@ -107,7 +108,7 @@ public class Company {
 
         public Company buildAndSave(){
             Company company = this.build();
-            logger.info("Prepare to save company with name=\""+company.getName()+ "\"");
+            log.info("Prepare to save company with name=\""+company.getName()+ "\"");
             Connection connection = DbConnection.getConnection();
             String sql = new StringBuilder().append("INSERT INTO \"Companies\" (name, country, start_of_new_year, share_all_absences, ldap_auth_enabled, ldap_auth_config, date_format, company_wide_message, mode, timezone,\"createdAt\",\"updatedAt\")")
                     .append(" VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);").toString();
@@ -125,22 +126,22 @@ public class Company {
                 createCompany.setString(10,company.timezone);
                 createCompany.setTimestamp(11,new Timestamp(new java.util.Date().getTime()));
                 createCompany.setTimestamp(12,new Timestamp(new java.util.Date().getTime()));
-                logger.info("Executing: "+createCompany.toString());
+                log.info("Executing: "+createCompany.toString());
                 createCompany.executeUpdate();
-                logger.info("Saved company with name=\""+company.getName()+ "\"");
-                logger.info("Getting id of company with name=\""+company.getName()+ "\"");
+                log.info("Saved company with name=\""+company.getName()+ "\"");
+                log.info("Getting id of company with name=\""+company.getName()+ "\"");
 
                 String getCompanySql = "SELECT \"Companies\".id FROM \"Companies\" WHERE \"Companies\".name = ?;";
                 PreparedStatement getCompany = connection.prepareStatement(getCompanySql);
                 getCompany.setString(1, company.getName());
-                logger.info("Executing: "+getCompany.toString());
+                log.info("Executing: "+getCompany.toString());
                 ResultSet resultSet = getCompany.executeQuery();
                 resultSet.next();
                 company.setId(resultSet.getInt(1));
-                logger.info("Company ID id '"+company.getId()+"'");
+                log.info("Company ID id '"+company.getId()+"'");
                 return company;
             } catch (Exception e){
-                logger.error("Error when creating company",e);
+                log.error("Error when creating company",e);
                 return null;
             }
 

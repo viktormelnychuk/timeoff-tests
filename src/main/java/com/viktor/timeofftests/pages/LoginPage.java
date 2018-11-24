@@ -1,21 +1,16 @@
 package com.viktor.timeofftests.pages;
 
 import com.viktor.timeofftests.common.Constants;
+import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
 
 public class LoginPage extends BasePage {
     private WebDriver driver;
-
-    @FindBy(id= "email_inp")
-    private WebElement emailInput;
-
-    @FindBy(id= "pass_inp")
-    private WebElement passwordInput;
-
-    @FindBy(id="submit_login")
-    private WebElement loginButton;
+    private By emailInput = By.id("email_inp");
+    private By passwordInput = By.id("pass_inp");
+    private By loginButton = By.id("submit_login");
 
     public LoginPage(WebDriver driver){
         super(driver);

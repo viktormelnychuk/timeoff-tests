@@ -2,17 +2,15 @@ package com.viktor.timeofftests.services;
 
 import com.viktor.timeofftests.db.DbConnection;
 import com.viktor.timeofftests.models.Department;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-import org.apache.regexp.RESyntaxException;
+import lombok.extern.log4j.Log4j2;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 
+@Log4j2
 public class DepartmentService {
     private static DepartmentService departmentService;
-    private static final Logger logger = LogManager.getLogger(DepartmentService.class);
     public static DepartmentService getInstance(){
         if(departmentService == null){
             return new DepartmentService();
@@ -29,13 +27,13 @@ public class DepartmentService {
             PreparedStatement getDepartment = connection.prepareStatement(sql);
             getDepartment.setString(1,name);
             getDepartment.setInt(2, companyId);
-            logger.info("Executing {}", getDepartment.toString());
+            log.info("Executing {}", getDepartment.toString());
             ResultSet resultSet = getDepartment.executeQuery();
             if (resultSet.next()){
-                logger.info("Found department with name {}", name);
+                log.info("Found department with name {}", name);
                 return deserializeDepartment(resultSet);
             } else {
-                logger.info("Department not found. Creating");
+                log.info("Department not found. Creating");
                 return new Department.Builder()
                         .withName(name)
                         .inCompany(companyId)
@@ -43,13 +41,13 @@ public class DepartmentService {
             }
 
         } catch (Exception e){
-            logger.error("Error occurred", e);
+            log.error("Error occurred", e);
             return null;
         }
     }
 
 
-    public Department deserializeDepartment(ResultSet set){
+    private Department deserializeDepartment(ResultSet set){
         try{
             return new Department.Builder()
                     .withName(set.getString("name"))
@@ -60,7 +58,7 @@ public class DepartmentService {
                     .withAdminUserId(set.getInt("bossId"))
                     .build();
         } catch (Exception e){
-            logger.error("Error deserializing department", e);
+            log.error("Error deserializing department", e);
             return null;
         }
     }

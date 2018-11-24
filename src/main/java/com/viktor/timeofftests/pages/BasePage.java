@@ -1,28 +1,31 @@
 package com.viktor.timeofftests.pages;
 
 import com.viktor.timeofftests.common.ConciseAPI;
-import com.viktor.timeofftests.common.partials.MenuBar;
+import com.viktor.timeofftests.pages.partials.MenuBar;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
-import org.openqa.selenium.support.PageFactory;
 import org.openqa.selenium.support.ui.Select;
 
 public abstract class BasePage extends ConciseAPI {
 
     private WebDriver driver;
-    protected MenuBar menuBar;
+    MenuBar menuBar;
 
     public abstract String getBaseUrl();
+
+    public BasePage (){}
 
     public BasePage(WebDriver driver){
         this.driver = driver;
         menuBar = new MenuBar(driver);
-        PageFactory.initElements(driver, this);
     }
-
-    public void open(){
+    public void setDriver(WebDriver driver){
+        this.driver = driver;
+    }
+    void open(){
         this.driver.get(getBaseUrl());
     }
 
@@ -31,32 +34,26 @@ public abstract class BasePage extends ConciseAPI {
         return this.driver;
     }
 
-    public void fillInputField(WebElement element, String value){
-        this.logInput(element,value);
+   public void fillInputField(By locator, String value){
+        WebElement element = findOne(locator);
         element.clear();
         element.sendKeys(value);
+        Logger logger = LogManager.getLogger(this.getClass());
+        logger.debug("Filling [{}] found [{}] with value '{}'", element.getTagName(), locator.toString(), value);
     }
 
-    public void selectOption(WebElement element, String text){
-        this.logInput(element,text);
+    public void selectOption(By locator, String text){
+        WebElement element = findOne(locator);
+        Logger logger = LogManager.getLogger(this.getClass());
+        logger.debug("Filling [{}] found [{}] with value '{}'", element.getTagName(), locator.toString(), text);
         Select select = new Select(element);
         select.selectByVisibleText(text);
     }
 
-    public void clickButton(WebElement element){
-        logClick(element);
+    public void clickButton(By locator){
+        WebElement element = findOne(locator);
+        Logger logger = LogManager.getLogger(this.getClass());
+        logger.debug("Clicking on the <{}> found by [{}]", element.getTagName(), locator);
         element.click();
     }
-
-    private void logInput(WebElement element, String value){
-        Logger logger = LogManager.getLogger(this.getClass());
-        String logMessage = "Filling " + element.getTagName() + " field" + " with value \"" + value + "\"";
-        logger.debug(logMessage);
-    }
-
-    private void logClick(WebElement element){
-        Logger logger = LogManager.getLogger(this.getClass());
-        logger.debug("Clicking on the <"+ element.getTagName() + "> with text \""+element.getText()+"\"");
-    }
-
 }

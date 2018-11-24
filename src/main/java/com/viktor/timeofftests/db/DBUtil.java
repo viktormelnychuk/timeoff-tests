@@ -1,19 +1,18 @@
 package com.viktor.timeofftests.db;
 
 
+import lombok.extern.log4j.Log4j2;
+
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.sql.Statement;
 
+@Log4j2
 public class DBUtil {
 
     public static void cleanDB(){
-        String url = "jdbc:postgresql://localhost:5432/timeoff";
-        String user = "timeoff";
-        String password = "1234";
-
         try{
+            log.info("Begin cleaning db tables");
             Connection connection = DbConnection.getConnection();
             Statement statement = connection.createStatement();
             String sql = "truncate table \"BankHolidays\", \"Leaves\",  \"Companies\", \"DepartmentSupervisor\", \"Departments\", \"EmailAudit\", \"LeaveTypes\", \"Sessions\", \"UserFeeds\", \"Users\", \"schedule\", \"user_allowance_adjustment\";";

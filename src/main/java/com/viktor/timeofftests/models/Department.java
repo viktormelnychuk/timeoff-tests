@@ -117,7 +117,6 @@ public class Department {
     }
 
     public void assignBossUserId(int id){
-        //  Executing (default): UPDATE "Departments" SET "bossId"=4,"updatedAt"='2018-11-20 19:04:43.380 +00:00' WHERE "id" = 4
         Connection connection = DbConnection.getConnection();
         String sql = "UPDATE \"Departments\" SET \"bossId\"=?, \"updatedAt\"=? WHERE \"id\"=?";
         try{
