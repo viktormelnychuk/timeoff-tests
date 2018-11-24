@@ -7,6 +7,8 @@ import com.viktor.timeofftests.db.DBUtil;
 import lombok.extern.log4j.Log4j2;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.hamcrest.Matcher;
+import org.hamcrest.MatcherAssert;
 import org.junit.After;
 import org.junit.BeforeClass;
 import org.junit.Rule;
@@ -14,9 +16,8 @@ import org.junit.rules.TestRule;
 import org.junit.rules.TestWatcher;
 import org.junit.runner.Description;
 import org.openqa.selenium.WebDriver;
-
 @Log4j2
-public class BaseTest extends ConciseAPI {
+public abstract class BaseTest extends ConciseAPI {
     private WebDriver driver;
     @Override
     public WebDriver getDriver() {
@@ -42,14 +43,14 @@ public class BaseTest extends ConciseAPI {
         }
     };
 
-    static void assertTrue(String message, Boolean condition){
-        log.info("Asserting condition");
-        org.junit.Assert.assertTrue(message, condition);
+
+    public static <T> void assertThat(T actual, Matcher<? super T> matcher) {
+        assertThat("", actual, matcher);
     }
 
-    static void assertEquals (String expected, String actual){
-        log.info("Asserting [{}] equals [{}]", actual, expected);
-        org.junit.Assert.assertEquals(expected, actual);
+    public static <T> void assertThat(String reason, T actual, Matcher<? super T> matcher) {
+        log.info("Asserting that [{}] [{}]", actual, matcher.toString());
+        MatcherAssert.assertThat(reason, actual, matcher);
     }
 
 }

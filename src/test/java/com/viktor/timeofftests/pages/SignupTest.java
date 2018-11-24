@@ -7,8 +7,8 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
 
-import static org.hamcrest.CoreMatchers.*;
-import static org.junit.Assert.assertThat;
+import static org.hamcrest.CoreMatchers.equalTo;
+import static org.hamcrest.CoreMatchers.is;
 
 //TODO: Refactor all assertions to AssertThat;
 
@@ -32,9 +32,9 @@ public class SignupTest extends BaseTest {
         String alertMessage = calendarPage.getAlertMessage();
         String employeeGreeting = calendarPage.getEmployeeGreeting();
         String expectedEmployeeGreeting = "First Name Last Name's calendar for 2018";
-        assertEquals("Registration is complete.", alertMessage);
-        assertTrue("User is not an admin", userService.userIsAdmin("email@email.tes"));
-        assertEquals(expectedEmployeeGreeting, employeeGreeting);
+        assertThat("Alert message is incorrect",alertMessage, is("Registration is complete."));
+        assertThat(userService.userIsAdmin("email@email.tes"), is(true));
+        assertThat(expectedEmployeeGreeting, is(employeeGreeting));
     }
 
     @Test
@@ -42,7 +42,7 @@ public class SignupTest extends BaseTest {
         SignupPage signupPage = new SignupPage(getDriver());
         signupPage.open();
         signupPage = signupPage.clickCreateButtonExpectingFailure();
-        assertEquals(signupPage.getBaseUrl(),signupPage.getDriver().getCurrentUrl());
+        assertThat(signupPage.getBaseUrl(), is(signupPage.getDriver().getCurrentUrl()));
     }
     @Test
     public void verifyFirstNameRequired(){
@@ -51,7 +51,7 @@ public class SignupTest extends BaseTest {
         signupPage = signupPage
                 .fillCompanyName("Company")
                 .clickCreateButtonExpectingFailure();
-        assertEquals(signupPage.getBaseUrl(),signupPage.getDriver().getCurrentUrl());
+        assertThat(signupPage.getBaseUrl(), is(signupPage.getDriver().getCurrentUrl()));
     }
 
     @Test
@@ -62,7 +62,7 @@ public class SignupTest extends BaseTest {
                 .fillCompanyName("Company")
                 .fillFirstName("First Name")
                 .clickCreateButtonExpectingFailure();
-        assertEquals(signupPage.getBaseUrl(),signupPage.getDriver().getCurrentUrl());
+        assertThat(signupPage.getBaseUrl(), is(signupPage.getDriver().getCurrentUrl()));
     }
 
     @Test
@@ -74,7 +74,7 @@ public class SignupTest extends BaseTest {
                 .fillFirstName("Some test")
                 .fillLastName("Some test2")
                 .clickCreateButtonExpectingFailure();
-        assertEquals(signupPage.getBaseUrl(),signupPage.getDriver().getCurrentUrl());
+        assertThat(signupPage.getBaseUrl(), is(signupPage.getDriver().getCurrentUrl()));
     }
 
     @Test
@@ -87,7 +87,7 @@ public class SignupTest extends BaseTest {
                 .fillLastName("Another test")
                 .fillEmail("email@email.com")
                 .clickCreateButtonExpectingFailure();
-        assertEquals(signupPage.getBaseUrl(),signupPage.getDriver().getCurrentUrl());
+        assertThat(signupPage.getBaseUrl(), is(signupPage.getDriver().getCurrentUrl()));
     }
 
     @Test
@@ -101,7 +101,7 @@ public class SignupTest extends BaseTest {
                 .fillEmail("email@email.em")
                 .fillPassword("Password")
                 .clickCreateButtonExpectingFailure();
-        assertEquals(signupPage.getBaseUrl(),signupPage.getDriver().getCurrentUrl());
+        assertThat(signupPage.getBaseUrl(), is(signupPage.getDriver().getCurrentUrl()));
     }
 
     @Test
@@ -118,7 +118,8 @@ public class SignupTest extends BaseTest {
         SignupPage signupPage = new SignupPage(getDriver());
         signupPage.open();
         signupPage = signupPage.signupWithUserExpectingFailure(user);
-        assertEquals("Failed to register user please contact customer service. Error: Email is already used", signupPage.getAlertMessage());
+        String expectedMessage = "Failed to register user please contact customer service. Error: Email is already used";
+        assertThat(signupPage.getAlertMessage(), is(expectedMessage));
     }
 
     @Test
@@ -128,14 +129,17 @@ public class SignupTest extends BaseTest {
         CalendarPage calendarPage = signupPage.signupAsDefaultUser();
         LoginPage loginPage = calendarPage.menuBar.logout();
         calendarPage = loginPage.loginWithDefaultUser();
-        assertEquals(calendarPage.getBaseUrl(), calendarPage.getDriver().getCurrentUrl());
+        assertThat(calendarPage.getBaseUrl(), equalTo(calendarPage.getDriver().getCurrentUrl()));
         String expectedEmployeeGreeting = Constants.DEFAULT_USER_NAME + " " +Constants.DEFAULT_USER_LAST_NAME + "'s calendar for 2018";
-        assertEquals(expectedEmployeeGreeting, calendarPage.getEmployeeGreeting());
+        assertThat(expectedEmployeeGreeting, is(calendarPage.getEmployeeGreeting()));
 
     }
 
     @Test
     public void testing (){
+
+
+
         LoginPage loginPage = new LoginPage(getDriver());
         loginPage.open();
         loginPage.

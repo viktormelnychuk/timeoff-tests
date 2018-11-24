@@ -1,8 +1,9 @@
 package com.viktor.timeofftests.common;
 
-import com.google.common.base.Function;
-import lombok.extern.log4j.Log4j2;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.openqa.selenium.*;
+import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
 import java.lang.reflect.InvocationHandler;
@@ -13,9 +14,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
 
-import static com.viktor.timeofftests.common.Conditions.visible;
-
-@Log4j2
 public abstract class ConciseAPI {
     public abstract WebDriver getDriver();
     public void open(String url){
@@ -90,10 +88,10 @@ public abstract class ConciseAPI {
         private ElementFinderProxy(By elementLocator){
             this.elementLocator = elementLocator;
         }
-
         public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
             try{
-                return method.invoke(assertThat(visible(elementLocator)), args);
+                return method.invoke(new WebDriverWait(getDriver(), 10)
+                        .until(ExpectedConditions.visibilityOfElementLocated(elementLocator)), args);
             } catch (InvocationTargetException e){
                 throw e.getCause();
             }
@@ -108,6 +106,7 @@ public abstract class ConciseAPI {
     }
 
     protected WebElement findOne(By locator){
+        Logger log = LogManager.getLogger(this.getClass());
         log.debug("Waiting for visibility of element by {}", locator);
         return (WebElement) newElementFinderProxyInstance(new ProxiedWebElement(), locator);
     }
@@ -218,7 +217,8 @@ public abstract class ConciseAPI {
 
         public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
             try {
-                return method.invoke(getDriver().findElements(elementsLocator), args);
+                return method.invoke(new WebDriverWait(getDriver(), 10)
+                        .until(ExpectedConditions.visibilityOfAllElementsLocatedBy(elementsLocator)), args);
             } catch (InvocationTargetException e){
                 throw e.getCause();
             }
@@ -234,15 +234,8 @@ public abstract class ConciseAPI {
     }
 
     protected List<WebElement> findAllBy(By locator){
+        Logger log = LogManager.getLogger(this.getClass());
         log.debug("Waiting for visibility of elements by {}", locator);
         return (List<WebElement>) newElementsFinderProxyInstance(new ListOfWebElementsBait(), locator);
-    }
-
-    protected <V> V waitUntil (Function<? super WebDriver, V> condition, int timeout){
-        return new WebDriverWait(getDriver(), timeout).until(condition);
-    }
-
-    protected <V> V assertThat(Function<? super WebDriver, V> condition){
-        return waitUntil(condition, 10);
     }
 }
