@@ -104,8 +104,7 @@ public abstract class ConciseAPI {
         return java.lang.reflect.Proxy.newProxyInstance(
                 obj.getClass().getClassLoader(),
                 obj.getClass().getInterfaces(),
-                new ElementFinderProxy(elementLocator)
-        );
+                new ElementFinderProxy(elementLocator));
     }
 
     protected WebElement findOne(By locator){

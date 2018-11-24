@@ -16,9 +16,14 @@ public abstract class BasePage extends ConciseAPI {
 
     public abstract String getBaseUrl();
 
-    BasePage(WebDriver driver){
+    public BasePage (){}
+
+    public BasePage(WebDriver driver){
         this.driver = driver;
         menuBar = new MenuBar(driver);
+    }
+    public void setDriver(WebDriver driver){
+        this.driver = driver;
     }
     void open(){
         this.driver.get(getBaseUrl());
@@ -29,7 +34,7 @@ public abstract class BasePage extends ConciseAPI {
         return this.driver;
     }
 
-    void fillInputField(By locator, String value){
+   public void fillInputField(By locator, String value){
         WebElement element = findOne(locator);
         element.clear();
         element.sendKeys(value);
@@ -37,7 +42,7 @@ public abstract class BasePage extends ConciseAPI {
         logger.debug("Filling [{}] found [{}] with value '{}'", element.getTagName(), locator.toString(), value);
     }
 
-    void selectOption(By locator, String text){
+    public void selectOption(By locator, String text){
         WebElement element = findOne(locator);
         Logger logger = LogManager.getLogger(this.getClass());
         logger.debug("Filling [{}] found [{}] with value '{}'", element.getTagName(), locator.toString(), text);
@@ -45,7 +50,7 @@ public abstract class BasePage extends ConciseAPI {
         select.selectByVisibleText(text);
     }
 
-    void clickButton(By locator){
+    public void clickButton(By locator){
         WebElement element = findOne(locator);
         Logger logger = LogManager.getLogger(this.getClass());
         logger.debug("Clicking on the <{}> found by [{}]", element.getTagName(), locator);
