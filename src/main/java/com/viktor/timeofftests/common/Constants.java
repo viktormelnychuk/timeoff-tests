@@ -8,4 +8,5 @@ public class Constants {
     public static final String DEFAULT_COMPANY_NAME = "Acme";
     public static final String DEFAULT_COMPANY_COUNTRY = "UA: Україна";
     public static final String DEFAULT_COMPANY_TIMEZONE = "Europe/Kiev";
+    public static final String PASSWORD_HASH_SECRET = "!2~`HswpPPLa22+=±§sdq qwe,appp qwwokDF_";
 }

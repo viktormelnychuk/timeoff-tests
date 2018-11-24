@@ -1,10 +1,7 @@
 package com.viktor.timeofftests.pages;
 
-import com.viktor.timeofftests.common.partials.MenuBar;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebElement;
-import org.openqa.selenium.support.FindBy;
 
 public class CalendarPage extends BasePage {
     private WebDriver driver;
@@ -16,14 +13,14 @@ public class CalendarPage extends BasePage {
         return "http://localhost:3000/calendar/";
     }
 
-    public CalendarPage(WebDriver driver) {
+    CalendarPage(WebDriver driver) {
         super(driver);
         this.driver = driver;
     }
-    public String getAlertMessage(){
+    String getAlertMessage(){
         return findOne(this.message).getText();
     }
-    public String getEmployeeGreeting(){
+    String getEmployeeGreeting(){
         return findOne(this.employeeName).getText();
     }
 

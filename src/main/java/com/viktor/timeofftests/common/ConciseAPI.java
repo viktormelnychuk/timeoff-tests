@@ -1,10 +1,10 @@
 package com.viktor.timeofftests.common;
 
 import com.google.common.base.Function;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import lombok.extern.log4j.Log4j2;
 import org.openqa.selenium.*;
 import org.openqa.selenium.support.ui.WebDriverWait;
+
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -15,13 +15,12 @@ import java.util.ListIterator;
 
 import static com.viktor.timeofftests.common.Conditions.visible;
 
-
+@Log4j2
 public abstract class ConciseAPI {
     public abstract WebDriver getDriver();
     public void open(String url){
         getDriver().get(url);
     }
-    private final Logger logger = LogManager.getLogger(ConciseAPI.class);
     class ProxiedWebElement implements WebElement {
 
         public void click() {
@@ -110,7 +109,7 @@ public abstract class ConciseAPI {
     }
 
     protected WebElement findOne(By locator){
-        logger.debug("Waiting for visibility of element by {}", locator);
+        log.debug("Waiting for visibility of element by {}", locator);
         return (WebElement) newElementFinderProxyInstance(new ProxiedWebElement(), locator);
     }
 
@@ -236,6 +235,7 @@ public abstract class ConciseAPI {
     }
 
     protected List<WebElement> findAllBy(By locator){
+        log.debug("Waiting for visibility of elements by {}", locator);
         return (List<WebElement>) newElementsFinderProxyInstance(new ListOfWebElementsBait(), locator);
     }
 

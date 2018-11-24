@@ -1,13 +1,12 @@
 package com.viktor.timeofftests.models;
 
-import com.sun.jna.platform.win32.Sspi;
+import com.viktor.timeofftests.common.Constants;
 import com.viktor.timeofftests.db.DbConnection;
 import com.viktor.timeofftests.services.CompanyService;
 import com.viktor.timeofftests.services.DepartmentService;
 import lombok.Data;
 import lombok.extern.log4j.Log4j2;
 import org.apache.commons.codec.digest.DigestUtils;
-import org.eclipse.jetty.util.ajax.JSON;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -54,7 +53,7 @@ public class User {
         }
 
         public Builder withPassword (String password){
-            String pwf = password + "!2~`HswpPPLa22+=±§sdq qwe,appp qwwokDF_";
+            String pwf = password + Constants.PASSWORD_HASH_SECRET;
             this.password = DigestUtils.md5Hex(pwf.getBytes());
             return this;
         }
@@ -105,7 +104,7 @@ public class User {
             return this;
         }
 
-        public User build(){
+        User build(){
             User user = new User();
             user.setEmail(this.email);
             user.setPassword(this.password);

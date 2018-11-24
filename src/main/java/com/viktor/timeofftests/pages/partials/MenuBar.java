@@ -1,6 +1,5 @@
-package com.viktor.timeofftests.common.partials;
+package com.viktor.timeofftests.pages.partials;
 
-import com.viktor.timeofftests.pages.BasePage;
 import com.viktor.timeofftests.pages.LoginPage;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;

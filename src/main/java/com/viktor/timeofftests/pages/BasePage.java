@@ -1,7 +1,7 @@
 package com.viktor.timeofftests.pages;
 
 import com.viktor.timeofftests.common.ConciseAPI;
-import com.viktor.timeofftests.common.partials.MenuBar;
+import com.viktor.timeofftests.pages.partials.MenuBar;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.openqa.selenium.By;
