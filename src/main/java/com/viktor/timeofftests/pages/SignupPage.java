@@ -2,12 +2,13 @@ package com.viktor.timeofftests.pages;
 
 import com.viktor.timeofftests.common.Constants;
 import com.viktor.timeofftests.models.User;
+import com.viktor.timeofftests.services.UserService;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 
 public class SignupPage extends BasePage{
     private WebDriver driver;
-
+    private UserService userService = UserService.getInstance();
     private By alert = By.xpath("//div[@role='alert' and @class='alert alert-danger']");
     private By companyName = By.id("company_name_inp");
     private By firstName= By.id("name_inp");
@@ -98,7 +99,7 @@ public class SignupPage extends BasePage{
     }
 
     SignupPage signupWithUserExpectingFailure(User user){
-        fillCompanyName("company");
+        fillCompanyName(userService.getCompanyForUser(user).getName());
         fillEmail(user.getEmail());
         fillFirstName(user.getName());
         fillLastName(user.getLastName());

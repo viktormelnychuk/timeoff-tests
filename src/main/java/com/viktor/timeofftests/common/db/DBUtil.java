@@ -1,4 +1,4 @@
-package com.viktor.timeofftests.db;
+package com.viktor.timeofftests.common.db;
 
 
 import lombok.extern.log4j.Log4j2;

@@ -3,7 +3,7 @@ package com.viktor.timeofftests.pages;
 import com.viktor.timeofftests.common.ConciseAPI;
 import com.viktor.timeofftests.common.DriverEnum;
 import com.viktor.timeofftests.common.DriverUtil;
-import com.viktor.timeofftests.db.DBUtil;
+import com.viktor.timeofftests.common.db.DBUtil;
 import lombok.extern.log4j.Log4j2;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
