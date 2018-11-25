@@ -28,7 +28,7 @@ public class DepartmentService {
                     .withName(name)
                     .inCompany(companyId)
                     .build();
-            return saveDepartment(department);
+            return saveDepartment(newDepartment);
         } else {
             return department;
         }

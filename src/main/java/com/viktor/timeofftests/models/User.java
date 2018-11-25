@@ -16,6 +16,7 @@ public class User {
     private int id;
     private String email;
     private String password;
+    private String rawPassword;
     private String name;
     private String lastName;
     private boolean activated;
@@ -32,6 +33,7 @@ public class User {
     public static class Builder {
         private String email;
         private String password;
+        private String rawPassword;
         private String name;
         private String lastName;
         private boolean activated = true;
@@ -48,6 +50,7 @@ public class User {
         }
 
         public Builder withPassword (String password){
+            this.rawPassword = password;
             String pwf = password + Constants.PASSWORD_HASH_SECRET;
             this.password = DigestUtils.md5Hex(pwf.getBytes());
             return this;
@@ -103,6 +106,7 @@ public class User {
             User user = new User();
             user.setEmail(this.email);
             user.setPassword(this.password);
+            user.setRawPassword(this.rawPassword);
             user.setName(this.name);
             user.setLastName(this.lastName);
             user.setActivated(this.activated);
