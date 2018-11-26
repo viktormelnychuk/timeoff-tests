@@ -41,7 +41,11 @@ public class CompanyService {
             getCompany.setString(1, name);
             ResultSet set = getCompany.executeQuery();
             set.next();
-            return deserializeComapny(set);
+            if(set.next()){
+                return deserializeComapny(set);
+            } else {
+                return null;
+            }
         } catch (Exception e){
             log.error("Error retrieving company with name {}", name);
             return null;

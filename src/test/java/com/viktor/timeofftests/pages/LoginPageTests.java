@@ -4,14 +4,11 @@ import com.viktor.timeofftests.common.DriverUtil;
 import com.viktor.timeofftests.models.User;
 import com.viktor.timeofftests.services.SessionService;
 import com.viktor.timeofftests.services.UserService;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.JUnit4;
+import org.junit.jupiter.api.Test;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.notNullValue;
 
-@RunWith(JUnit4.class)
 public class LoginPageTests extends BaseTest {
     private UserService userService = UserService.getInstance();
     private SessionService sessionService = SessionService.getInstance();

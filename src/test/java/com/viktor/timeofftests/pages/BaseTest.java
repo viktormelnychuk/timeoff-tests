@@ -9,14 +9,16 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.hamcrest.Matcher;
 import org.hamcrest.MatcherAssert;
-import org.junit.After;
-import org.junit.BeforeClass;
-import org.junit.Rule;
-import org.junit.rules.TestRule;
-import org.junit.rules.TestWatcher;
-import org.junit.runner.Description;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.extension.AfterEachCallback;
+import org.junit.jupiter.api.extension.BeforeEachCallback;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.api.extension.ExtensionContext;
 import org.openqa.selenium.WebDriver;
+
 @Log4j2
+@ExtendWith(TraceUnitExtension.class)
 public abstract class BaseTest extends ConciseAPI {
     private WebDriver driver;
     @Override
@@ -24,25 +26,15 @@ public abstract class BaseTest extends ConciseAPI {
         this.driver = DriverUtil.getDriver(DriverEnum.CHROME);
         return this.driver;
     }
-    @BeforeClass
+    @BeforeAll
    public static void cleanDB(){
       DBUtil.cleanDB();
     }
 
-    @After
+    @AfterEach
     public void tearDown(){
         this.driver.quit();
     }
-
-
-    @Rule
-    public TestRule watcher = new TestWatcher() {
-        protected void starting (Description description){
-            Logger logger = LogManager.getLogger(description.getClass());
-            logger.info("Starting to run {}",description.getDisplayName());
-        }
-    };
-
 
     public static <T> void assertThat(T actual, Matcher<? super T> matcher) {
         assertThat("", actual, matcher);
@@ -52,5 +44,15 @@ public abstract class BaseTest extends ConciseAPI {
         log.info("Asserting that [{}] [{}]", actual, matcher.toString());
         MatcherAssert.assertThat(reason, actual, matcher);
     }
+}
 
+class TraceUnitExtension implements AfterEachCallback, BeforeEachCallback {
+    private Logger log = LogManager.getLogger(BaseTest.class);
+    public void afterEach(ExtensionContext extensionContext) throws Exception {
+       log.info("Done running {}:{}", extensionContext.getTestClass().toString(), extensionContext.getDisplayName());
+    }
+
+    public void beforeEach(ExtensionContext extensionContext) throws Exception {
+        log.info("Begin running {}:{}", extensionContext.getTestClass().toString(),extensionContext.getDisplayName());
+    }
 }

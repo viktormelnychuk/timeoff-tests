@@ -45,7 +45,12 @@ public class DepartmentService {
             log.info("Executing {}", getDepartment.toString());
             ResultSet resultSet = getDepartment.executeQuery();
             resultSet.next();
-            return deserializeDepartment(resultSet);
+            if(resultSet.next()){
+                return deserializeDepartment(resultSet);
+            } else {
+                return null;
+            }
+
         } catch (Exception e){
             log.error("Error occurred", e);
             return null;

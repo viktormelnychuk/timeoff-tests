@@ -5,17 +5,14 @@ import com.viktor.timeofftests.models.User;
 import com.viktor.timeofftests.services.CompanyService;
 import com.viktor.timeofftests.services.DepartmentService;
 import com.viktor.timeofftests.services.UserService;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.JUnit4;
+import org.junit.jupiter.api.Test;
 
 import static org.hamcrest.CoreMatchers.*;
-
-@RunWith(JUnit4.class)
 public class SignupTest extends BaseTest {
     private UserService userService = UserService.getInstance();
     private CompanyService companyService = CompanyService.getInstance();
     private DepartmentService departmentService = DepartmentService.getInstance();
+
     @Test
     public void signupAsNewUser(){
         SignupPage signupPage = new SignupPage(getDriver());
