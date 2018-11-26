@@ -90,7 +90,11 @@ public class UserService {
             statement.setInt(1,user.getCompanyID());
             log.info("Executing {}", statement.toString());
             ResultSet resultSet = statement.executeQuery();
-            return companyService.deserializeComapny(resultSet);
+            if(resultSet.next()){
+                return companyService.deserializeComapny(resultSet);
+            } else {
+                return null;
+            }
         } catch (Exception e){
             log.error("Error occurred", e);
             return null;

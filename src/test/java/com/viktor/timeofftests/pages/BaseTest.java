@@ -10,7 +10,7 @@ import org.apache.logging.log4j.Logger;
 import org.hamcrest.Matcher;
 import org.hamcrest.MatcherAssert;
 import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.extension.AfterEachCallback;
 import org.junit.jupiter.api.extension.BeforeEachCallback;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -26,8 +26,8 @@ public abstract class BaseTest extends ConciseAPI {
         this.driver = DriverUtil.getDriver(DriverEnum.CHROME);
         return this.driver;
     }
-    @BeforeAll
-   public static void cleanDB(){
+    @BeforeEach
+   public void cleanDB(){
       DBUtil.cleanDB();
     }
 

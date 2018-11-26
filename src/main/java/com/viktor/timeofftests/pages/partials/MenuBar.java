@@ -3,13 +3,18 @@ package com.viktor.timeofftests.pages.partials;
 import com.viktor.timeofftests.pages.BasePage;
 import com.viktor.timeofftests.pages.LoginPage;
 import org.openqa.selenium.By;
+import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
+import org.openqa.selenium.support.ui.ExpectedCondition;
+import org.openqa.selenium.support.ui.ExpectedConditions;
 
 public class MenuBar extends BasePage {
 
     private final WebDriver driver;
     private By meMenu = By.id("me_menu");
     private By logOutLink = By.linkText("Logout");
+    private By employeesButton = By.linkText("Employees");
 
 
     public String getBaseUrl() {
@@ -20,9 +25,20 @@ public class MenuBar extends BasePage {
         this.driver = driver;
         super.setDriver(driver);
     }
+
+    public boolean employeesButtonDisplayed(){
+        try {
+            this.driver.findElement(employeesButton);
+            return true;
+        } catch (NoSuchElementException ex){
+            return false;
+        }
+    }
+
     public LoginPage logout(){
         clickButton(this.meMenu);
         clickButton(this.logOutLink);
         return new LoginPage(this.driver);
     }
+
 }

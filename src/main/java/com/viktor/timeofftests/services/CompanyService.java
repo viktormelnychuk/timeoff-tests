@@ -40,7 +40,6 @@ public class CompanyService {
             PreparedStatement getCompany = connection.prepareStatement(sql);
             getCompany.setString(1, name);
             ResultSet set = getCompany.executeQuery();
-            set.next();
             if(set.next()){
                 return deserializeComapny(set);
             } else {

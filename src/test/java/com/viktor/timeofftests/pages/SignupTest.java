@@ -91,11 +91,11 @@ public class SignupTest extends BaseTest {
                 .inCompany("Test Company")
                 .inDepartment("Department1")
                 .build();
-        userService.createNewUser(user);
+        User createdUser = userService.createNewUser(user);
         userService.makeDepartmentAdmin(user);
         SignupPage signupPage = new SignupPage(getDriver());
         signupPage.open();
-        signupPage = signupPage.signupWithUserExpectingFailure(user);
+        signupPage = signupPage.signupWithUserExpectingFailure(createdUser);
         String expectedMessage = "Failed to register user please contact customer service. Error: Email is already used";
         assertThat(signupPage.getAlertMessage(), is(expectedMessage));
     }

@@ -103,8 +103,8 @@ public class SignupPage extends BasePage{
         fillEmail(user.getEmail());
         fillFirstName(user.getName());
         fillLastName(user.getLastName());
-        fillPassword("1234");
-        fillPasswordConfirmation("1234");
+        fillPassword(user.getRawPassword());
+        fillPasswordConfirmation(user.getRawPassword());
         return clickCreateButtonExpectingFailure();
     }
 
