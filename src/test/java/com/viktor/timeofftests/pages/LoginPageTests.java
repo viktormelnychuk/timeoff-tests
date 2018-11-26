@@ -94,4 +94,9 @@ public class LoginPageTests extends BaseTest {
         assertThat(signupPage.getBaseUrl(), is(signupPage.getDriver().getCurrentUrl()));
     }
 
+    @Test
+    void testing(){
+        SessionService.getInstance().insertNewSession();
+    }
+
 }
