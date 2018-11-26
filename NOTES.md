@@ -13,6 +13,7 @@ return val + '.' + crypto
 };
 
 ```
+session id generated with uid(24) where uid is [https://www.npmjs.com/package/uid-safe]
 
 
 # Features
