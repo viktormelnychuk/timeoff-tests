@@ -5,7 +5,6 @@ import com.viktor.timeofftests.models.User;
 import com.viktor.timeofftests.services.SessionService;
 import com.viktor.timeofftests.services.UserService;
 import org.junit.jupiter.api.Test;
-import sun.rmi.runtime.Log;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.notNullValue;

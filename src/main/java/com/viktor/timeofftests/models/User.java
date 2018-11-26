@@ -7,6 +7,7 @@ import lombok.Data;
 import lombok.extern.log4j.Log4j2;
 import org.apache.commons.codec.digest.DigestUtils;
 
+import java.nio.charset.StandardCharsets;
 import java.sql.Timestamp;
 import java.util.Date;
 
@@ -52,7 +53,7 @@ public class User {
         public Builder withPassword (String password){
             this.rawPassword = password;
             String pwf = password + Constants.PASSWORD_HASH_SECRET;
-            this.password = DigestUtils.md5Hex(pwf.getBytes());
+            this.password = DigestUtils.md5Hex(pwf.getBytes(StandardCharsets.UTF_8));
             return this;
         }
 

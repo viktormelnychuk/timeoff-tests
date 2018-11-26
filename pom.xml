@@ -76,7 +76,7 @@
                 <version>3.0.0-M1</version>
                 <configuration>
                     <includes>
-                        <include>**/**/*Test.java</include>
+                        <include>**/**/*.java</include>
                     </includes>
                     <parallel>all</parallel>
                     <threadCount>2</threadCount>
