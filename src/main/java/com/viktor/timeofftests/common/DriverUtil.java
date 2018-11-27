@@ -1,5 +1,6 @@
 package com.viktor.timeofftests.common;
 
+import com.viktor.timeofftests.models.Session;
 import org.openqa.selenium.Cookie;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
@@ -7,6 +8,8 @@ import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.firefox.FirefoxDriver;
 
 import java.io.UnsupportedEncodingException;
+import java.util.Calendar;
+import java.util.Date;
 
 public class DriverUtil {
     private WebDriver driver;
@@ -19,7 +22,7 @@ public class DriverUtil {
         } else if (driverType == DriverEnum.CHROME){
             ChromeOptions chromeOptions = new ChromeOptions();
             chromeOptions.addArguments("headless");
-            return new ChromeDriver(chromeOptions);
+            return new ChromeDriver();
         }
         return new FirefoxDriver();
     }
@@ -41,5 +44,14 @@ public class DriverUtil {
             //fail silently
             return "";
         }
+    }
+
+    public static void setSessionCookie(Session session, WebDriver driver){
+        Calendar calendar = Calendar.getInstance();
+        driver.get("http://localhost:3000/404");
+        calendar.roll(Calendar.YEAR, -10);
+        Date expiry = calendar.getTime();
+        Cookie cookie = new Cookie("connection.sid", session.getSid());
+        driver.manage().addCookie(cookie);
     }
 }

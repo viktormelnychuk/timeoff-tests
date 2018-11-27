@@ -1,10 +1,12 @@
 package com.viktor.timeofftests.pages;
 
 import com.viktor.timeofftests.common.DriverUtil;
+import com.viktor.timeofftests.models.Session;
 import com.viktor.timeofftests.models.User;
 import com.viktor.timeofftests.services.SessionService;
 import com.viktor.timeofftests.services.UserService;
 import org.junit.jupiter.api.Test;
+import org.openqa.selenium.WebDriver;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.notNullValue;
@@ -96,7 +98,21 @@ public class LoginPageTests extends BaseTest {
 
     @Test
     void testing(){
-        SessionService.getInstance().insertNewSession();
+        WebDriver driver = getDriver();
+        //driver.get("http://localhost:3000/login");
+        User user = new User.Builder()
+                .withEmail("tester@viktor.com")
+                .withPassword("1234")
+                .withName("John")
+                .withLastName("Doe")
+                .inCompany("Acme")
+                .inDepartment("Sales")
+                .build();
+        user = userService.createNewUser(user);
+        Session session = SessionService.getInstance().insertNewSessionForUserId(user.getId());
+        DriverUtil.setSessionCookie(session, driver);
+        driver.get("http://localhost:3000/calendar/teamview/");
+        System.out.println("qqwe");
     }
 
 }

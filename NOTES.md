@@ -5,6 +5,7 @@
     * Try to login as deactivated user
 2. Secret for generating session is :
 ```
+val = session uid;
 return val + '.' + crypto
     .createHmac('sha256', secret)
     .update(val)

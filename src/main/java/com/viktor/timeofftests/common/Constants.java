@@ -11,4 +11,5 @@ public class Constants {
     public static final String PASSWORD_HASH_SECRET = "!2~`HswpPPLa22+=±§sdq qwe,appp qwwokDF_";
     public static final String DEFAULT_DEPARTMENT_NAME = "SALES";
     public static final int DEFAULT_DEPARTMENT_ALLOWANCE = 20;
+    public static final String COOKIE_SIGNING_SECRET = "my dirty secret ;khjsdkjahsdajhasdam,nnsnad,";
 }
