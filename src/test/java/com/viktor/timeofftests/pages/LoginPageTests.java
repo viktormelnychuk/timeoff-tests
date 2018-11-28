@@ -3,6 +3,7 @@ package com.viktor.timeofftests.pages;
 import com.viktor.timeofftests.common.DriverUtil;
 import com.viktor.timeofftests.models.Session;
 import com.viktor.timeofftests.models.User;
+import com.viktor.timeofftests.services.BankHolidaysService;
 import com.viktor.timeofftests.services.SessionService;
 import com.viktor.timeofftests.services.UserService;
 import org.junit.jupiter.api.Test;
@@ -113,5 +114,11 @@ public class LoginPageTests extends BaseTest {
         loginPage.open();
         SignupPage signupPage = loginPage.clickRegisterLink();
         assertThat(signupPage.getBaseUrl(), is(signupPage.getDriver().getCurrentUrl()));
+    }
+
+    @Test
+    void testing(){
+        BankHolidaysService bankHolidaysService = BankHolidaysService.getInstance();
+        bankHolidaysService.populateBankHolidaysForCompany(1);
     }
 }
