@@ -9,15 +9,14 @@ import java.sql.DriverManager;
 public class DbConnection {
 
     public static Connection getConnection(){
+        String password = "1234";
+        String user = "timeoff";
+        String url = "jdbc:postgresql://localhost:5432/timeoff";
         try {
-            String password = "1234";
-            String user = "timeoff";
-            String url = "jdbc:postgresql://localhost:5432/timeoff";
             log.info("Connecting to db as {}:{}", user, password);
             return DriverManager.getConnection(url, user, password);
         } catch (Exception e){
-            e.printStackTrace();
-            System.exit(1);
+            log.error("Error connecting to database as {}:{} on url={}",user, password, url, e);
             return null;
         }
     }

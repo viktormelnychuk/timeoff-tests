@@ -10,7 +10,6 @@ import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
-import java.security.NoSuchAlgorithmException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -70,12 +69,6 @@ public class SessionService {
             return null;
         }
     }
-
-//    public Session insertNewSession (){
-//        String sid = generateSessionUid();
-//        insertSession(sid);
-//        return null;
-//    }
     public Session insertNewSessionForUserId (int userId){
         String sid = generateSessionUid();
         String cookiePart = "{\"cookie\":{\"originalMaxAge\":null,\"expires\":null,\"httpOnly\":true,\"path\":\"/\"}";

@@ -1,6 +1,7 @@
 package com.viktor.timeofftests.common;
 
 import com.viktor.timeofftests.models.Session;
+import lombok.extern.log4j.Log4j2;
 import org.openqa.selenium.Cookie;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
@@ -10,13 +11,14 @@ import org.openqa.selenium.firefox.FirefoxDriver;
 import java.io.UnsupportedEncodingException;
 import java.util.Calendar;
 import java.util.Date;
-
+@Log4j2
 public class DriverUtil {
     private WebDriver driver;
 
     private DriverUtil(){}
 
     public static WebDriver getDriver(DriverEnum driverType){
+        log.info("Starting new {} browser", driverType.toString());
         if (driverType == DriverEnum.FIREFOX){
             return new FirefoxDriver();
         } else if (driverType == DriverEnum.CHROME){

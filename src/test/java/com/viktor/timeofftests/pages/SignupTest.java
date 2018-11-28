@@ -84,10 +84,6 @@ public class SignupTest extends BaseTest {
     @Test
     public void verifyCannotSignupWithExistingUser(){
         User user = new User.Builder()
-                .withEmail("email@er.re")
-                .withName("name")
-                .withLastName("lastname")
-                .withPassword("1234")
                 .inCompany("Test Company")
                 .inDepartment("Department1")
                 .build();

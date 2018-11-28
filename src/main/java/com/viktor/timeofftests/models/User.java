@@ -32,16 +32,17 @@ public class User {
 
     @Log4j2
     public static class Builder {
-        private String email;
-        private String password;
-        private String rawPassword;
-        private String name;
-        private String lastName;
+        private String email = Constants.DEFAULT_USER_EMAIL;
+        // hashed raw password
+        private String password = "2df81af5c193524b83db263efb5db2a2";
+        private String rawPassword = Constants.DEFAULT_USER_PASSWORD;
+        private String name = Constants.DEFAULT_USER_NAME;
+        private String lastName = Constants.DEFAULT_USER_LAST_NAME;
         private boolean activated = true;
         private boolean admin = false;
         private boolean autoApprove = true;
         private Timestamp startDate = new Timestamp(new Date().getTime());
-        private Timestamp endDate = new Timestamp(new Date().getTime());
+        private Timestamp endDate;
         private int companyID;
         private int departmentID;
 

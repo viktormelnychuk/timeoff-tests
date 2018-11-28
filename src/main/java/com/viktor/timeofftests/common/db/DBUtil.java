@@ -12,12 +12,14 @@ public class DBUtil {
 
     public static void cleanDB(){
         try{
-            log.info("Begin cleaning db tables");
+            log.info("Begin clearing db tables");
             Connection connection = DbConnection.getConnection();
             Statement statement = connection.createStatement();
             String sql = "truncate table \"BankHolidays\", \"Leaves\",  \"Companies\", \"DepartmentSupervisor\", \"Departments\", \"EmailAudit\", \"LeaveTypes\", \"Sessions\", \"UserFeeds\", \"Users\", \"schedule\", \"user_allowance_adjustment\";";
             statement.execute(sql);
+            log.info("Done clearing database");
         } catch (SQLException exception){
+            log.error("Error clearing database", exception);
             exception.printStackTrace();
         }
 

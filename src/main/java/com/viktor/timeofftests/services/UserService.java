@@ -49,9 +49,6 @@ public class UserService {
                 "VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?)";
         try {
             log.info("Preparing to insert new user");
-            Calendar calendar = Calendar.getInstance();
-            calendar.add(Calendar.YEAR, 2);
-            Timestamp time = new Timestamp(calendar.getTime().getTime());
             PreparedStatement insertUser = connection.prepareStatement(sql);
             insertUser.setString(1, user.getEmail());
             insertUser.setString(2, user.getPassword());
@@ -61,7 +58,7 @@ public class UserService {
             insertUser.setBoolean(6, user.isAdmin());
             insertUser.setBoolean(7, user.isAutoApprove());
             insertUser.setTimestamp(8,user.getStartDate() );
-            insertUser.setTimestamp(9, time);
+            insertUser.setTimestamp(9, user.getEndDate());
             insertUser.setTimestamp(10, new Timestamp(new Date().getTime()));
             insertUser.setTimestamp(11, new Timestamp(new Date().getTime()));
             insertUser.setInt(12, user.getCompanyID());

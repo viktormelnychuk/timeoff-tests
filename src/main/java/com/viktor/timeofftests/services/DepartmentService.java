@@ -105,7 +105,22 @@ public class DepartmentService {
             return null;
         }
     }
+    public void assignBossUserId(Department department, int id){
+        Connection connection = DbConnection.getConnection();
+        String sql = "UPDATE \"Departments\" SET \"bossId\"=?, \"updatedAt\"=? WHERE \"id\"=?";
+        try{
+            PreparedStatement updateDepartmentWithBossId = connection.prepareStatement(sql);
+            updateDepartmentWithBossId.setInt(1,id);
+            updateDepartmentWithBossId.setTimestamp(2, new Timestamp(new java.util.Date().getTime()));
+            updateDepartmentWithBossId.setInt(3, department.getId());
+            log.info("Updating department with id={} to have bossId={}", department.getId(), id);
+            log.info("Executing {}",updateDepartmentWithBossId.toString());
+            updateDepartmentWithBossId.executeUpdate();
 
+        } catch (Exception e){
+            log.error("Error updating department", e);
+        }
+    }
 
     private Department deserializeDepartment(ResultSet set){
         try{

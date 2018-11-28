@@ -22,10 +22,6 @@ public class LoginPageTests extends BaseTest {
         LoginPage loginPage = new LoginPage(getDriver());
         loginPage.open();
         User user = new User.Builder()
-                .withEmail("tester@viktor.com")
-                .withName("John")
-                .withLastName("Doe")
-                .withPassword("1234")
                 .inCompany("Acme")
                 .inDepartment("Sales")
                 .isAdmin()
@@ -49,10 +45,6 @@ public class LoginPageTests extends BaseTest {
         LoginPage loginPage = new LoginPage(getDriver());
         loginPage.open();
         User user = new User.Builder()
-                .withEmail("tester@viktor.com")
-                .withPassword("1234")
-                .withName("John")
-                .withLastName("Doe")
                 .inCompany("Acme")
                 .inDepartment("Sales")
                 .build();
@@ -96,15 +88,11 @@ public class LoginPageTests extends BaseTest {
         Calendar calendar = Calendar.getInstance();
         calendar.roll(Calendar.DATE, 10);
         Date startedOn = calendar.getTime();
-        Date endedOn = new Date();
+        calendar.roll(Calendar.DATE, 9);
+        Date endedOn = calendar.getTime();
         LoginPage loginPage = new LoginPage(getDriver());
         loginPage.open();
         User user = new User.Builder()
-                .withEmail("tester@viktor.com")
-                .withName("John")
-                .withLastName("Doe")
-                .withEmail("Doe")
-                .withPassword("1234")
                 .inCompany("Acme")
                 .inDepartment("Sales")
                 .startedOn(startedOn)
@@ -126,24 +114,4 @@ public class LoginPageTests extends BaseTest {
         SignupPage signupPage = loginPage.clickRegisterLink();
         assertThat(signupPage.getBaseUrl(), is(signupPage.getDriver().getCurrentUrl()));
     }
-
-    @Test
-    void testing(){
-        WebDriver driver = getDriver();
-        //driver.get("http://localhost:3000/login");
-        User user = new User.Builder()
-                .withEmail("tester@viktor.com")
-                .withPassword("1234")
-                .withName("John")
-                .withLastName("Doe")
-                .inCompany("Acme")
-                .inDepartment("Sales")
-                .build();
-        user = userService.createNewUser(user);
-        Session session = SessionService.getInstance().insertNewSessionForUserId(user.getId());
-        DriverUtil.setSessionCookie(session, driver);
-        driver.get("http://localhost:3000/calendar/teamview/");
-        System.out.println("qqwe");
-    }
-
 }
