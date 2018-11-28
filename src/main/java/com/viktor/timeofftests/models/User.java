@@ -103,6 +103,16 @@ public class User {
             return this;
         }
 
+        public Builder startedOn (Date date){
+            this.startDate = new Timestamp(date.getTime());
+            return this;
+        }
+
+        public Builder endedOn (Date date){
+            this.endDate = new Timestamp(date.getTime());
+            return this;
+        }
+
         public User build(){
             User user = new User();
             user.setEmail(this.email);

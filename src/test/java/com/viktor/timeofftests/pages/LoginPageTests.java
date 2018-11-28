@@ -8,6 +8,9 @@ import com.viktor.timeofftests.services.UserService;
 import org.junit.jupiter.api.Test;
 import org.openqa.selenium.WebDriver;
 
+import java.util.Calendar;
+import java.util.Date;
+
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.notNullValue;
 
@@ -86,6 +89,34 @@ public class LoginPageTests extends BaseTest {
         assertThat(loginPage.getBaseUrl(), is(loginPage.getDriver().getCurrentUrl()));
         loginPage.fillEmail("email@email.email").clickLoginButtonExpectingFailure();
         assertThat(loginPage.getBaseUrl(), is(loginPage.getDriver().getCurrentUrl()));
+    }
+
+    @Test
+    void cannotLoginAsDeactivatedUser(){
+        Calendar calendar = Calendar.getInstance();
+        calendar.roll(Calendar.DATE, 10);
+        Date startedOn = calendar.getTime();
+        Date endedOn = new Date();
+        LoginPage loginPage = new LoginPage(getDriver());
+        loginPage.open();
+        User user = new User.Builder()
+                .withEmail("tester@viktor.com")
+                .withName("John")
+                .withLastName("Doe")
+                .withEmail("Doe")
+                .withPassword("1234")
+                .inCompany("Acme")
+                .inDepartment("Sales")
+                .startedOn(startedOn)
+                .endedOn(endedOn)
+                .build();
+        user = userService.createNewUser(user);
+        loginPage
+                .fillEmail(user.getEmail())
+                .fillPassword(user.getRawPassword())
+                .clickLoginButtonExpectingFailure();
+        assertThat(loginPage.getBaseUrl(), is(loginPage.getDriver().getCurrentUrl()));
+        assertThat(loginPage.getAlertMessage(), is("Incorrect credentials"));
     }
 
     @Test
