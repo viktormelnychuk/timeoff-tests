@@ -16,6 +16,6 @@ return val + '.' + crypto
 ```
 session id generated with uid(24) where uid is [https://www.npmjs.com/package/uid-safe]
 3. Figure out how to make sure order does not matter when creating user (inCompany and inDepartment can be used in any order)
-
+4. Run all migrations! it is important!
 # Features
 1. Prepare poll of 2 or 3 drivers to get from so they are prepared when user tries to run tests
