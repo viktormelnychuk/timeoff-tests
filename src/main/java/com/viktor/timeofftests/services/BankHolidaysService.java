@@ -7,11 +7,12 @@ import com.viktor.timeofftests.common.db.DbConnection;
 import com.viktor.timeofftests.models.BankHoliday;
 import com.viktor.timeofftests.models.Company;
 import lombok.extern.log4j.Log4j2;
-import java.util.Date;
+
 import java.io.File;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.Timestamp;
+import java.util.Date;
 
 
 @Log4j2
@@ -27,7 +28,8 @@ public class BankHolidaysService {
     }
     private BankHolidaysService(){}
 
-    public void populateBankHolidaysForCompany (String companyName){
+    void populateBankHolidaysForCompany(String companyName){
+        log.info("Inserting default holidays for company with name={}", companyName);
         Company company = companyService.getCompanyWithName(companyName);
         BankHoliday[] bankHolidays = getHolidaysForCountry(company.getCountry());
         String sql = "INSERT INTO \"BankHolidays\" (name, date, \"createdAt\", \"updatedAt\", \"companyId\") VALUES(?, ?, ?, ?, ?)";
@@ -42,6 +44,7 @@ public class BankHolidaysService {
                 statement.setInt(5, company.getId());
                 statement.addBatch();
             }
+            log.info("Executing {}", statement.toString());
             int[] rowsAffected = statement.executeBatch();
             if (rowsAffected.length != bankHolidays.length){
                 throw new Exception("Not all bank holidays were inserted");
@@ -53,6 +56,7 @@ public class BankHolidaysService {
 
     private BankHoliday[] getHolidaysForCountry(String countryCode){
         try {
+            log.info("Reading bank holidays from [localisation.json] for country={}",countryCode);
             File jsonFile = new File(getClass().getClassLoader().getResource("localisation.json").getFile());
             ObjectMapper mapper = new ObjectMapper();
             JsonNode root = mapper.readTree(jsonFile);

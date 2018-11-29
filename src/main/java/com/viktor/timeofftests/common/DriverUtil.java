@@ -24,12 +24,12 @@ public class DriverUtil {
         } else if (driverType == DriverEnum.CHROME){
             ChromeOptions chromeOptions = new ChromeOptions();
             chromeOptions.addArguments("headless");
-            return new ChromeDriver();
+            return new ChromeDriver(chromeOptions);
         }
         return new FirefoxDriver();
     }
 
-    public static String getDriverCookie(String key, WebDriver driver){
+    private static String getDriverCookie(String key, WebDriver driver){
         Cookie cookie = driver.manage().getCookieNamed(key);
         return cookie.getValue();
     }

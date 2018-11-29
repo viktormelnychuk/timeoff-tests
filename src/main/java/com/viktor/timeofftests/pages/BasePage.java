@@ -10,19 +10,20 @@ import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.Select;
 
 public abstract class BasePage extends ConciseAPI {
+    By pageTitle = By.xpath("//h1");
 
     private WebDriver driver;
     MenuBar menuBar;
 
     public abstract String getBaseUrl();
 
-    public BasePage (){}
+    protected BasePage(){}
 
-    public BasePage(WebDriver driver){
+    BasePage(WebDriver driver){
         this.driver = driver;
         menuBar = new MenuBar(driver);
     }
-    public void setDriver(WebDriver driver){
+    protected void setDriver(WebDriver driver){
         this.driver = driver;
     }
     void open(){
@@ -36,7 +37,7 @@ public abstract class BasePage extends ConciseAPI {
         return this.driver;
     }
 
-   public void fillInputField(By locator, String value){
+   void fillInputField(By locator, String value){
         WebElement element = findOne(locator);
         element.clear();
         element.sendKeys(value);
@@ -44,15 +45,15 @@ public abstract class BasePage extends ConciseAPI {
         logger.debug("Filling [{}] found [{}] with value '{}'", element.getTagName(), locator.toString(), value);
     }
 
-    public void selectOption(By locator, String text){
+   void selectOption(By locator, String text){
         WebElement element = findOne(locator);
         Logger logger = LogManager.getLogger(this.getClass());
         logger.debug("Filling [{}] found [{}] with value '{}'", element.getTagName(), locator.toString(), text);
         Select select = new Select(element);
-        select.selectByVisibleText(text);
+        select.selectByValue(text);
     }
 
-    public void clickButton(By locator){
+   protected void clickButton(By locator){
         WebElement element = findOne(locator);
         Logger logger = LogManager.getLogger(this.getClass());
         logger.debug("Clicking on the <{}> found by [{}]", element.getTagName(), locator);

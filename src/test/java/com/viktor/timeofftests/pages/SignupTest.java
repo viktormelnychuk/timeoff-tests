@@ -14,7 +14,7 @@ public class SignupTest extends BaseTest {
     private DepartmentService departmentService = DepartmentService.getInstance();
 
     @Test
-    public void signupAsNewUser(){
+    void signupAsNewUser(){
         SignupPage signupPage = new SignupPage(getDriver());
         signupPage.open();
         CalendarPage calendarPage = signupPage
@@ -24,7 +24,7 @@ public class SignupTest extends BaseTest {
                 .fillEmail("email@email.tes")
                 .fillPassword("1234")
                 .fillPasswordConfirmation("1234")
-                .selectCountry("CU: Cuba")
+                .selectCountry("CU")
                 .selectTimeZone("Europe/Kirov")
                 .clickCreateButtonExpectingSuccess();
         String alertMessage = calendarPage.getAlertMessage();
@@ -39,7 +39,7 @@ public class SignupTest extends BaseTest {
     }
 
     @Test
-    public void verifyFieldsRequired(){
+    void verifyFieldsRequired(){
         SignupPage signupPage = new SignupPage(getDriver());
         signupPage.open();
         signupPage = signupPage.clickCreateButtonExpectingFailure();
@@ -67,7 +67,7 @@ public class SignupTest extends BaseTest {
     }
 
     @Test
-    public void verifyPasswordAndPasswordConfirmationAreSame(){
+    void verifyPasswordAndPasswordConfirmationAreSame(){
         SignupPage signupPage = new SignupPage(getDriver());
         signupPage.open();
         signupPage = signupPage
@@ -82,7 +82,7 @@ public class SignupTest extends BaseTest {
     }
 
     @Test
-    public void verifyCannotSignupWithExistingNonAdminUser(){
+    void verifyCannotSignupWithExistingNonAdminUser(){
         User user = new User.Builder()
                 .inCompany("Test Company")
                 .inDepartment("Department1")
@@ -96,7 +96,7 @@ public class SignupTest extends BaseTest {
         assertThat(signupPage.getAlertMessage(), is(expectedMessage));
     }
     @Test
-    public void verifyCannotSignupWithExistingAdminUser(){
+    void verifyCannotSignupWithExistingAdminUser(){
         User user = new User.Builder()
                 .inCompany("Test Company")
                 .inDepartment("Department1")
@@ -111,7 +111,7 @@ public class SignupTest extends BaseTest {
         assertThat(signupPage.getAlertMessage(), is(expectedMessage));
     }
     @Test
-    public void verifyCanLoginAfterSignup(){
+    void verifyCanLoginAfterSignup(){
         SignupPage signupPage = new SignupPage(getDriver());
         signupPage.open();
         CalendarPage calendarPage = signupPage.signupAsDefaultUser();

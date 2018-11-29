@@ -1,6 +1,5 @@
 package com.viktor.timeofftests.services;
 
-import com.viktor.timeofftests.common.Constants;
 import com.viktor.timeofftests.common.db.DbConnection;
 import com.viktor.timeofftests.models.Company;
 import com.viktor.timeofftests.models.LeaveType;
@@ -8,6 +7,7 @@ import lombok.extern.log4j.Log4j2;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.util.Arrays;
 
 @Log4j2
 public class LeaveTypeService {
@@ -21,7 +21,8 @@ public class LeaveTypeService {
     }
     private LeaveTypeService(){}
 
-    public void insertLeaveTypes(LeaveType[] leaveTypes, String companyName){
+    void insertLeaveTypes(LeaveType[] leaveTypes, String companyName){
+        log.info("Inserting leave types: {}", Arrays.toString(leaveTypes));
         Company company = CompanyService.getInstance().getCompanyWithName(companyName);
         try{
             Connection connection = DbConnection.getConnection();
@@ -40,6 +41,7 @@ public class LeaveTypeService {
                 insert.setInt(8, leaveType.getCompanyId());
                 insert.addBatch();
             }
+            log.info("Executing {}", insert);
             insert.executeBatch();
         } catch (Exception e){
             log.error("Error inserting Leave types", e);

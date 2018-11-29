@@ -9,7 +9,6 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Timestamp;
-import java.util.Calendar;
 import java.util.Date;
 
 @Log4j2
@@ -113,6 +112,15 @@ public class UserService {
             log.error("Error fetching user", e);
             return false;
         }
+    }
+
+    public User createDefaultAdmin(){
+        User user = new User.Builder()
+                .isAdmin()
+                .inCompany("Acme")
+                .inDepartment("Sales")
+                .build();
+        return createNewUser(user);
     }
 
 }

@@ -1,5 +1,6 @@
 package com.viktor.timeofftests.models;
 
+import com.viktor.timeofftests.common.Constants;
 import com.viktor.timeofftests.services.CompanyService;
 import lombok.Data;
 import lombok.extern.log4j.Log4j2;
@@ -20,8 +21,8 @@ public class Department {
     @Log4j2
     public static class Builder {
         private int id;
-        private String name;
-        private int allowance;
+        private String name = Constants.DEFAULT_DEPARTMENT_NAME;
+        private int allowance = Constants.DEFAULT_DEPARTMENT_ALLOWANCE;
         private boolean includePublicHolidays;
         private boolean isAccuredAllowance;
         private int companyId;
