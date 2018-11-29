@@ -17,6 +17,8 @@ public class Company {
     private String companyWideMessage;
     private int mode;
     private String timezone;
+    private BankHoliday[] bankHolidays;
+    private LeaveType[] leaveTypes;
 
     private Company(){}
     @Log4j2
@@ -32,7 +34,8 @@ public class Company {
         private String companyWideMessage;
         private int mode = 1;
         private String timezone = Constants.DEFAULT_COMPANY_TIMEZONE;
-
+        private LeaveType[] leaveTypes;
+        private BankHoliday[] bankHolidays;
         public Builder withId(int id){
             this.id = id;
             return this;
@@ -85,6 +88,16 @@ public class Company {
             return this;
         }
 
+        public Builder withLeaveTypes(LeaveType[] leaveTypes){
+            this.leaveTypes = leaveTypes;
+            return this;
+        }
+
+        public Builder withCustomBankHolidays(BankHoliday[] bankHolidays){
+            this.bankHolidays = bankHolidays;
+            return this;
+        }
+
         public Company build(){
             Company company = new Company();
             company.name = this.name;
@@ -98,6 +111,8 @@ public class Company {
             company.mode = this.mode;
             company.timezone = this.timezone;
             company.id = this.id;
+            company.bankHolidays = this.bankHolidays;
+            company.leaveTypes = this.leaveTypes;
             return company;
         }
     }

@@ -1,5 +1,6 @@
 package com.viktor.timeofftests.services;
 
+import com.viktor.timeofftests.common.Constants;
 import com.viktor.timeofftests.common.db.DbConnection;
 import com.viktor.timeofftests.models.Company;
 import lombok.extern.log4j.Log4j2;
@@ -82,6 +83,12 @@ public class CompanyService {
             ResultSet resultSet = getCompany.executeQuery();
             resultSet.next();
             company.setId(resultSet.getInt(1));
+            if (company.getLeaveTypes() != null){
+                LeaveTypeService.getInstance().insertLeaveTypes(company.getLeaveTypes(), company.getName());
+            } else {
+                LeaveTypeService.getInstance().insertLeaveTypes(Constants.DEFAULT_LEAVE_TYPES, company.getName());
+            }
+            BankHolidaysService.getInstance().populateBankHolidaysForCompany(company.getName());
             log.info("Company ID id '"+company.getId()+"'");
             return company;
         } catch (Exception e){

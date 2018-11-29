@@ -21,14 +21,14 @@ public class LeaveTypeService {
     }
     private LeaveTypeService(){}
 
-    public void insertDefaultLeaveTypes(String companyName){
+    public void insertLeaveTypes(LeaveType[] leaveTypes, String companyName){
         Company company = CompanyService.getInstance().getCompanyWithName(companyName);
         try{
             Connection connection = DbConnection.getConnection();
-            String sql = "INSERT INTO \"LeaveTypes\" (name, color, use_allowance, limit, sort_order, \"createdAt\", \"updatedAt\", \"companyId\")" +
+            String sql = "INSERT INTO \"LeaveTypes\" (name, color, use_allowance, \"limit\", sort_order, \"createdAt\", \"updatedAt\", \"companyId\")" +
                     "VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
             PreparedStatement insert = connection.prepareStatement(sql);
-            for (LeaveType leaveType: Constants.DEFAULT_LEAVE_TYPES) {
+            for (LeaveType leaveType: leaveTypes) {
                 leaveType.setCompanyId(company.getId());
                 insert.setString(1, leaveType.getName());
                 insert.setString(2, leaveType.getColorHex());

@@ -82,7 +82,7 @@ public class SignupTest extends BaseTest {
     }
 
     @Test
-    public void verifyCannotSignupWithExistingUser(){
+    public void verifyCannotSignupWithExistingNonAdminUser(){
         User user = new User.Builder()
                 .inCompany("Test Company")
                 .inDepartment("Department1")
@@ -95,7 +95,21 @@ public class SignupTest extends BaseTest {
         String expectedMessage = "Failed to register user please contact customer service. Error: Email is already used";
         assertThat(signupPage.getAlertMessage(), is(expectedMessage));
     }
-
+    @Test
+    public void verifyCannotSignupWithExistingAdminUser(){
+        User user = new User.Builder()
+                .inCompany("Test Company")
+                .inDepartment("Department1")
+                .isAdmin()
+                .build();
+        User createdUser = userService.createNewUser(user);
+        userService.makeDepartmentAdmin(user);
+        SignupPage signupPage = new SignupPage(getDriver());
+        signupPage.open();
+        signupPage = signupPage.signupWithUserExpectingFailure(createdUser);
+        String expectedMessage = "Failed to register user please contact customer service. Error: Email is already used";
+        assertThat(signupPage.getAlertMessage(), is(expectedMessage));
+    }
     @Test
     public void verifyCanLoginAfterSignup(){
         SignupPage signupPage = new SignupPage(getDriver());
