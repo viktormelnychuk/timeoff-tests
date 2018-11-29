@@ -1,9 +1,11 @@
 package com.viktor.timeofftests.pages;
 
 import com.viktor.timeofftests.common.DriverUtil;
+import com.viktor.timeofftests.models.Company;
 import com.viktor.timeofftests.models.Session;
 import com.viktor.timeofftests.models.User;
 import com.viktor.timeofftests.services.BankHolidaysService;
+import com.viktor.timeofftests.services.CompanyService;
 import com.viktor.timeofftests.services.SessionService;
 import com.viktor.timeofftests.services.UserService;
 import org.junit.jupiter.api.Test;
@@ -118,7 +120,11 @@ public class LoginPageTests extends BaseTest {
 
     @Test
     void testing(){
+        Company company = new Company.Builder()
+                .withName("Acme")
+                .build();
+        CompanyService.getInstance().saveCompany(company);
         BankHolidaysService bankHolidaysService = BankHolidaysService.getInstance();
-        bankHolidaysService.populateBankHolidaysForCompany(1);
+        bankHolidaysService.populateBankHolidaysForCompany("Acme");
     }
 }

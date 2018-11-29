@@ -1,5 +1,6 @@
 package com.viktor.timeofftests.models;
 
+import com.viktor.timeofftests.common.Constants;
 import lombok.Data;
 import lombok.extern.log4j.Log4j2;
 
@@ -22,7 +23,7 @@ public class Company {
     public static class Builder{
         private int id;
         private String name;
-        private String country = "CA";
+        private String country = Constants.DEFAULT_COMPANY_COUNTRY;
         private int startOfNewYear = 1;
         private boolean shareAllAbsences = false;
         private boolean ldapAuthEnabled = false;
@@ -30,7 +31,7 @@ public class Company {
         private String dateFormat = "YYYY-MM-DD";
         private String companyWideMessage;
         private int mode = 1;
-        private String timezone = "Europe/Kiev";
+        private String timezone = Constants.DEFAULT_COMPANY_TIMEZONE;
 
         public Builder withId(int id){
             this.id = id;

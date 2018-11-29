@@ -43,8 +43,11 @@ public class BankHolidaysService {
                 statement.addBatch();
             }
             int[] rowsAffected = statement.executeBatch();
+            if (rowsAffected.length != bankHolidays.length){
+                throw new Exception("Not all bank holidays were inserted");
+            }
         } catch (Exception e){
-
+            log.error("Error inserting bank holidays", e);
         }
     }
 
