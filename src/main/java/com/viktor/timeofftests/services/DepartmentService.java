@@ -1,5 +1,6 @@
 package com.viktor.timeofftests.services;
 
+import com.viktor.timeofftests.common.db.DBUtil;
 import com.viktor.timeofftests.common.db.DbConnection;
 import com.viktor.timeofftests.models.Department;
 import lombok.extern.log4j.Log4j2;
@@ -54,6 +55,8 @@ public class DepartmentService {
         } catch (Exception e){
             log.error("Error occurred", e);
             return null;
+        } finally {
+            DBUtil.closeConnection(connection);
         }
     }
     public Department getDepartmentWithName (String name){
@@ -70,6 +73,8 @@ public class DepartmentService {
         } catch (Exception e){
             log.error("Error ocurred", e);
             return null;
+        } finally {
+            DBUtil.closeConnection(connection);
         }
     }
 
@@ -103,6 +108,8 @@ public class DepartmentService {
         } catch (Exception e){
             log.error("Error inserting department", e);
             return null;
+        } finally {
+            DBUtil.closeConnection(connection);
         }
     }
     public void assignBossUserId(Department department, int id){
@@ -119,6 +126,8 @@ public class DepartmentService {
 
         } catch (Exception e){
             log.error("Error updating department", e);
+        } finally {
+            DBUtil.closeConnection(connection);
         }
     }
 

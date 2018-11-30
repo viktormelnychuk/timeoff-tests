@@ -3,6 +3,7 @@ package com.viktor.timeofftests.services;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.viktor.timeofftests.common.db.DBUtil;
 import com.viktor.timeofftests.common.db.DbConnection;
 import com.viktor.timeofftests.models.BankHoliday;
 import com.viktor.timeofftests.models.Company;
@@ -31,10 +32,10 @@ public class BankHolidaysService {
     void populateBankHolidaysForCompany(String companyName){
         log.info("Inserting default holidays for company with name={}", companyName);
         Company company = companyService.getCompanyWithName(companyName);
+        Connection connection = DbConnection.getConnection();
         BankHoliday[] bankHolidays = getHolidaysForCountry(company.getCountry());
         String sql = "INSERT INTO \"BankHolidays\" (name, date, \"createdAt\", \"updatedAt\", \"companyId\") VALUES(?, ?, ?, ?, ?)";
         try{
-            Connection connection = DbConnection.getConnection();
             PreparedStatement statement = connection.prepareStatement(sql);
             for (BankHoliday bankHoliday : bankHolidays) {
                 statement.setString(1, bankHoliday.getName());
@@ -51,6 +52,8 @@ public class BankHolidaysService {
             }
         } catch (Exception e){
             log.error("Error inserting bank holidays", e);
+        } finally {
+            DBUtil.closeConnection(connection);
         }
     }
 

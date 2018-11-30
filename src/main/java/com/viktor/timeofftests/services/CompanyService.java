@@ -1,6 +1,7 @@
 package com.viktor.timeofftests.services;
 
 import com.viktor.timeofftests.common.Constants;
+import com.viktor.timeofftests.common.db.DBUtil;
 import com.viktor.timeofftests.common.db.DbConnection;
 import com.viktor.timeofftests.models.Company;
 import lombok.extern.log4j.Log4j2;
@@ -35,11 +36,13 @@ public class CompanyService {
     }
 
     public Company getCompanyWithName (String name){
+        log.info("Getting company with name={}", name);
         Connection connection = DbConnection.getConnection();
         String sql = "SELECT * FROM \"Companies\" WHERE name=? LIMIT 1;";
         try {
             PreparedStatement getCompany = connection.prepareStatement(sql);
             getCompany.setString(1, name);
+            log.info("Executing {}", getCompany);
             ResultSet set = getCompany.executeQuery();
             if(set.next()){
                 return deserializeComapny(set);
@@ -49,6 +52,30 @@ public class CompanyService {
         } catch (Exception e){
             log.error("Error retrieving company with name {}", name);
             return null;
+        } finally {
+            DBUtil.closeConnection(connection);
+        }
+    }
+
+    public Company getCompanyWithId (int id){
+        log.info("Getting company with id={}", id);
+        Connection connection = DbConnection.getConnection();
+        String sql = "SELECT * FROM \"Companies\" WHERE id=?;";
+        try {
+            PreparedStatement getCompany = connection.prepareStatement(sql);
+            getCompany.setInt(1, id);
+            log.info("Executing {}", getCompany);
+            ResultSet set = getCompany.executeQuery();
+            if (set.next()){
+                return deserializeComapny(set);
+            } else {
+                return null;
+            }
+        } catch (Exception e){
+            log.error("Error getting company with", e);
+            return null;
+        } finally {
+            DBUtil.closeConnection(connection);
         }
     }
 
@@ -94,11 +121,13 @@ public class CompanyService {
         } catch (Exception e){
             log.error("Error when creating company",e);
             return null;
+        } finally {
+            DBUtil.closeConnection(connection);
         }
 
     }
 
-    public Company deserializeComapny(ResultSet resultSet){
+    Company deserializeComapny(ResultSet resultSet){
         try {
             return new Company.Builder()
                     .withId(resultSet.getInt("id"))

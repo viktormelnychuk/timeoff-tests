@@ -24,4 +24,12 @@ public class DBUtil {
         }
 
     }
+
+    public static void closeConnection (Connection connection){
+        try{
+            connection.close();
+        } catch (Exception e){
+            //ignore
+        }
+    }
 }

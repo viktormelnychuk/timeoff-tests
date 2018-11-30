@@ -1,6 +1,7 @@
 package com.viktor.timeofftests.services;
 
 import com.viktor.timeofftests.common.Constants;
+import com.viktor.timeofftests.common.db.DBUtil;
 import com.viktor.timeofftests.common.db.DbConnection;
 import com.viktor.timeofftests.models.Session;
 import lombok.extern.log4j.Log4j2;
@@ -44,13 +45,15 @@ public class SessionService {
         } catch (Exception e){
             log.error("Error getting session with sid=[{}]", sid, e);
             return null;
+        } finally {
+            DBUtil.closeConnection(connection);
         }
     }
 
     public Session insertSession (String sid, String data){
+        Connection connection = DbConnection.getConnection();
         try {
             log.info("Inserting session with sid=[{}]", sid);
-            Connection connection = DbConnection.getConnection();
             String sql = "INSERT INTO \"Sessions\" (sid, expires, data, \"createdAt\", \"updatedAt\") VALUES (?,?,?,?,?)";
             PreparedStatement insertSession = connection.prepareStatement(sql);
             insertSession.setString(1, sid);
@@ -67,6 +70,8 @@ public class SessionService {
         } catch (Exception e){
             log.error("Error inserting session with sid=[{}]",sid,e);
             return null;
+        } finally {
+            DBUtil.closeConnection(connection);
         }
     }
     public Session insertNewSessionForUserId (int userId){

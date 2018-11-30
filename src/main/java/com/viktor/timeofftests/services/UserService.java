@@ -1,5 +1,6 @@
 package com.viktor.timeofftests.services;
 
+import com.viktor.timeofftests.common.db.DBUtil;
 import com.viktor.timeofftests.common.db.DbConnection;
 import com.viktor.timeofftests.models.Company;
 import com.viktor.timeofftests.models.User;
@@ -74,6 +75,8 @@ public class UserService {
         } catch (Exception e){
             log.error("Error inserting user", e);
             return null;
+        } finally {
+            DBUtil.closeConnection(connection);
         }
     }
 
@@ -94,6 +97,8 @@ public class UserService {
         } catch (Exception e){
             log.error("Error occurred", e);
             return null;
+        } finally {
+            DBUtil.closeConnection(connection);
         }
     }
 
@@ -111,6 +116,8 @@ public class UserService {
         } catch (Exception e){
             log.error("Error fetching user", e);
             return false;
+        } finally {
+            DBUtil.closeConnection(connection);
         }
     }
 

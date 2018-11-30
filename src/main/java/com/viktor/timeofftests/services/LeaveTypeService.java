@@ -1,5 +1,6 @@
 package com.viktor.timeofftests.services;
 
+import com.viktor.timeofftests.common.db.DBUtil;
 import com.viktor.timeofftests.common.db.DbConnection;
 import com.viktor.timeofftests.models.Company;
 import com.viktor.timeofftests.models.LeaveType;
@@ -24,8 +25,8 @@ public class LeaveTypeService {
     void insertLeaveTypes(LeaveType[] leaveTypes, String companyName){
         log.info("Inserting leave types: {}", Arrays.toString(leaveTypes));
         Company company = CompanyService.getInstance().getCompanyWithName(companyName);
+        Connection connection = DbConnection.getConnection();
         try{
-            Connection connection = DbConnection.getConnection();
             String sql = "INSERT INTO \"LeaveTypes\" (name, color, use_allowance, \"limit\", sort_order, \"createdAt\", \"updatedAt\", \"companyId\")" +
                     "VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
             PreparedStatement insert = connection.prepareStatement(sql);
@@ -45,6 +46,8 @@ public class LeaveTypeService {
             insert.executeBatch();
         } catch (Exception e){
             log.error("Error inserting Leave types", e);
+        } finally {
+            DBUtil.closeConnection(connection);
         }
     }
 }

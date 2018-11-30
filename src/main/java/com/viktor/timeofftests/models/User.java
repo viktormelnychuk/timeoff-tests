@@ -132,4 +132,8 @@ public class User {
         }
     }
 
+    public Company getUserCompany(){
+        return CompanyService.getInstance().getCompanyWithId(this.companyID);
+    }
+
 }
