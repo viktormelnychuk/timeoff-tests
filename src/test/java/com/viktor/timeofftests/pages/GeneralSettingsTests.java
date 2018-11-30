@@ -90,4 +90,7 @@ public class GeneralSettingsTests extends BaseTest {
         assertThat("DD/MM/YY", is(company.getDateFormat()));
         assertThat("Europe/London", is(company.getTimezone()));
     }
+    /*
+    Add tests for schedule part
+     */
 }
