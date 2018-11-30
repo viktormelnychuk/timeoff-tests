@@ -12,6 +12,9 @@ public class GeneralSettingsPage extends BasePage {
     private By dateFormatSelect = By.id("input_date_format");
     private By timeZoneSelect = By.id("input_time_zone");
     private By saveCompanySettingsButton = By.xpath("//form[@id='company_edit_form']//button[@type='submit']");
+
+    private By companyWeekScheduleButtons = By.xpath("//div[@class='btn-group' and @data-toggle='buttons']");
+
     private By alert = By.xpath("//div[@role='alert']");
     public GeneralSettingsPage(WebDriver driver){
         super(driver);

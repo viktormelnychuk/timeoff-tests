@@ -1,5 +1,6 @@
 package com.viktor.timeofftests.pages;
 
+import com.viktor.timeofftests.models.Company;
 import com.viktor.timeofftests.models.User;
 import com.viktor.timeofftests.services.CompanyService;
 import com.viktor.timeofftests.services.UserService;
@@ -82,10 +83,11 @@ public class GeneralSettingsTests extends BaseTest {
                 .saveCompanySettings();
 
         String expectedAlert = "Company was successfully updated";
+        Company company = companyService.getCompanyWithId(user.getCompanyID());
         assertThat(generalSettingsPage.getAlertText(), is(expectedAlert));
-        assertThat("New Company Name", is(companyService.getCompanyWithId(user.getCompanyID()).getName()));
-        assertThat("GB", is(companyService.getCompanyWithId(user.getCompanyID()).getCountry()));
-        assertThat("DD/MM/YY", is(companyService.getCompanyWithId(user.getCompanyID()).getDateFormat()));
-        assertThat("Europe/London", is(companyService.getCompanyWithId(user.getCompanyID()).getTimezone()));
+        assertThat("New Company Name", is(company.getName()));
+        assertThat("GB", is(company.getCountry()));
+        assertThat("DD/MM/YY", is(company.getDateFormat()));
+        assertThat("Europe/London", is(company.getTimezone()));
     }
 }
