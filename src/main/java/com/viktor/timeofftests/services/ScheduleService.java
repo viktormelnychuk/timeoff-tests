@@ -4,10 +4,25 @@ import com.viktor.timeofftests.common.db.DBUtil;
 import com.viktor.timeofftests.common.db.DbConnection;
 import com.viktor.timeofftests.models.Schedule;
 import lombok.extern.log4j.Log4j2;
+import org.openqa.selenium.WebElement;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.Timestamp;
+import java.util.Date;
+import java.util.List;
+import java.util.Objects;
+
+enum WeekDays {
+    MONDAY,
+    TUESDAY,
+    WEDNESDAY,
+    THURSDAY,
+    FRIDAY,
+    SATURDAY,
+    SUNDAY
+}
 
 @Log4j2
 public class ScheduleService {
@@ -24,8 +39,8 @@ public class ScheduleService {
     public void insertDefaultSchedule( int companyId ){
         log.info("Preparing to insert default schedule for company with id={}", companyId);
         Connection connection = DbConnection.getConnection();
-        String sql = "INSERT INTO \"schedule\" (id, monday, tuesday, wednesday, thursday, friday, saturday, sunday, created_at, updated_at, company_id, user_id)" +
-                " VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) ";
+        String sql = "INSERT INTO \"schedule\" (monday, tuesday, wednesday, thursday, friday, saturday, sunday, created_at, updated_at, company_id, user_id)" +
+                " VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) ";
         try {
             Schedule schedule = new Schedule(companyId);
             PreparedStatement insert = connection.prepareStatement(sql);
@@ -36,10 +51,10 @@ public class ScheduleService {
             insert.setInt(5, schedule.getFriday() );
             insert.setInt(6, schedule.getSaturday() );
             insert.setInt(7, schedule.getSunday());
-            insert.setTimestamp(8, schedule.getCreatedAt() );
-            insert.setTimestamp(9, schedule.getUpdatedAt() );
-            insert.setInt(10, schedule.getCompanyId());
-            insert.setInt(11, schedule.getUserID());
+            insert.setTimestamp(8, new Timestamp(new Date().getTime()));
+            insert.setTimestamp(9, new Timestamp(new Date().getTime()));
+            insert.setObject(10, schedule.getCompanyId());
+            insert.setObject(11, schedule.getUserID());
             log.info("Executing {}", insert);
             insert.executeUpdate();
         } catch (Exception e){
@@ -74,6 +89,7 @@ public class ScheduleService {
     private Schedule deserializeSchedule(ResultSet set){
         try {
             Schedule schedule = new Schedule();
+            schedule.setId(set.getInt("id"));
             schedule.setMonday(set.getInt("monday"));
             schedule.setTuesday(set.getInt("monday"));
             schedule.setWednesday(set.getInt("monday"));
@@ -87,6 +103,26 @@ public class ScheduleService {
         } catch (Exception e){
             log.error("Error deserializing schedule ", e);
             return null;
+        }
+    }
+
+    public Schedule deserializeSchedule (List<WebElement> list){
+        Schedule schedule = new Schedule();
+        schedule.setMonday(isCheckedScheduleDay(list.get(0).getAttribute("checked")));
+        schedule.setTuesday(isCheckedScheduleDay(list.get(1).getAttribute("checked")));
+        schedule.setWednesday(isCheckedScheduleDay(list.get(2).getAttribute("checked")));
+        schedule.setThursday(isCheckedScheduleDay(list.get(3).getAttribute("checked")));
+        schedule.setFriday(isCheckedScheduleDay(list.get(4).getAttribute("checked")));
+        schedule.setSaturday(isCheckedScheduleDay(list.get(5).getAttribute("checked")));
+        schedule.setSunday(isCheckedScheduleDay(list.get(6).getAttribute("checked")));
+        return schedule;
+    }
+
+    private int isCheckedScheduleDay (String checkedValue){
+        if (Objects.equals(checkedValue, "true")){
+            return 1;
+        } else {
+            return 2;
         }
     }
 }

@@ -84,9 +84,12 @@ public class LoginPageTests extends BaseTest {
     @Test
     void cannotLoginAsDeactivatedUser(){
         Calendar calendar = Calendar.getInstance();
-        calendar.roll(Calendar.DATE, 10);
+        calendar.roll(Calendar.DAY_OF_YEAR, -10);
+        // Roll 10 days back from today
         Date startedOn = calendar.getTime();
-        calendar.roll(Calendar.DATE, 9);
+
+        // Roll 9 days from startedOn
+        calendar.roll(Calendar.DAY_OF_YEAR, 9);
         Date endedOn = calendar.getTime();
         LoginPage loginPage = new LoginPage(getDriver());
         loginPage.open();

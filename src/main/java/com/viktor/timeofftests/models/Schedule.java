@@ -14,12 +14,10 @@ public class Schedule {
     private int friday = 1;
     private int saturday = 2;
     private int sunday = 2;
-    private Timestamp createdAt = new Timestamp(new Date().getTime());
-    private Timestamp updatedAt = new Timestamp(new Date().getTime());
     private Integer companyId;
     private Integer userID;
 
-    public Schedule(int id, int monday, int tuesday, int wednesday, int thursday, int friday, int saturday, int sunday, Timestamp createdAt, int companyId, int userID) {
+    public Schedule(int id, int monday, int tuesday, int wednesday, int thursday, int friday, int saturday, int sunday, int companyId, int userID) {
         this.id = id;
         this.monday = monday;
         this.tuesday = tuesday;
@@ -28,7 +26,6 @@ public class Schedule {
         this.friday = friday;
         this.saturday = saturday;
         this.sunday = sunday;
-        this.createdAt = createdAt;
         this.companyId = companyId;
         this.userID = userID;
     }

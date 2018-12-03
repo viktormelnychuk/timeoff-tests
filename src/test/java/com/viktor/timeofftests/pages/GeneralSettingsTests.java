@@ -1,12 +1,14 @@
 package com.viktor.timeofftests.pages;
 
 import com.viktor.timeofftests.models.Company;
+import com.viktor.timeofftests.models.Schedule;
 import com.viktor.timeofftests.models.User;
 import com.viktor.timeofftests.services.CompanyService;
+import com.viktor.timeofftests.services.ScheduleService;
 import com.viktor.timeofftests.services.UserService;
 import org.junit.jupiter.api.Test;
 
-import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.*;
 
 public class GeneralSettingsTests extends BaseTest {
     private UserService userService = UserService.getInstance();
@@ -25,7 +27,7 @@ public class GeneralSettingsTests extends BaseTest {
         User user = userService.createDefaultAdmin();
         GeneralSettingsPage generalSettingsPage = new GeneralSettingsPage(getDriver());
         generalSettingsPage.navigate();
-        generalSettingsPage = generalSettingsPage
+        generalSettingsPage = generalSettingsPage.companySettings
                 .setCompanyName("New Company Name")
                 .saveCompanySettings();
         String expectedAlert = "Company was successfully updated";
@@ -38,7 +40,7 @@ public class GeneralSettingsTests extends BaseTest {
         User user = userService.createDefaultAdmin();
         GeneralSettingsPage generalSettingsPage = new GeneralSettingsPage(getDriver());
         generalSettingsPage.navigate();
-        generalSettingsPage = generalSettingsPage
+        generalSettingsPage = generalSettingsPage.companySettings
                 .setCompanyCountry("GB")
                 .saveCompanySettings();
         String expectedAlert = "Company was successfully updated";
@@ -50,7 +52,7 @@ public class GeneralSettingsTests extends BaseTest {
         User user = userService.createDefaultAdmin();
         GeneralSettingsPage generalSettingsPage = new GeneralSettingsPage(getDriver());
         generalSettingsPage.navigate();
-        generalSettingsPage = generalSettingsPage
+        generalSettingsPage = generalSettingsPage.companySettings
                 .setCompanyDateFormat("DD/MM/YY")
                 .saveCompanySettings();
         String expectedAlert = "Company was successfully updated";
@@ -62,7 +64,7 @@ public class GeneralSettingsTests extends BaseTest {
         User user = userService.createDefaultAdmin();
         GeneralSettingsPage generalSettingsPage = new GeneralSettingsPage(getDriver());
         generalSettingsPage.navigate();
-        generalSettingsPage = generalSettingsPage
+        generalSettingsPage = generalSettingsPage.companySettings
                 .setCompanyTimeZone("Europe/London")
                 .saveCompanySettings();
         String expectedAlert = "Company was successfully updated";
@@ -75,7 +77,7 @@ public class GeneralSettingsTests extends BaseTest {
         User user = userService.createDefaultAdmin();
         GeneralSettingsPage generalSettingsPage = new GeneralSettingsPage(getDriver());
         generalSettingsPage.navigate();
-        generalSettingsPage = generalSettingsPage
+        generalSettingsPage = generalSettingsPage.companySettings
                 .setCompanyName("New Company Name")
                 .setCompanyCountry("GB")
                 .setCompanyDateFormat("DD/MM/YY")
@@ -90,7 +92,50 @@ public class GeneralSettingsTests extends BaseTest {
         assertThat("DD/MM/YY", is(company.getDateFormat()));
         assertThat("Europe/London", is(company.getTimezone()));
     }
-    /*
-    Add tests for schedule part
-     */
+
+    //Check UI
+    @Test
+    void checkScheduleUI(){
+        String[] expectedButtonTitles = new String[]{"Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"};
+        String expectedTitle = "Company week schedule";
+        String expectedDescription = "Define company wide weekly schedule. Press correspondent button to toggle working/non-working day.";
+        String expectedSaveButtonTitle = "Save schedule";
+        User user = userService.createDefaultAdmin();
+        GeneralSettingsPage generalSettingsPage = new GeneralSettingsPage(getDriver());
+        generalSettingsPage.navigate();
+        String[] actualTitles = generalSettingsPage.companyScheduleSettings.getScheduleDayTitles();
+        assertThat(actualTitles, equalTo(expectedButtonTitles));
+        assertThat(generalSettingsPage.companyScheduleSettings.getTitle(), is(expectedTitle));
+        assertThat(generalSettingsPage.companyScheduleSettings.getDescription(), is(expectedDescription));
+        assertThat(generalSettingsPage.companyScheduleSettings.getSaveButtonTitle(),is(expectedSaveButtonTitle));
+
+    }
+
+    @Test
+    void checkDefaultSchedule(){
+        User user = userService.createDefaultAdmin();
+        GeneralSettingsPage generalSettingsPage = new GeneralSettingsPage(getDriver());
+        generalSettingsPage.navigate();
+        Schedule visibleSchedule = generalSettingsPage.companyScheduleSettings.getSchedule();
+        assertThat(visibleSchedule, is(new Schedule()));
+    }
+
+    @Test
+    void adminEditsWeekSchedule(){
+        User user = userService.createDefaultAdmin();
+        GeneralSettingsPage generalSettingsPage = new GeneralSettingsPage(getDriver());
+        generalSettingsPage.navigate();
+        generalSettingsPage = generalSettingsPage.companyScheduleSettings
+                .toggleDays(1,2,3,4)
+                .saveSchedule();
+        Schedule visibleSchedule = generalSettingsPage.companyScheduleSettings.getSchedule();
+        Schedule inDbSchedule = ScheduleService.getInstance().getScheduleForCompanyId(user.getCompanyID());
+        // set id, companyId and userId to DB values to avoid failure when comparing
+        visibleSchedule.setId(inDbSchedule.getId());
+        visibleSchedule.setCompanyId(inDbSchedule.getCompanyId());
+        visibleSchedule.setUserID(inDbSchedule.getUserID());
+        assertThat(visibleSchedule, is(inDbSchedule));
+        assertThat(generalSettingsPage.getAlertText(), is("Schedule for company was saved"));
+    }
+
 }
