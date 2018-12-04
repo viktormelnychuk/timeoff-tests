@@ -59,4 +59,17 @@ public abstract class BasePage extends ConciseAPI {
         logger.debug("Clicking on the <{}> found by [{}]", element.getTagName(), locator);
         element.click();
     }
+
+    protected String getInputValue (By locator) {
+        return findOne(locator).getAttribute("value");
+    }
+    protected String getSelectedOption(By locator){
+        Select select = new Select(findOne(locator));
+        return select.getFirstSelectedOption().getText();
+    }
+
+    protected String getSelectedOptionValue(By locator){
+        Select select = new Select(findOne(locator));
+        return select.getFirstSelectedOption().getAttribute("value");
+    }
 }

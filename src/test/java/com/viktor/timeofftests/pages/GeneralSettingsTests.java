@@ -1,12 +1,18 @@
 package com.viktor.timeofftests.pages;
 
 import com.viktor.timeofftests.models.Company;
+import com.viktor.timeofftests.models.LeaveType;
 import com.viktor.timeofftests.models.Schedule;
 import com.viktor.timeofftests.models.User;
+import com.viktor.timeofftests.pages.partials.settings.CompanySettings;
+import com.viktor.timeofftests.pages.partials.settings.LeaveTypesSettings;
 import com.viktor.timeofftests.services.CompanyService;
+import com.viktor.timeofftests.services.LeaveTypeService;
 import com.viktor.timeofftests.services.ScheduleService;
 import com.viktor.timeofftests.services.UserService;
 import org.junit.jupiter.api.Test;
+
+import java.util.List;
 
 import static org.hamcrest.Matchers.*;
 
@@ -20,6 +26,24 @@ public class GeneralSettingsTests extends BaseTest {
         generalSettingsPage.navigate();
         assertThat(generalSettingsPage.getPageTitle(), is("General settings"));
         assertThat(generalSettingsPage.getBaseUrl(), is(generalSettingsPage.getDriver().getCurrentUrl()));
+    }
+
+    @Test
+    void checkCompanySettingsUI(){
+        User user = userService.createDefaultAdmin();
+        Company company = companyService.getCompanyWithId(user.getCompanyID());
+        GeneralSettingsPage generalSettingsPage = new GeneralSettingsPage(getDriver());
+        generalSettingsPage.navigate();
+        //create alias
+        CompanySettings settings = generalSettingsPage.companySettings;
+        assertThat(settings.getCompanyLabel(), is("Company name"));
+        assertThat(settings.getCountryLabel(), is("Country"));
+        assertThat(settings.getDateFormatLabel(), is("Date format"));
+        assertThat(settings.getTimeZoneLabel(), is("Time zone"));
+        assertThat(settings.getCompanyName(), is(company.getName()));
+        assertThat(settings.getCountry(), is(company.getCountry()));
+        assertThat(settings.getDateFormat(), is(company.getDateFormat()));
+        assertThat(settings.getTimeZone(), is(company.getTimezone()));
     }
 
     @Test
@@ -136,6 +160,17 @@ public class GeneralSettingsTests extends BaseTest {
         visibleSchedule.setUserID(inDbSchedule.getUserID());
         assertThat(visibleSchedule, is(inDbSchedule));
         assertThat(generalSettingsPage.getAlertText(), is("Schedule for company was saved"));
+    }
+
+    @Test
+    void checkLeaveTypesUI(){
+        User user = userService.createDefaultAdmin();
+        GeneralSettingsPage generalSettingsPage = new GeneralSettingsPage(getDriver());
+        generalSettingsPage.navigate();
+        LeaveTypesSettings leaveTypesSettings = generalSettingsPage.leaveTypesSettings;
+        List<LeaveType> displayedLeaveTypes = leaveTypesSettings.getDisplayedLeaveTypes();
+        List<LeaveType> inDbLeaveTypes = LeaveTypeService.getInstance().getLeaveTypesForCompanyWithId(user.getCompanyID());
+        assertThat(displayedLeaveTypes, is(inDbLeaveTypes));
     }
 
 }
