@@ -2,6 +2,7 @@ package com.viktor.timeofftests.pages.partials;
 
 import com.viktor.timeofftests.pages.BasePage;
 import com.viktor.timeofftests.pages.LoginPage;
+import com.viktor.timeofftests.pages.partials.modals.NewAbsenceModal;
 import org.openqa.selenium.By;
 import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.WebDriver;
@@ -12,7 +13,7 @@ public class MenuBar extends BasePage {
     private By meMenu = By.id("me_menu");
     private By logOutLink = By.linkText("Logout");
     private By employeesButton = By.linkText("Employees");
-
+    private By newAbsenceButton = By.id("book_time_off_btn");
 
     public String getBaseUrl() {
         return null;
@@ -30,6 +31,11 @@ public class MenuBar extends BasePage {
         } catch (NoSuchElementException ex){
             return false;
         }
+    }
+
+    public NewAbsenceModal openNewAbsenceModal(){
+        clickButton(newAbsenceButton);
+        return new NewAbsenceModal(this.driver);
     }
 
     public LoginPage logout(){

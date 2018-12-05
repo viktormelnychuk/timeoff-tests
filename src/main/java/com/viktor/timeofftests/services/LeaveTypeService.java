@@ -131,26 +131,22 @@ public class LeaveTypeService {
         List<LeaveType> leaveTypes = new ArrayList<>();
         for (WebElement row : rows) {
             LeaveType leaveType = new LeaveType();
-            try{
-                String name = row.findElement(By.xpath(".//input[contains(@data-tom-leave-type-order,'name')]")).getAttribute("value");
-                String color = row.findElement(By.xpath(".//div[contains(@data-tom-leave-type-order,'colour_')]/input[@type='hidden']")).getAttribute("value");
-                boolean useAllowance = row.findElement(By.xpath(".//input[contains(@data-tom-leave-type-order,'allowance_')]")).isSelected();
-                String limit = row.findElement(By.xpath(".//input[contains(@data-tom-leave-type-order,'limit_')]")).getAttribute("value");
-                String nameWithId = row.findElement(By.xpath(".//input[contains(@data-tom-leave-type-order,'name')]")).getAttribute("name");
-                String id = nameWithId.split("__")[1];
-                String xpathForChecked = String.format(".//input[@value='%s']", id);
-                int sortOrder = getSortOrder(row.findElement(By.xpath(xpathForChecked)));
-                leaveType.setColorHex(color);
-                leaveType.setName(name);
-                leaveType.setUseAllowance(useAllowance);
-                leaveType.setLimit(Integer.parseInt(limit));
-                leaveType.setId(Integer.parseInt(id));
-                leaveType.setSortOrder(sortOrder);
-                leaveType.setCompanyId(getCompanyIdForLeave(leaveType));
-                leaveTypes.add(leaveType);
-            } catch (NoSuchElementException e){
-                // ignore because HTML contains lots of empty <div class='row'></div>
-            }
+            String name = row.findElement(By.xpath(".//input[contains(@data-tom-leave-type-order,'name')]")).getAttribute("value");
+            String color = row.findElement(By.xpath(".//div[contains(@data-tom-leave-type-order,'colour_')]/input[@type='hidden']")).getAttribute("value");
+            boolean useAllowance = row.findElement(By.xpath(".//input[contains(@data-tom-leave-type-order,'allowance_')]")).isSelected();
+            String limit = row.findElement(By.xpath(".//input[contains(@data-tom-leave-type-order,'limit_')]")).getAttribute("value");
+            String nameWithId = row.findElement(By.xpath(".//input[contains(@data-tom-leave-type-order,'name')]")).getAttribute("name");
+            String id = nameWithId.split("__")[1];
+            String xpathForChecked = String.format(".//input[@value='%s']", id);
+            int sortOrder = getSortOrder(row.findElement(By.xpath(xpathForChecked)));
+            leaveType.setColorHex(color);
+            leaveType.setName(name);
+            leaveType.setUseAllowance(useAllowance);
+            leaveType.setLimit(Integer.parseInt(limit));
+            leaveType.setId(Integer.parseInt(id));
+            leaveType.setSortOrder(sortOrder);
+            leaveType.setCompanyId(getCompanyIdForLeave(leaveType));
+            leaveTypes.add(leaveType);
         }
         return leaveTypes;
     };
