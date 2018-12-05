@@ -89,19 +89,7 @@
     </dependencies>
 
 	<build>
-        <plugins>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-surefire-plugin</artifactId>
-                <version>3.0.0-M1</version>
-                <configuration>
-                    <includes>
-                        <include>**/**/*.java</include>
-                    </includes>
-                    <parallel>all</parallel>
-                    <threadCount>2</threadCount>
-                </configuration>
-            </plugin>
+	<plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>

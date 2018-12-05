@@ -4,6 +4,7 @@ import com.viktor.timeofftests.models.Company;
 import com.viktor.timeofftests.models.LeaveType;
 import com.viktor.timeofftests.models.Schedule;
 import com.viktor.timeofftests.models.User;
+import com.viktor.timeofftests.pages.partials.modals.AddNewLeaveTypeModal;
 import com.viktor.timeofftests.pages.partials.modals.NewAbsenceModal;
 import com.viktor.timeofftests.pages.partials.settings.CompanySettings;
 import com.viktor.timeofftests.pages.partials.settings.LeaveTypesSettings;
@@ -20,6 +21,7 @@ import static org.hamcrest.Matchers.*;
 public class GeneralSettingsTests extends BaseTest {
     private UserService userService = UserService.getInstance();
     private CompanyService companyService = CompanyService.getInstance();
+    private LeaveTypeService leaveTypeService = LeaveTypeService.getInstance();
     @Test
     void navigateToSettingsPage(){
         userService.createDefaultAdmin();
@@ -170,41 +172,88 @@ public class GeneralSettingsTests extends BaseTest {
         generalSettingsPage.navigate();
         LeaveTypesSettings leaveTypesSettings = generalSettingsPage.leaveTypesSettings;
         List<LeaveType> displayedLeaveTypes = leaveTypesSettings.getDisplayedLeaveTypes();
-        List<LeaveType> inDbLeaveTypes = LeaveTypeService.getInstance().getLeaveTypesForCompanyWithId(user.getCompanyID());
+        List<LeaveType> inDbLeaveTypes = leaveTypeService.getLeaveTypesForCompanyWithId(user.getCompanyID());
         assertThat(displayedLeaveTypes, is(inDbLeaveTypes));
     }
 
     @Test
-    void editLeaveTypeName(){
+    void editLeaveTypes(){
         User user = userService.createDefaultAdmin();
         GeneralSettingsPage generalSettingsPage = new GeneralSettingsPage(getDriver());
         generalSettingsPage.navigate();
         LeaveTypesSettings leaveTypesSettings = generalSettingsPage.leaveTypesSettings;
         generalSettingsPage = leaveTypesSettings
                 .editLeaveTypeName("Holiday","New Holiday")
+                .setPrimaryLeaveType("Sick Leave")
+                .setUseAllowanceForLeave("Sick Leave", true)
+                .setLimit("Holiday", 10)
                 .clickSaveButton();
+
         assertThat(generalSettingsPage.getAlertText(),is("Changes to leave types were saved"));
-        List<String> displayedLeaveTypesNames = leaveTypesSettings.getDisplayedLeaveTypesAsString();
-        assertThat(displayedLeaveTypesNames, contains("New Holiday", "Sick Leave"));
-        NewAbsenceModal modal = generalSettingsPage.menuBar.openNewAbsenceModal();
-        assertThat(modal.getDisplayedLeaveTypesAsString(), containsInAnyOrder("New Holiday", "Sick Leave"));
+
+        assertThat(leaveTypesSettings.getDisplayedLeaveTypesAsString(),contains("New Holiday","Sick Leave"));
+
+        List<LeaveType> inDbLeaveTypes = leaveTypeService.getLeaveTypesForCompanyWithId(user.getCompanyID());
         List<LeaveType> displayedLeaveTypes = leaveTypesSettings.getDisplayedLeaveTypes();
-        List<LeaveType> inDbLeaveTypes = LeaveTypeService.getInstance().getLeaveTypesForCompanyWithId(user.getCompanyID());
-        assertThat(displayedLeaveTypes, is(inDbLeaveTypes));
+        assertThat(inDbLeaveTypes, is(displayedLeaveTypes));
+
+        NewAbsenceModal modal = generalSettingsPage.menuBar.openNewAbsenceModal();
+        assertThat(modal.getDisplayedLeaveTypesAsString(), contains("Sick Leave", "New Holiday"));
     }
 
     @Test
-    void editLeaveTypeOrder(){
+    void deleteLeaveType(){
         User user = userService.createDefaultAdmin();
         GeneralSettingsPage generalSettingsPage = new GeneralSettingsPage(getDriver());
         generalSettingsPage.navigate();
         LeaveTypesSettings leaveTypesSettings = generalSettingsPage.leaveTypesSettings;
-        generalSettingsPage = leaveTypesSettings
-                .setPrimaryLeaveType("Sick Leave")
-                .clickSaveButton();
-        assertThat(generalSettingsPage.getAlertText(),is("Changes to leave types were saved"));
+        generalSettingsPage = leaveTypesSettings.deleteLeave("Holiday");
+
+        assertThat(generalSettingsPage.getAlertText(), is("Leave type was successfully removed"));
+
+        List<LeaveType> inDbLeaveTypes = leaveTypeService.getLeaveTypesForCompanyWithId(user.getCompanyID());
+        List<LeaveType> displayedLeaveTypes = leaveTypesSettings.getDisplayedLeaveTypes();
+        assertThat(inDbLeaveTypes, is(displayedLeaveTypes));
+
         NewAbsenceModal modal = generalSettingsPage.menuBar.openNewAbsenceModal();
-        assertThat(modal.getDisplayedLeaveTypesAsString(), contains("Sick Leave", "Holiday"));
+        assertThat(modal.getDisplayedLeaveTypesAsString(), contains("Sick Leave"));
+    }
+
+    @Test
+    void canDeleteAllLeaveTypes(){
+        User user = userService.createDefaultAdmin();
+        GeneralSettingsPage generalSettingsPage = new GeneralSettingsPage(getDriver());
+        generalSettingsPage.navigate();
+        generalSettingsPage = generalSettingsPage.leaveTypesSettings.deleteAllLeaveTypesWithSave();
+
+        assertThat(generalSettingsPage.getAlertText(), is("Changes to leave types were saved"));
+        List<LeaveType> inDbLeaveTypes = leaveTypeService.getLeaveTypesForCompanyWithId(user.getCompanyID());
+        List<LeaveType> displayedLeaveTypes = generalSettingsPage.leaveTypesSettings.getDisplayedLeaveTypes();
+        assertThat(inDbLeaveTypes, is(displayedLeaveTypes));
+
+        NewAbsenceModal modal = generalSettingsPage.menuBar.openNewAbsenceModal();
+        assertThat(modal.getDisplayedLeaveTypesAsString(), emptyIterable());
+    }
+
+    @Test
+    void addNewLeaveType(){
+        User user = userService.createDefaultAdmin();
+        GeneralSettingsPage generalSettingsPage = new GeneralSettingsPage(getDriver());
+        generalSettingsPage.navigate();
+        AddNewLeaveTypeModal modal = generalSettingsPage.leaveTypesSettings.clickAddButton();
+        generalSettingsPage =
+                modal.setName("New leave")
+                .setAllowance(true)
+                .setLimit(10)
+                .clickCreateButton();
+
+        assertThat(generalSettingsPage.getAlertText(), is("Changes to leave types were saved"));
+        List<LeaveType> inDbLeaveTypes = leaveTypeService.getLeaveTypesForCompanyWithId(user.getCompanyID());
+        List<LeaveType> displayedLeaveTypes = generalSettingsPage.leaveTypesSettings.getDisplayedLeaveTypes();
+        assertThat(inDbLeaveTypes, is(displayedLeaveTypes));
+
+        NewAbsenceModal newAbsenceModal = generalSettingsPage.menuBar.openNewAbsenceModal();
+        assertThat(newAbsenceModal.getDisplayedLeaveTypesAsString(), contains("Holiday","Sick Leave","New leave"));
     }
 
 }
