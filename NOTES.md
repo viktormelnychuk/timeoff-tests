@@ -20,3 +20,4 @@ session id generated with uid(24) where uid is [https://www.npmjs.com/package/ui
 5. Rewrite to use assertAll when there are multiple asserts per test method
 # Features
 1. Prepare poll of 2 or 3 drivers to get from so they are prepared when user tries to run tests
+2. Make all tests parametrized! get test data from the csv/json/yml/xml
