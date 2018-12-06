@@ -15,9 +15,15 @@ return val + '.' + crypto
 
 ```
 session id generated with uid(24) where uid is [https://www.npmjs.com/package/uid-safe]
-3. Figure out how to make sure order does not matter when creating user (inCompany and inDepartment can be used in any order)
-4. Run all migrations! it is important!
-5. Rewrite to use assertAll when there are multiple asserts per test method
+
+1. Figure out how to make sure order does not matter when creating user (inCompany and inDepartment can be used in any order)
+2. Run all migrations! it is important!
+3. Rewrite to use assertAll when there are multiple asserts per test method
+
 # Features
 1. Prepare poll of 2 or 3 drivers to get from so they are prepared when user tries to run tests
-2. Make all tests parametrized! get test data from the csv/json/yml/xml
+2. Make all tests parametrized! get test data from the csv/json/yml/xml (Use Junit5 parametrization and arguments + arguments resolver)
+
+
+# Things to consider
+1. Make db clearing run on before class instead of before method (increase performance?, allow to process same preconditons in @BeforeAll)
