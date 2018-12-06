@@ -23,7 +23,11 @@ session id generated with uid(24) where uid is [https://www.npmjs.com/package/ui
 # Features
 1. Prepare poll of 2 or 3 drivers to get from so they are prepared when user tries to run tests
 2. Make all tests parametrized! get test data from the csv/json/yml/xml (Use Junit5 parametrization and arguments + arguments resolver)
-
+3. Add Allure as reporting tool
 
 # Things to consider
 1. Make db clearing run on before class instead of before method (increase performance?, allow to process same preconditons in @BeforeAll)
+2. Move to AssertJ
+
+# !!!Very important!!!
+ADD NEW LAYER: Add layer of test steps (e.g. UserSteps shoudl create new user in db in necessary, contain assertions via `validate*` methods
