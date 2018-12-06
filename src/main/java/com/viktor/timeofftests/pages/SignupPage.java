@@ -20,7 +20,7 @@ public class SignupPage extends BasePage{
     private By timezone = By.id("timezone_inp");
     private By createButton = By.id("submit_registration");
 
-    SignupPage(WebDriver driver) {
+    public SignupPage(WebDriver driver) {
         super(driver);
         this.driver = driver;
     }
@@ -28,65 +28,61 @@ public class SignupPage extends BasePage{
     public String getBaseUrl() {
         return "http://localhost:3000/register/";
     }
-    @Override
-    public void open(String url){
-        super.open(url);
-    }
 
-    SignupPage fillCompanyName(String value){
+    public SignupPage fillCompanyName(String value){
         fillInputField(this.companyName, value);
         return this;
     }
 
-    SignupPage fillFirstName(String value){
+    public SignupPage fillFirstName(String value){
         fillInputField(this.firstName, value);
         return this;
     }
 
-    SignupPage fillLastName(String value){
+    public SignupPage fillLastName(String value){
         fillInputField(this.lastName, value);
         return this;
     }
 
-    SignupPage fillEmail(String value){
+    public SignupPage fillEmail(String value){
         fillInputField(this.email, value);
         return this;
     }
 
-    SignupPage fillPassword(String value){
+    public SignupPage fillPassword(String value){
         fillInputField(this.password, value);
         return this;
     }
 
-    SignupPage fillPasswordConfirmation(String value){
+    public SignupPage fillPasswordConfirmation(String value){
         fillInputField(this.confirmPassword, value);
         return this;
     }
 
-    SignupPage selectCountry(String value) {
+    public SignupPage selectCountry(String value) {
         selectOption(this.country, value);
         return this;
     }
 
-    SignupPage selectTimeZone(String value){
+    public SignupPage selectTimeZone(String value){
         selectOption(this.timezone, value);
         return this;
     }
 
-    CalendarPage clickCreateButtonExpectingSuccess(){
+    public CalendarPage clickCreateButtonExpectingSuccess(){
         clickButton(this.createButton);
         return new CalendarPage(this.driver);
     }
 
-    SignupPage clickCreateButtonExpectingFailure(){
+    public SignupPage clickCreateButtonExpectingFailure(){
         clickButton(this.createButton);
         return this;
     }
-    String getAlertMessage(){
+    public String getAlertMessage(){
         return findOne(this.alert).getText();
     }
 
-    CalendarPage signupAsDefaultUser(){
+    public CalendarPage signupAsDefaultUser(){
         fillCompanyName(Constants.DEFAULT_COMPANY_NAME);
         fillEmail(Constants.DEFAULT_USER_EMAIL);
         fillFirstName(Constants.DEFAULT_USER_NAME);
@@ -98,7 +94,7 @@ public class SignupPage extends BasePage{
         return clickCreateButtonExpectingSuccess();
     }
 
-    SignupPage signupWithUserExpectingFailure(User user){
+    public SignupPage signupWithUserExpectingFailure(User user){
         fillCompanyName(userService.getCompanyForUser(user).getName());
         fillEmail(user.getEmail());
         fillFirstName(user.getName());

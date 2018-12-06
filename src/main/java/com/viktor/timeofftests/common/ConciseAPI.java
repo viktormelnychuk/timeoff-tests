@@ -16,9 +16,6 @@ import java.util.ListIterator;
 
 public abstract class ConciseAPI {
     public abstract WebDriver getDriver();
-    public void open(String url){
-        getDriver().get(url);
-    }
     class ProxiedWebElement implements WebElement {
 
         public void click() {

@@ -5,6 +5,7 @@ import com.viktor.timeofftests.models.User;
 import com.viktor.timeofftests.services.CompanyService;
 import com.viktor.timeofftests.services.DepartmentService;
 import com.viktor.timeofftests.services.UserService;
+import com.viktor.timeofftests.steps.SignupSteps;
 import org.junit.jupiter.api.Test;
 
 import static org.hamcrest.CoreMatchers.*;
@@ -12,25 +13,23 @@ public class SignupTest extends BaseTest {
     private UserService userService = UserService.getInstance();
     private CompanyService companyService = CompanyService.getInstance();
     private DepartmentService departmentService = DepartmentService.getInstance();
-
+    private SignupSteps signupSteps = SignupSteps.getInstance();
     @Test
     void signupAsNewUser(){
-        SignupPage signupPage = new SignupPage(getDriver());
-        signupPage.open();
-        CalendarPage calendarPage = signupPage
-                .fillCompanyName("TestCompany")
-                .fillFirstName("First Name")
-                .fillLastName("Last Name")
-                .fillEmail("email@email.tes")
-                .fillPassword("1234")
-                .fillPasswordConfirmation("1234")
-                .selectCountry("CU")
-                .selectTimeZone("Europe/Kirov")
-                .clickCreateButtonExpectingSuccess();
-        String alertMessage = calendarPage.getAlertMessage();
-        String employeeGreeting = calendarPage.getEmployeeGreeting();
-        String expectedEmployeeGreeting = "First Name Last Name's calendar for 2018";
+        signupSteps.openSignupPage();
+        signupSteps.enterCompanyName("Acme");
+        signupSteps.enterEmail("tester@viktor.com");
+        signupSteps.enterFirstName("John");
+        signupSteps.enterLastName("Doe");
+        signupSteps.selectCountry("UA");
+        signupSteps.selectTimeZone("Europe/Kiev");
+        signupSteps.submitExpectingSuccess();
 
+        userSteps.validateUserExist("tester@viktor.com");
+        companySteps.validateCompanyCreated("Acme");
+
+        calendatSteps.validateEmployeeGreeting(expectedEmployeeGreeting);
+        calendarSteps.validateAlertMessage("Registration is complete.");
         assertThat(alertMessage, is("Registration is complete."));
         assertThat(expectedEmployeeGreeting, is(employeeGreeting));
         assertThat(userService.userIsAdmin("email@email.tes"), is(true));

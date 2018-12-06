@@ -14,9 +14,6 @@ public abstract class BasePage extends ConciseAPI {
 
     private WebDriver driver;
     MenuBar menuBar;
-
-    public abstract String getBaseUrl();
-
     protected BasePage(){}
 
     public BasePage(WebDriver driver){
@@ -25,11 +22,6 @@ public abstract class BasePage extends ConciseAPI {
     }
     protected void setDriver(WebDriver driver){
         this.driver = driver;
-    }
-    void open(){
-        Logger log = LogManager.getLogger(getClass());
-        log.info("Navigating to {}", getBaseUrl());
-        this.driver.get(getBaseUrl());
     }
 
     @Override

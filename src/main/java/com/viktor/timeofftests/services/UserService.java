@@ -25,6 +25,28 @@ public class UserService {
     }
     private UserService(){}
 
+    public User getUserWithEmail(String email){
+        Connection connection = DbConnection.getConnection();
+        String sql = "SELECT * FROM \"Users\" WHERE email=?";
+        log.info("Getting user with email {}", email);
+        try {
+            PreparedStatement statement = connection.prepareStatement(sql);
+            statement.setString(1, email);
+            log.info("Executing {}", statement);
+            ResultSet set = statement.executeQuery();
+            if (set.next()){
+                return deserializeUser(set);
+            } else {
+                return null;
+            }
+        } catch (Exception e){
+            log.error("Error getting user", e);
+            return null;
+        } finally {
+            DBUtil.closeConnection(connection);
+        }
+    }
+
     public void makeDepartmentAdmin(User user){
         Connection connection = DbConnection.getConnection();
         String sql = "UPDATE \"Departments\" SET \"bossId\"=?, \"updatedAt\"=? WHERE id=(SELECT \"DepartmentId\" FROM \"Users\" WHERE id=?);";
