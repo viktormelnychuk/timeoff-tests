@@ -32,10 +32,11 @@ public class LoginPageTests extends BaseTest {
                 .clickLoginButtonExpectingSuccess();
         String expectedEmployeeGreeting = "John Doe's calendar for 2018";
         String sidInDriver = DriverUtil.getSidFromCookies(calendarPage.getDriver());
-
-        assertThat(true, is(calendarPage.menuBar.employeesButtonDisplayed()));
-        assertThat(calendarPage.getEmployeeGreeting(), is(expectedEmployeeGreeting));
-        assertThat((sessionService.getSessionWithSid(sidInDriver)), is(notNullValue()));
+        assertAll(
+                ()-> assertThat(true, is(calendarPage.menuBar.employeesButtonDisplayed())),
+                ()-> assertThat(calendarPage.getEmployeeGreeting(), is(expectedEmployeeGreeting)),
+                ()-> assertThat((sessionService.getSessionWithSid(sidInDriver)), is(notNullValue()))
+        );
     }
 
     @Test
@@ -53,10 +54,11 @@ public class LoginPageTests extends BaseTest {
                 .clickLoginButtonExpectingSuccess();
         String expectedEmployeeGreeting = "John Doe's calendar for 2018";
         String sidInDriver = DriverUtil.getSidFromCookies(calendarPage.getDriver());
-
-        assertThat(false, is(calendarPage.menuBar.employeesButtonDisplayed()));
-        assertThat(calendarPage.getEmployeeGreeting(), is(expectedEmployeeGreeting));
-        assertThat((sessionService.getSessionWithSid(sidInDriver)), is(notNullValue()));
+        assertAll(
+                ()-> assertThat(false, is(calendarPage.menuBar.employeesButtonDisplayed())),
+                ()-> assertThat(calendarPage.getEmployeeGreeting(), is(expectedEmployeeGreeting)),
+                ()-> assertThat((sessionService.getSessionWithSid(sidInDriver)), is(notNullValue()))
+        );
     }
 
     @Test
@@ -67,8 +69,11 @@ public class LoginPageTests extends BaseTest {
                 .fillEmail("non-existing@viktor.com")
                 .fillPassword("1234")
                 .clickLoginButtonExpectingFailure();
-        assertThat(loginPage.getBaseUrl(), is(loginPage.getDriver().getCurrentUrl()));
-        assertThat(loginPage.getAlertMessage(), is("Incorrect credentials"));
+        LoginPage toAssert = loginPage;
+        assertAll(
+                ()-> assertThat(toAssert.getBaseUrl(), is(toAssert.getDriver().getCurrentUrl())),
+                ()-> assertThat(toAssert.getAlertMessage(), is("Incorrect credentials"))
+        );
     }
 
     @Test
@@ -104,8 +109,10 @@ public class LoginPageTests extends BaseTest {
                 .fillEmail(user.getEmail())
                 .fillPassword(user.getRawPassword())
                 .clickLoginButtonExpectingFailure();
-        assertThat(loginPage.getBaseUrl(), is(loginPage.getDriver().getCurrentUrl()));
-        assertThat(loginPage.getAlertMessage(), is("Incorrect credentials"));
+        assertAll(
+                ()->assertThat(loginPage.getBaseUrl(), is(loginPage.getDriver().getCurrentUrl())),
+                ()->assertThat(loginPage.getAlertMessage(), is("Incorrect credentials"))
+        );
     }
 
     @Test

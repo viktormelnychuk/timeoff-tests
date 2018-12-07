@@ -30,12 +30,13 @@ public class SignupTest extends BaseTest {
         String alertMessage = calendarPage.getAlertMessage();
         String employeeGreeting = calendarPage.getEmployeeGreeting();
         String expectedEmployeeGreeting = "First Name Last Name's calendar for 2018";
-
-        assertThat(alertMessage, is("Registration is complete."));
-        assertThat(expectedEmployeeGreeting, is(employeeGreeting));
-        assertThat(userService.userIsAdmin("email@email.tes"), is(true));
-        assertThat(companyService.getCompanyWithName("TestCompany"), is(notNullValue()));
-        assertThat(departmentService.getDepartmentWithName("Sales"), is(notNullValue()));
+        assertAll(
+                ()-> assertThat(alertMessage, is("Registration is complete.")),
+                ()-> assertThat(expectedEmployeeGreeting, is(employeeGreeting)),
+                ()-> assertThat(userService.userIsAdmin("email@email.tes"), is(true)),
+                ()-> assertThat(companyService.getCompanyWithName("TestCompany"), is(notNullValue())),
+                ()-> assertThat(departmentService.getDepartmentWithName("Sales"), is(notNullValue()))
+        );
     }
 
     @Test
@@ -120,6 +121,5 @@ public class SignupTest extends BaseTest {
         assertThat(calendarPage.getBaseUrl(), equalTo(calendarPage.getDriver().getCurrentUrl()));
         String expectedEmployeeGreeting = Constants.DEFAULT_USER_NAME + " " +Constants.DEFAULT_USER_LAST_NAME + "'s calendar for 2018";
         assertThat(expectedEmployeeGreeting, is(calendarPage.getEmployeeGreeting()));
-
     }
 }

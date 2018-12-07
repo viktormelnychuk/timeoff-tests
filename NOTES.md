@@ -18,16 +18,16 @@ session id generated with uid(24) where uid is [https://www.npmjs.com/package/ui
 
 1. Figure out how to make sure order does not matter when creating user (inCompany and inDepartment can be used in any order)
 2. Run all migrations! it is important!
-3. Rewrite to use assertAll when there are multiple asserts per test method
+3. ~~Rewrite to use assertAll when there are multiple asserts per test method~~ [DONE]
 
 # Features
-1. Prepare poll of 2 or 3 drivers to get from so they are prepared when user tries to run tests
-2. Make all tests parametrized! get test data from the csv/json/yml/xml (Use Junit5 parametrization and arguments + arguments resolver)
-3. Add Allure as reporting tool
+1. Prepare poll of 2 or 3 drivers to get from so they are prepared when user tries to run tests [NEXT]
+2. Make all tests parametrized! get test data from the csv/json/yml/xml (Use Junit5 parametrization and arguments + arguments resolver)(**may not be needed**)
+3. Add Allure as reporting tool [LATER]
 
 # Things to consider
 1. Make db clearing run on before class instead of before method (increase performance?, allow to process same preconditons in @BeforeAll)
-2. Move to AssertJ
+2. ~~Move to AssertJ~~ [NOPE]
 
 # !!!Very important!!!
-ADD NEW LAYER: Add layer of test steps (e.g. UserSteps shoudl create new user in db in necessary, contain assertions via `validate*` methods
+ADD NEW LAYER: Add layer of test steps (e.g. UserSteps should create new user in db in necessary, contain assertions via `validate*` methods
