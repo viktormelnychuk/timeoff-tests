@@ -79,6 +79,11 @@ public class User {
             return this;
         }
 
+        public Builder inCompany (int companyID){
+            this.companyID = companyID;
+            return this;
+        }
+
         public Builder inDepartment(Department department){
             this.departmentID = department.getId();
             return this;
@@ -89,8 +94,18 @@ public class User {
             return this;
         }
 
+        public Builder inDepartment (int departmentID){
+            this.departmentID = departmentID;
+            return this;
+        }
+
         public Builder isAdmin(){
             this.admin = true;
+            return this;
+        }
+
+        public Builder isAdmin(boolean b){
+            this.admin = b;
             return this;
         }
 
@@ -99,10 +114,20 @@ public class User {
             return this;
         }
 
+        public Builder isActivate(boolean b){
+            this.activated = b;
+            return this;
+        }
+
         public Builder isAutoApproved(){
             this.autoApprove = true;
             return this;
         }
+        public Builder isAutoApproved(boolean b){
+            this.autoApprove = b;
+            return this;
+        }
+
 
         public Builder startedOn (Date date){
             this.startDate = new Timestamp(date.getTime());
@@ -110,6 +135,10 @@ public class User {
         }
 
         public Builder endedOn (Date date){
+            if(date == null){
+                this.endDate = null;
+                return this;
+            }
             this.endDate = new Timestamp(date.getTime());
             return this;
         }

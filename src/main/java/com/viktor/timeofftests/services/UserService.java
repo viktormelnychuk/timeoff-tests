@@ -152,4 +152,25 @@ public class UserService {
         return createNewUser(user);
     }
 
+    private User deserializeUser(ResultSet set){
+        try{
+            return new User.Builder()
+                    .withEmail(set.getString("email"))
+                    .withName(set.getString("name"))
+                    .withLastName(set.getString("lastname"))
+                    .withPassword(set.getString("password"))
+                    .isActivate(set.getBoolean("activated"))
+                    .isAdmin(set.getBoolean("admin"))
+                    .isAutoApproved(set.getBoolean("auto_approve"))
+                    .startedOn(set.getDate("start_date"))
+                    .endedOn(set.getDate("end_date"))
+                    .inCompany(set.getInt("companyId"))
+                    .inDepartment(set.getInt("DepartmentId"))
+                    .build();
+        } catch (Exception e){
+            log.error("Error desirializing user", e);
+            return null;
+        }
+    }
+
 }

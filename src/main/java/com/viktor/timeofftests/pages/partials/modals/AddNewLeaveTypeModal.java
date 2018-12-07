@@ -42,7 +42,7 @@ public class AddNewLeaveTypeModal extends BasePage {
         return new GeneralSettingsPage(this.driver);
     }
 
-    @Override
+
     public String getBaseUrl() {
         return null;
     }

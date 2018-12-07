@@ -131,6 +131,27 @@ public class DepartmentService {
         }
     }
 
+    public Department getDepartmentWithId(int departmentId){
+        log.info("Gettign department with id={}", departmentId);
+        Connection connection = DbConnection.getConnection();
+        String sql = "SELECT * FROM \"Departments\" WHERE id=?";
+        try {
+            PreparedStatement statement = connection.prepareStatement(sql);
+            statement.setInt(1, departmentId);
+            ResultSet set = statement.executeQuery();
+            if(set.next()){
+                return deserializeDepartment(set);
+            } else {
+                return null;
+            }
+        } catch (Exception e){
+            log.error("Error getting department with id={}",departmentId, e);
+            return null;
+        } finally {
+            DBUtil.closeConnection(connection);
+        }
+    }
+
     private Department deserializeDepartment(ResultSet set){
         try{
             return new Department.Builder()

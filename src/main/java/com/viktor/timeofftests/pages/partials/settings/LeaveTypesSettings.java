@@ -70,7 +70,7 @@ public class LeaveTypesSettings extends BasePage {
         return this;
     }
 
-    @Override
+
     public String getBaseUrl() {
         return null;
     }

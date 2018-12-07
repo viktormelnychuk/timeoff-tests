@@ -7,8 +7,6 @@ import com.viktor.timeofftests.common.db.DBUtil;
 import lombok.extern.log4j.Log4j2;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.hamcrest.Matcher;
-import org.hamcrest.MatcherAssert;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.extension.AfterEachCallback;
@@ -36,14 +34,14 @@ public abstract class BaseTest extends ConciseAPI {
         this.driver.quit();
     }
 
-    public static <T> void assertThat(T actual, Matcher<? super T> matcher) {
-        assertThat("", actual, matcher);
-    }
-
-    public static <T> void assertThat(String reason, T actual, Matcher<? super T> matcher) {
-        log.info("Asserting that [{}] [{}]", actual, matcher.toString());
-        MatcherAssert.assertThat(reason, actual, matcher);
-    }
+//    public static <T> void assertThat(T actual, Matcher<? super T> matcher) {
+//        assertThat("", actual, matcher);
+//    }
+//
+//    public static <T> void assertThat(String reason, T actual, Matcher<? super T> matcher) {
+//        log.info("Asserting that [{}] [{}]", actual, matcher.toString());
+//        MatcherAssert.assertThat(reason, actual, matcher);
+//    }
 }
 
 class TraceUnitExtension implements AfterEachCallback, BeforeEachCallback {

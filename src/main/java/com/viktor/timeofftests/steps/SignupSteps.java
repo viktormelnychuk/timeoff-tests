@@ -8,7 +8,7 @@ import org.openqa.selenium.WebDriver;
 
 public class SignupSteps extends BaseStep {
     private static SignupSteps instance;
-    private final String pageUrl = "/signup";
+    private final String pageUrl = "/register";
     private SignupPage currentPage;
 
     public static SignupSteps getInstance(){

@@ -79,9 +79,4 @@ public class CompanySettings extends BasePage {
         clickButton(saveCompanySettingsButton);
         return new GeneralSettingsPage(this.driver);
     }
-
-    @Override
-    public String getBaseUrl() {
-        return null;
-    }
 }

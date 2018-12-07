@@ -23,12 +23,11 @@ public class GeneralSettingsPage extends BasePage {
 
     void navigate(){
         LoginPage loginPage  = new LoginPage(driver);
-        loginPage.open();
+        // loginPage.open();
         loginPage.loginWithDefaultUser();
         driver.get(getBaseUrl());
     }
 
-    @Override
     public String getBaseUrl() {
         return "http://localhost:3000/settings/general/";
     }

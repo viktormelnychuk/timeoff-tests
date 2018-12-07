@@ -18,11 +18,6 @@ public class NewAbsenceModal extends BasePage {
         this.driver = driver;
     }
 
-    @Override
-    public String getBaseUrl() {
-        return null;
-    }
-
     public List<String> getDisplayedLeaveTypesAsString(){
         List<String> result = new ArrayList<>();
         Select leaveTypesSelect = new Select(findOne(leaveTypeSelect));

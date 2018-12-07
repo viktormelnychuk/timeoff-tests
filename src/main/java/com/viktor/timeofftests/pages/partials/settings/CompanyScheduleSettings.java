@@ -24,7 +24,7 @@ public class CompanyScheduleSettings extends BasePage {
         this.driver = driver;
     }
 
-    @Override
+
     public String getBaseUrl() {
         return null;
     }
