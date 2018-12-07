@@ -15,10 +15,9 @@ import com.viktor.timeofftests.services.UserService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import java.util.Arrays;
 import java.util.List;
 
-import static org.assertj.core.api.Assertions.assertThat;
+import static org.hamcrest.Matchers.*;
 
 public class GeneralSettingsTests extends BaseTest {
     private UserService userService = UserService.getInstance();
@@ -35,10 +34,8 @@ public class GeneralSettingsTests extends BaseTest {
 
     @Test
     void navigateToSettingsPage(){
-        assertThat(generalSettingsPage.getPageTitle())
-                .isEqualTo("General settings");
-        assertThat(generalSettingsPage.getBaseUrl())
-                .isEqualTo(generalSettingsPage.getDriver().getCurrentUrl());
+        assertThat(generalSettingsPage.getPageTitle(), is("General settings"));
+        assertThat(generalSettingsPage.getBaseUrl(), is(generalSettingsPage.getDriver().getCurrentUrl()));
     }
 
     @Test
@@ -46,14 +43,14 @@ public class GeneralSettingsTests extends BaseTest {
         Company company = companyService.getCompanyWithId(user.getCompanyID());
         //create alias
         CompanySettings settings = generalSettingsPage.companySettings;
-        assertThat(settings.getCompanyLabel()).isEqualTo("Company name");
-        assertThat(settings.getCountryLabel()).isEqualTo("Country");
-        assertThat(settings.getDateFormatLabel()).isEqualTo("Date format");
-        assertThat(settings.getTimeZoneLabel()).isEqualTo("Time zone");
-        assertThat(settings.getCompanyName()).isEqualTo(company.getName());
-        assertThat(settings.getCountry()).isEqualTo(company.getCountry());
-        assertThat(settings.getDateFormat()).isEqualTo(company.getDateFormat());
-        assertThat(settings.getTimeZone()).isEqualTo(company.getTimezone());
+        assertThat(settings.getCompanyLabel(), is("Company name"));
+        assertThat(settings.getCountryLabel(), is("Country"));
+        assertThat(settings.getDateFormatLabel(), is("Date format"));
+        assertThat(settings.getTimeZoneLabel(), is("Time zone"));
+        assertThat(settings.getCompanyName(), is(company.getName()));
+        assertThat(settings.getCountry(), is(company.getCountry()));
+        assertThat(settings.getDateFormat(), is(company.getDateFormat()));
+        assertThat(settings.getTimeZone(), is(company.getTimezone()));
     }
 
     @Test
@@ -62,9 +59,8 @@ public class GeneralSettingsTests extends BaseTest {
                 .setCompanyName("New Company Name")
                 .saveCompanySettings();
         String expectedAlert = "Company was successfully updated";
-        assertThat(generalSettingsPage.getAlertText()).isEqualTo(expectedAlert);
-        assertThat("New Company Name")
-                .isEqualTo(companyService.getCompanyWithId(user.getCompanyID()).getName());
+        assertThat(generalSettingsPage.getAlertText(), is(expectedAlert));
+        assertThat("New Company Name", is(companyService.getCompanyWithId(user.getCompanyID()).getName()));
     }
 
     @Test
@@ -73,8 +69,8 @@ public class GeneralSettingsTests extends BaseTest {
                 .setCompanyCountry("GB")
                 .saveCompanySettings();
         String expectedAlert = "Company was successfully updated";
-        assertThat(generalSettingsPage.getAlertText()).isEqualTo(expectedAlert);
-        assertThat("GB").isEqualTo(companyService.getCompanyWithId(user.getCompanyID()).getCountry());
+        assertThat(generalSettingsPage.getAlertText(), is(expectedAlert));
+        assertThat("GB", is(companyService.getCompanyWithId(user.getCompanyID()).getCountry()));
     }
     @Test
     void adminEditsCompanyDateFormat (){
@@ -82,8 +78,8 @@ public class GeneralSettingsTests extends BaseTest {
                 .setCompanyDateFormat("DD/MM/YY")
                 .saveCompanySettings();
         String expectedAlert = "Company was successfully updated";
-        assertThat(generalSettingsPage.getAlertText()).isEqualTo(expectedAlert);
-        assertThat("DD/MM/YY").isEqualTo(companyService.getCompanyWithId(user.getCompanyID()).getDateFormat());
+        assertThat(generalSettingsPage.getAlertText(), is(expectedAlert));
+        assertThat("DD/MM/YY", is(companyService.getCompanyWithId(user.getCompanyID()).getDateFormat()));
     }
     @Test
     void adminEditsCompanyTimeZone (){
@@ -91,8 +87,8 @@ public class GeneralSettingsTests extends BaseTest {
                 .setCompanyTimeZone("Europe/London")
                 .saveCompanySettings();
         String expectedAlert = "Company was successfully updated";
-        assertThat(generalSettingsPage.getAlertText()).isEqualTo(expectedAlert);
-        assertThat("Europe/London").isEqualTo(companyService.getCompanyWithId(user.getCompanyID()).getTimezone());
+        assertThat(generalSettingsPage.getAlertText(), is(expectedAlert));
+        assertThat("Europe/London", is(companyService.getCompanyWithId(user.getCompanyID()).getTimezone()));
     }
 
     @Test
@@ -106,11 +102,11 @@ public class GeneralSettingsTests extends BaseTest {
 
         String expectedAlert = "Company was successfully updated";
         Company company = companyService.getCompanyWithId(user.getCompanyID());
-        assertThat(generalSettingsPage.getAlertText()).isEqualTo(expectedAlert);
-        assertThat("New Company Name").isEqualTo(company.getName());
-        assertThat("GB").isEqualTo(company.getCountry());
-        assertThat("DD/MM/YY").isEqualTo(company.getDateFormat());
-        assertThat("Europe/London").isEqualTo(company.getTimezone());
+        assertThat(generalSettingsPage.getAlertText(), is(expectedAlert));
+        assertThat("New Company Name", is(company.getName()));
+        assertThat("GB", is(company.getCountry()));
+        assertThat("DD/MM/YY", is(company.getDateFormat()));
+        assertThat("Europe/London", is(company.getTimezone()));
     }
 
     //Check UI
@@ -121,18 +117,17 @@ public class GeneralSettingsTests extends BaseTest {
         String expectedDescription = "Define company wide weekly schedule. Press correspondent button to toggle working/non-working day.";
         String expectedSaveButtonTitle = "Save schedule";
         String[] actualTitles = generalSettingsPage.companyScheduleSettings.getScheduleDayTitles();
-        //assertThat(actualTitles, equalTo(expectedButtonTitles));
-        assertThat(actualTitles).containsAll(Arrays.asList(expectedButtonTitles));
-        assertThat(generalSettingsPage.companyScheduleSettings.getTitle()).isEqualTo(expectedTitle);
-        assertThat(generalSettingsPage.companyScheduleSettings.getDescription()).isEqualTo(expectedDescription);
-        assertThat(generalSettingsPage.companyScheduleSettings.getSaveButtonTitle()).isEqualTo(expectedSaveButtonTitle);
+        assertThat(actualTitles, equalTo(expectedButtonTitles));
+        assertThat(generalSettingsPage.companyScheduleSettings.getTitle(), is(expectedTitle));
+        assertThat(generalSettingsPage.companyScheduleSettings.getDescription(), is(expectedDescription));
+        assertThat(generalSettingsPage.companyScheduleSettings.getSaveButtonTitle(),is(expectedSaveButtonTitle));
 
     }
 
     @Test
     void checkDefaultSchedule(){
         Schedule visibleSchedule = generalSettingsPage.companyScheduleSettings.getSchedule();
-        assertThat(visibleSchedule).isEqualTo(new Schedule());
+        assertThat(visibleSchedule, is(new Schedule()));
     }
 
     @Test
@@ -142,10 +137,12 @@ public class GeneralSettingsTests extends BaseTest {
                 .saveSchedule();
         Schedule visibleSchedule = generalSettingsPage.companyScheduleSettings.getSchedule();
         Schedule inDbSchedule = ScheduleService.getInstance().getScheduleForCompanyId(user.getCompanyID());
-
-        assertThat(visibleSchedule)
-                .isEqualToIgnoringGivenFields(inDbSchedule,"id","companyId","userID");
-        assertThat(generalSettingsPage.getAlertText()).isEqualTo("Schedule for company was saved");
+        // set id, companyId and userId to DB values to avoid failure when comparing
+        visibleSchedule.setId(inDbSchedule.getId());
+        visibleSchedule.setCompanyId(inDbSchedule.getCompanyId());
+        visibleSchedule.setUserID(inDbSchedule.getUserID());
+        assertThat(visibleSchedule, is(inDbSchedule));
+        assertThat(generalSettingsPage.getAlertText(), is("Schedule for company was saved"));
     }
 
     @Test
@@ -153,7 +150,7 @@ public class GeneralSettingsTests extends BaseTest {
         LeaveTypesSettings leaveTypesSettings = generalSettingsPage.leaveTypesSettings;
         List<LeaveType> displayedLeaveTypes = leaveTypesSettings.getDisplayedLeaveTypes();
         List<LeaveType> inDbLeaveTypes = leaveTypeService.getLeaveTypesForCompanyWithId(user.getCompanyID());
-        assertThat(displayedLeaveTypes).containsAll(inDbLeaveTypes);
+        assertThat(displayedLeaveTypes, is(inDbLeaveTypes));
     }
 
     @Test
@@ -166,16 +163,16 @@ public class GeneralSettingsTests extends BaseTest {
                 .setLimit("Holiday", 10)
                 .clickSaveButton();
 
-        assertThat(generalSettingsPage.getAlertText()).isEqualTo("Changes to leave types were saved");
+        assertThat(generalSettingsPage.getAlertText(),is("Changes to leave types were saved"));
 
-        assertThat(leaveTypesSettings.getDisplayedLeaveTypesAsString()).contains("New Holiday", "Sick Leave");
+        assertThat(leaveTypesSettings.getDisplayedLeaveTypesAsString(),contains("New Holiday","Sick Leave"));
 
         List<LeaveType> inDbLeaveTypes = leaveTypeService.getLeaveTypesForCompanyWithId(user.getCompanyID());
         List<LeaveType> displayedLeaveTypes = leaveTypesSettings.getDisplayedLeaveTypes();
-        assertThat(displayedLeaveTypes).containsAll(inDbLeaveTypes);
+        assertThat(inDbLeaveTypes, is(displayedLeaveTypes));
 
         NewAbsenceModal modal = generalSettingsPage.menuBar.openNewAbsenceModal();
-        assertThat(modal.getDisplayedLeaveTypesAsString()).contains("Sick Leave", "New Holiday");
+        assertThat(modal.getDisplayedLeaveTypesAsString(), contains("Sick Leave", "New Holiday"));
     }
 
     @Test
@@ -183,27 +180,27 @@ public class GeneralSettingsTests extends BaseTest {
         LeaveTypesSettings leaveTypesSettings = generalSettingsPage.leaveTypesSettings;
         generalSettingsPage = leaveTypesSettings.deleteLeave("Holiday");
 
-        assertThat(generalSettingsPage.getAlertText()).isEqualTo("Leave type was successfully removed");
+        assertThat(generalSettingsPage.getAlertText(), is("Leave type was successfully removed"));
 
         List<LeaveType> inDbLeaveTypes = leaveTypeService.getLeaveTypesForCompanyWithId(user.getCompanyID());
         List<LeaveType> displayedLeaveTypes = leaveTypesSettings.getDisplayedLeaveTypes();
-        assertThat(inDbLeaveTypes).containsAll(displayedLeaveTypes);
+        assertThat(inDbLeaveTypes, is(displayedLeaveTypes));
 
         NewAbsenceModal modal = generalSettingsPage.menuBar.openNewAbsenceModal();
-        assertThat(modal.getDisplayedLeaveTypesAsString()).containsExactly("Sick Leave");
+        assertThat(modal.getDisplayedLeaveTypesAsString(), contains("Sick Leave"));
     }
 
     @Test
     void canDeleteAllLeaveTypes(){
         generalSettingsPage = generalSettingsPage.leaveTypesSettings.deleteAllLeaveTypesWithSave();
 
-        assertThat(generalSettingsPage.getAlertText()).isEqualTo("Changes to leave types were saved");
+        assertThat(generalSettingsPage.getAlertText(), is("Changes to leave types were saved"));
         List<LeaveType> inDbLeaveTypes = leaveTypeService.getLeaveTypesForCompanyWithId(user.getCompanyID());
         List<LeaveType> displayedLeaveTypes = generalSettingsPage.leaveTypesSettings.getDisplayedLeaveTypes();
-        assertThat(inDbLeaveTypes).containsAll(displayedLeaveTypes);
+        assertThat(inDbLeaveTypes, is(displayedLeaveTypes));
 
         NewAbsenceModal modal = generalSettingsPage.menuBar.openNewAbsenceModal();
-        assertThat(modal.getDisplayedLeaveTypesAsString()).isEmpty();
+        assertThat(modal.getDisplayedLeaveTypesAsString(), emptyIterable());
     }
 
     @Test
@@ -215,13 +212,13 @@ public class GeneralSettingsTests extends BaseTest {
                 .setLimit(10)
                 .clickCreateButton();
 
-        assertThat(generalSettingsPage.getAlertText()).isEqualTo("Changes to leave types were saved");
+        assertThat(generalSettingsPage.getAlertText(), is("Changes to leave types were saved"));
         List<LeaveType> inDbLeaveTypes = leaveTypeService.getLeaveTypesForCompanyWithId(user.getCompanyID());
         List<LeaveType> displayedLeaveTypes = generalSettingsPage.leaveTypesSettings.getDisplayedLeaveTypes();
-        assertThat(inDbLeaveTypes).containsAll(displayedLeaveTypes);
+        assertThat(inDbLeaveTypes, containsInAnyOrder(displayedLeaveTypes));
 
         NewAbsenceModal newAbsenceModal = generalSettingsPage.menuBar.openNewAbsenceModal();
-        assertThat(newAbsenceModal.getDisplayedLeaveTypesAsString()).contains("Holiday","Sick Leave","New leave");
+        assertThat(newAbsenceModal.getDisplayedLeaveTypesAsString(), contains("Holiday","Sick Leave","New leave"));
     }
 
 }

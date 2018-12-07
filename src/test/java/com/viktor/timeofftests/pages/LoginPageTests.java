@@ -9,7 +9,8 @@ import org.junit.jupiter.api.Test;
 import java.util.Calendar;
 import java.util.Date;
 
-import static org.assertj.core.api.Assertions.assertThat;
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.notNullValue;
 
 public class LoginPageTests extends BaseTest {
     private UserService userService = UserService.getInstance();
@@ -31,9 +32,10 @@ public class LoginPageTests extends BaseTest {
                 .clickLoginButtonExpectingSuccess();
         String expectedEmployeeGreeting = "John Doe's calendar for 2018";
         String sidInDriver = DriverUtil.getSidFromCookies(calendarPage.getDriver());
-        assertThat(calendarPage.menuBar.employeesButtonDisplayed()).isTrue();
-        assertThat(calendarPage.getEmployeeGreeting()).isEqualTo(expectedEmployeeGreeting);
-        assertThat(sessionService.getSessionWithSid(sidInDriver)).isNotNull();
+
+        assertThat(true, is(calendarPage.menuBar.employeesButtonDisplayed()));
+        assertThat(calendarPage.getEmployeeGreeting(), is(expectedEmployeeGreeting));
+        assertThat((sessionService.getSessionWithSid(sidInDriver)), is(notNullValue()));
     }
 
     @Test
@@ -52,9 +54,9 @@ public class LoginPageTests extends BaseTest {
         String expectedEmployeeGreeting = "John Doe's calendar for 2018";
         String sidInDriver = DriverUtil.getSidFromCookies(calendarPage.getDriver());
 
-        assertThat(calendarPage.menuBar.employeesButtonDisplayed()).isFalse();
-        assertThat(calendarPage.getEmployeeGreeting()).isEqualTo(expectedEmployeeGreeting);
-        assertThat((sessionService.getSessionWithSid(sidInDriver))).isNotNull();
+        assertThat(false, is(calendarPage.menuBar.employeesButtonDisplayed()));
+        assertThat(calendarPage.getEmployeeGreeting(), is(expectedEmployeeGreeting));
+        assertThat((sessionService.getSessionWithSid(sidInDriver)), is(notNullValue()));
     }
 
     @Test
@@ -65,8 +67,8 @@ public class LoginPageTests extends BaseTest {
                 .fillEmail("non-existing@viktor.com")
                 .fillPassword("1234")
                 .clickLoginButtonExpectingFailure();
-        assertThat(loginPage.getBaseUrl()).isEqualTo(loginPage.getDriver().getCurrentUrl());
-        assertThat(loginPage.getAlertMessage()).isEqualTo("Incorrect credentials");
+        assertThat(loginPage.getBaseUrl(), is(loginPage.getDriver().getCurrentUrl()));
+        assertThat(loginPage.getAlertMessage(), is("Incorrect credentials"));
     }
 
     @Test
@@ -74,9 +76,9 @@ public class LoginPageTests extends BaseTest {
         LoginPage loginPage = new LoginPage(getDriver());
         loginPage.open();
         loginPage.clickLoginButtonExpectingFailure();
-        assertThat(loginPage.getBaseUrl()).isEqualTo(loginPage.getDriver().getCurrentUrl());
+        assertThat(loginPage.getBaseUrl(), is(loginPage.getDriver().getCurrentUrl()));
         loginPage.fillEmail("email@email.email").clickLoginButtonExpectingFailure();
-        assertThat(loginPage.getBaseUrl()).isEqualTo(loginPage.getDriver().getCurrentUrl());
+        assertThat(loginPage.getBaseUrl(), is(loginPage.getDriver().getCurrentUrl()));
     }
 
     @Test
@@ -102,8 +104,8 @@ public class LoginPageTests extends BaseTest {
                 .fillEmail(user.getEmail())
                 .fillPassword(user.getRawPassword())
                 .clickLoginButtonExpectingFailure();
-        assertThat(loginPage.getBaseUrl()).isEqualTo(loginPage.getDriver().getCurrentUrl());
-        assertThat(loginPage.getAlertMessage()).isEqualTo("Incorrect credentials");
+        assertThat(loginPage.getBaseUrl(), is(loginPage.getDriver().getCurrentUrl()));
+        assertThat(loginPage.getAlertMessage(), is("Incorrect credentials"));
     }
 
     @Test
@@ -111,7 +113,7 @@ public class LoginPageTests extends BaseTest {
         LoginPage loginPage = new LoginPage(getDriver());
         loginPage.open();
         SignupPage signupPage = loginPage.clickRegisterLink();
-        assertThat(signupPage.getBaseUrl()).isEqualTo(loginPage.getDriver().getCurrentUrl());
+        assertThat(signupPage.getBaseUrl(), is(signupPage.getDriver().getCurrentUrl()));
     }
 
 }
