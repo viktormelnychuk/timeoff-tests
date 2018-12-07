@@ -137,11 +137,7 @@ public class GeneralSettingsTests extends BaseTest {
                 .saveSchedule();
         Schedule visibleSchedule = generalSettingsPage.companyScheduleSettings.getSchedule();
         Schedule inDbSchedule = ScheduleService.getInstance().getScheduleForCompanyId(user.getCompanyID());
-        // set id, companyId and userId to DB values to avoid failure when comparing
-        visibleSchedule.setId(inDbSchedule.getId());
-        visibleSchedule.setCompanyId(inDbSchedule.getCompanyId());
-        visibleSchedule.setUserID(inDbSchedule.getUserID());
-        assertThat(visibleSchedule, is(inDbSchedule));
+        assertThat(visibleSchedule, samePropertyValuesAs(inDbSchedule,"companyId","id","userID"));
         assertThat(generalSettingsPage.getAlertText(), is("Schedule for company was saved"));
     }
 
@@ -215,10 +211,10 @@ public class GeneralSettingsTests extends BaseTest {
         assertThat(generalSettingsPage.getAlertText(), is("Changes to leave types were saved"));
         List<LeaveType> inDbLeaveTypes = leaveTypeService.getLeaveTypesForCompanyWithId(user.getCompanyID());
         List<LeaveType> displayedLeaveTypes = generalSettingsPage.leaveTypesSettings.getDisplayedLeaveTypes();
-        assertThat(inDbLeaveTypes, containsInAnyOrder(displayedLeaveTypes));
+        assertThat(inDbLeaveTypes, containsInAnyOrder(displayedLeaveTypes.toArray()));
 
         NewAbsenceModal newAbsenceModal = generalSettingsPage.menuBar.openNewAbsenceModal();
-        assertThat(newAbsenceModal.getDisplayedLeaveTypesAsString(), contains("Holiday","Sick Leave","New leave"));
+        assertThat(newAbsenceModal.getDisplayedLeaveTypesAsString(), containsInAnyOrder("Holiday","Sick Leave","New leave"));
     }
 
 }
