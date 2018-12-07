@@ -32,7 +32,7 @@ public class SignupTest extends BaseTest {
         String expectedEmployeeGreeting = "First Name Last Name's calendar for 2018";
 
         assertThat(alertMessage).isEqualTo("Registration is complete.");
-        assertThat(expectedEmployeeGreeting).isEqualTo(expectedEmployeeGreeting);
+        assertThat(employeeGreeting).isEqualTo(expectedEmployeeGreeting);
         assertThat(userService.userIsAdmin("email@email.tes")).isTrue();
         assertThat(companyService.getCompanyWithName("TestCompany")).isNotNull();
         assertThat(departmentService.getDepartmentWithName("Sales")).isNotNull();
