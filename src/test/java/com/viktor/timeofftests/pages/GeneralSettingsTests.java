@@ -12,6 +12,7 @@ import com.viktor.timeofftests.services.CompanyService;
 import com.viktor.timeofftests.services.LeaveTypeService;
 import com.viktor.timeofftests.services.ScheduleService;
 import com.viktor.timeofftests.services.UserService;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
@@ -22,21 +23,24 @@ public class GeneralSettingsTests extends BaseTest {
     private UserService userService = UserService.getInstance();
     private CompanyService companyService = CompanyService.getInstance();
     private LeaveTypeService leaveTypeService = LeaveTypeService.getInstance();
+    private GeneralSettingsPage generalSettingsPage;
+    private User user;
+    @BeforeEach
+    void prepare(){
+        user = userService.createDefaultAdmin();
+        generalSettingsPage = new GeneralSettingsPage(getDriver());
+        generalSettingsPage.navigate();
+    }
+
     @Test
     void navigateToSettingsPage(){
-        userService.createDefaultAdmin();
-        GeneralSettingsPage generalSettingsPage = new GeneralSettingsPage(getDriver());
-        generalSettingsPage.navigate();
         assertThat(generalSettingsPage.getPageTitle(), is("General settings"));
         assertThat(generalSettingsPage.getBaseUrl(), is(generalSettingsPage.getDriver().getCurrentUrl()));
     }
 
     @Test
     void checkCompanySettingsUI(){
-        User user = userService.createDefaultAdmin();
         Company company = companyService.getCompanyWithId(user.getCompanyID());
-        GeneralSettingsPage generalSettingsPage = new GeneralSettingsPage(getDriver());
-        generalSettingsPage.navigate();
         //create alias
         CompanySettings settings = generalSettingsPage.companySettings;
         assertThat(settings.getCompanyLabel(), is("Company name"));
@@ -51,9 +55,6 @@ public class GeneralSettingsTests extends BaseTest {
 
     @Test
     void adminEditsCompanyName(){
-        User user = userService.createDefaultAdmin();
-        GeneralSettingsPage generalSettingsPage = new GeneralSettingsPage(getDriver());
-        generalSettingsPage.navigate();
         generalSettingsPage = generalSettingsPage.companySettings
                 .setCompanyName("New Company Name")
                 .saveCompanySettings();
@@ -64,9 +65,6 @@ public class GeneralSettingsTests extends BaseTest {
 
     @Test
     void adminEditsCompanyCountry (){
-        User user = userService.createDefaultAdmin();
-        GeneralSettingsPage generalSettingsPage = new GeneralSettingsPage(getDriver());
-        generalSettingsPage.navigate();
         generalSettingsPage = generalSettingsPage.companySettings
                 .setCompanyCountry("GB")
                 .saveCompanySettings();
@@ -76,9 +74,6 @@ public class GeneralSettingsTests extends BaseTest {
     }
     @Test
     void adminEditsCompanyDateFormat (){
-        User user = userService.createDefaultAdmin();
-        GeneralSettingsPage generalSettingsPage = new GeneralSettingsPage(getDriver());
-        generalSettingsPage.navigate();
         generalSettingsPage = generalSettingsPage.companySettings
                 .setCompanyDateFormat("DD/MM/YY")
                 .saveCompanySettings();
@@ -88,9 +83,6 @@ public class GeneralSettingsTests extends BaseTest {
     }
     @Test
     void adminEditsCompanyTimeZone (){
-        User user = userService.createDefaultAdmin();
-        GeneralSettingsPage generalSettingsPage = new GeneralSettingsPage(getDriver());
-        generalSettingsPage.navigate();
         generalSettingsPage = generalSettingsPage.companySettings
                 .setCompanyTimeZone("Europe/London")
                 .saveCompanySettings();
@@ -101,9 +93,6 @@ public class GeneralSettingsTests extends BaseTest {
 
     @Test
     void adminEditsAllCompanySettings(){
-        User user = userService.createDefaultAdmin();
-        GeneralSettingsPage generalSettingsPage = new GeneralSettingsPage(getDriver());
-        generalSettingsPage.navigate();
         generalSettingsPage = generalSettingsPage.companySettings
                 .setCompanyName("New Company Name")
                 .setCompanyCountry("GB")
@@ -127,9 +116,6 @@ public class GeneralSettingsTests extends BaseTest {
         String expectedTitle = "Company week schedule";
         String expectedDescription = "Define company wide weekly schedule. Press correspondent button to toggle working/non-working day.";
         String expectedSaveButtonTitle = "Save schedule";
-        User user = userService.createDefaultAdmin();
-        GeneralSettingsPage generalSettingsPage = new GeneralSettingsPage(getDriver());
-        generalSettingsPage.navigate();
         String[] actualTitles = generalSettingsPage.companyScheduleSettings.getScheduleDayTitles();
         assertThat(actualTitles, equalTo(expectedButtonTitles));
         assertThat(generalSettingsPage.companyScheduleSettings.getTitle(), is(expectedTitle));
@@ -140,18 +126,12 @@ public class GeneralSettingsTests extends BaseTest {
 
     @Test
     void checkDefaultSchedule(){
-        User user = userService.createDefaultAdmin();
-        GeneralSettingsPage generalSettingsPage = new GeneralSettingsPage(getDriver());
-        generalSettingsPage.navigate();
         Schedule visibleSchedule = generalSettingsPage.companyScheduleSettings.getSchedule();
         assertThat(visibleSchedule, is(new Schedule()));
     }
 
     @Test
     void adminEditsWeekSchedule(){
-        User user = userService.createDefaultAdmin();
-        GeneralSettingsPage generalSettingsPage = new GeneralSettingsPage(getDriver());
-        generalSettingsPage.navigate();
         generalSettingsPage = generalSettingsPage.companyScheduleSettings
                 .toggleDays(1,2,3,4)
                 .saveSchedule();
@@ -167,9 +147,6 @@ public class GeneralSettingsTests extends BaseTest {
 
     @Test
     void checkLeaveTypesUI(){
-        User user = userService.createDefaultAdmin();
-        GeneralSettingsPage generalSettingsPage = new GeneralSettingsPage(getDriver());
-        generalSettingsPage.navigate();
         LeaveTypesSettings leaveTypesSettings = generalSettingsPage.leaveTypesSettings;
         List<LeaveType> displayedLeaveTypes = leaveTypesSettings.getDisplayedLeaveTypes();
         List<LeaveType> inDbLeaveTypes = leaveTypeService.getLeaveTypesForCompanyWithId(user.getCompanyID());
@@ -178,9 +155,6 @@ public class GeneralSettingsTests extends BaseTest {
 
     @Test
     void editLeaveTypes(){
-        User user = userService.createDefaultAdmin();
-        GeneralSettingsPage generalSettingsPage = new GeneralSettingsPage(getDriver());
-        generalSettingsPage.navigate();
         LeaveTypesSettings leaveTypesSettings = generalSettingsPage.leaveTypesSettings;
         generalSettingsPage = leaveTypesSettings
                 .editLeaveTypeName("Holiday","New Holiday")
@@ -203,9 +177,6 @@ public class GeneralSettingsTests extends BaseTest {
 
     @Test
     void deleteLeaveType(){
-        User user = userService.createDefaultAdmin();
-        GeneralSettingsPage generalSettingsPage = new GeneralSettingsPage(getDriver());
-        generalSettingsPage.navigate();
         LeaveTypesSettings leaveTypesSettings = generalSettingsPage.leaveTypesSettings;
         generalSettingsPage = leaveTypesSettings.deleteLeave("Holiday");
 
@@ -221,9 +192,6 @@ public class GeneralSettingsTests extends BaseTest {
 
     @Test
     void canDeleteAllLeaveTypes(){
-        User user = userService.createDefaultAdmin();
-        GeneralSettingsPage generalSettingsPage = new GeneralSettingsPage(getDriver());
-        generalSettingsPage.navigate();
         generalSettingsPage = generalSettingsPage.leaveTypesSettings.deleteAllLeaveTypesWithSave();
 
         assertThat(generalSettingsPage.getAlertText(), is("Changes to leave types were saved"));
@@ -237,9 +205,6 @@ public class GeneralSettingsTests extends BaseTest {
 
     @Test
     void addNewLeaveType(){
-        User user = userService.createDefaultAdmin();
-        GeneralSettingsPage generalSettingsPage = new GeneralSettingsPage(getDriver());
-        generalSettingsPage.navigate();
         AddNewLeaveTypeModal modal = generalSettingsPage.leaveTypesSettings.clickAddButton();
         generalSettingsPage =
                 modal.setName("New leave")
@@ -250,7 +215,7 @@ public class GeneralSettingsTests extends BaseTest {
         assertThat(generalSettingsPage.getAlertText(), is("Changes to leave types were saved"));
         List<LeaveType> inDbLeaveTypes = leaveTypeService.getLeaveTypesForCompanyWithId(user.getCompanyID());
         List<LeaveType> displayedLeaveTypes = generalSettingsPage.leaveTypesSettings.getDisplayedLeaveTypes();
-        assertThat(inDbLeaveTypes, is(displayedLeaveTypes));
+        assertThat(inDbLeaveTypes, containsInAnyOrder(displayedLeaveTypes));
 
         NewAbsenceModal newAbsenceModal = generalSettingsPage.menuBar.openNewAbsenceModal();
         assertThat(newAbsenceModal.getDisplayedLeaveTypesAsString(), contains("Holiday","Sick Leave","New leave"));
