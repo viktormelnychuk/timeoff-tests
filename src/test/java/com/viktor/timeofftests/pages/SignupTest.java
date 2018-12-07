@@ -7,7 +7,7 @@ import com.viktor.timeofftests.services.DepartmentService;
 import com.viktor.timeofftests.services.UserService;
 import org.junit.jupiter.api.Test;
 
-import static org.hamcrest.CoreMatchers.*;
+import static org.assertj.core.api.Assertions.assertThat;
 public class SignupTest extends BaseTest {
     private UserService userService = UserService.getInstance();
     private CompanyService companyService = CompanyService.getInstance();
@@ -31,11 +31,11 @@ public class SignupTest extends BaseTest {
         String employeeGreeting = calendarPage.getEmployeeGreeting();
         String expectedEmployeeGreeting = "First Name Last Name's calendar for 2018";
 
-        assertThat(alertMessage, is("Registration is complete."));
-        assertThat(expectedEmployeeGreeting, is(employeeGreeting));
-        assertThat(userService.userIsAdmin("email@email.tes"), is(true));
-        assertThat(companyService.getCompanyWithName("TestCompany"), is(notNullValue()));
-        assertThat(departmentService.getDepartmentWithName("Sales"), is(notNullValue()));
+        assertThat(alertMessage).isEqualTo("Registration is complete.");
+        assertThat(expectedEmployeeGreeting).isEqualTo(expectedEmployeeGreeting);
+        assertThat(userService.userIsAdmin("email@email.tes")).isTrue();
+        assertThat(companyService.getCompanyWithName("TestCompany")).isNotNull();
+        assertThat(departmentService.getDepartmentWithName("Sales")).isNotNull();
     }
 
     @Test
@@ -43,27 +43,27 @@ public class SignupTest extends BaseTest {
         SignupPage signupPage = new SignupPage(getDriver());
         signupPage.open();
         signupPage = signupPage.clickCreateButtonExpectingFailure();
-        assertThat(signupPage.getBaseUrl(), is(signupPage.getDriver().getCurrentUrl()));
+        assertThat(signupPage.getBaseUrl()).isEqualTo(signupPage.getDriver().getCurrentUrl());
 
         signupPage.fillCompanyName("Company");
         signupPage = signupPage.clickCreateButtonExpectingFailure();
-        assertThat(signupPage.getBaseUrl(), is(signupPage.getDriver().getCurrentUrl()));
+        assertThat(signupPage.getBaseUrl()).isEqualTo(signupPage.getDriver().getCurrentUrl());
 
         signupPage.fillEmail("email@viktor,.com");
         signupPage = signupPage.clickCreateButtonExpectingFailure();
-        assertThat(signupPage.getBaseUrl(), is(signupPage.getDriver().getCurrentUrl()));
+        assertThat(signupPage.getBaseUrl()).isEqualTo(signupPage.getDriver().getCurrentUrl());
 
         signupPage.fillFirstName("John");
         signupPage = signupPage.clickCreateButtonExpectingFailure();
-        assertThat(signupPage.getBaseUrl(), is(signupPage.getDriver().getCurrentUrl()));
+        assertThat(signupPage.getBaseUrl()).isEqualTo(signupPage.getDriver().getCurrentUrl());
 
         signupPage.fillLastName("Doe");
         signupPage = signupPage.clickCreateButtonExpectingFailure();
-        assertThat(signupPage.getBaseUrl(), is(signupPage.getDriver().getCurrentUrl()));
+        assertThat(signupPage.getBaseUrl()).isEqualTo(signupPage.getDriver().getCurrentUrl());
 
         signupPage.fillPassword("1234");
         signupPage = signupPage.clickCreateButtonExpectingFailure();
-        assertThat(signupPage.getBaseUrl(), is(signupPage.getDriver().getCurrentUrl()));
+        assertThat(signupPage.getBaseUrl()).isEqualTo(signupPage.getDriver().getCurrentUrl());
     }
 
     @Test
@@ -78,7 +78,7 @@ public class SignupTest extends BaseTest {
                 .fillPassword("1234")
                 .fillPasswordConfirmation("3214")
                 .clickCreateButtonExpectingFailure();
-        assertThat(signupPage.getAlertMessage(), is("Confirmed password does not match initial one"));
+        assertThat(signupPage.getAlertMessage()).isEqualTo("Confirmed password does not match initial one");
     }
 
     @Test
@@ -93,10 +93,11 @@ public class SignupTest extends BaseTest {
         signupPage.open();
         signupPage = signupPage.signupWithUserExpectingFailure(createdUser);
         String expectedMessage = "Failed to register user please contact customer service. Error: Email is already used";
-        assertThat(signupPage.getAlertMessage(), is(expectedMessage));
+        assertThat(signupPage.getAlertMessage()).isEqualTo(expectedMessage);
     }
     @Test
     void verifyCannotSignupWithExistingAdminUser(){
+        String expectedMessage = "Failed to register user please contact customer service. Error: Email is already used";
         User user = new User.Builder()
                 .inCompany("Test Company")
                 .inDepartment("Department1")
@@ -107,8 +108,7 @@ public class SignupTest extends BaseTest {
         SignupPage signupPage = new SignupPage(getDriver());
         signupPage.open();
         signupPage = signupPage.signupWithUserExpectingFailure(createdUser);
-        String expectedMessage = "Failed to register user please contact customer service. Error: Email is already used";
-        assertThat(signupPage.getAlertMessage(), is(expectedMessage));
+        assertThat(signupPage.getAlertMessage()).isEqualTo(expectedMessage);
     }
     @Test
     void verifyCanLoginAfterSignup(){
@@ -117,9 +117,9 @@ public class SignupTest extends BaseTest {
         CalendarPage calendarPage = signupPage.signupAsDefaultUser();
         LoginPage loginPage = calendarPage.menuBar.logout();
         calendarPage = loginPage.loginWithDefaultUser();
-        assertThat(calendarPage.getBaseUrl(), equalTo(calendarPage.getDriver().getCurrentUrl()));
+        assertThat(calendarPage.getBaseUrl()).isEqualTo(calendarPage.getDriver().getCurrentUrl());
         String expectedEmployeeGreeting = Constants.DEFAULT_USER_NAME + " " +Constants.DEFAULT_USER_LAST_NAME + "'s calendar for 2018";
-        assertThat(expectedEmployeeGreeting, is(calendarPage.getEmployeeGreeting()));
+        assertThat(calendarPage.getEmployeeGreeting()).isEqualTo(expectedEmployeeGreeting);
 
     }
 }
