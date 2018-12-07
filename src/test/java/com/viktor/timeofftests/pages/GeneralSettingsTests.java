@@ -34,8 +34,10 @@ public class GeneralSettingsTests extends BaseTest {
 
     @Test
     void navigateToSettingsPage(){
-        assertThat(generalSettingsPage.getPageTitle(), is("General settings"));
-        assertThat(generalSettingsPage.getBaseUrl(), is(generalSettingsPage.getDriver().getCurrentUrl()));
+        assertAll(
+                ()->assertThat(generalSettingsPage.getPageTitle(), is("General settings")),
+                () ->assertThat(generalSettingsPage.getBaseUrl(), is(generalSettingsPage.getDriver().getCurrentUrl()))
+        );
     }
 
     @Test
@@ -51,6 +53,7 @@ public class GeneralSettingsTests extends BaseTest {
         assertThat(settings.getCountry(), is(company.getCountry()));
         assertThat(settings.getDateFormat(), is(company.getDateFormat()));
         assertThat(settings.getTimeZone(), is(company.getTimezone()));
+
     }
 
     @Test

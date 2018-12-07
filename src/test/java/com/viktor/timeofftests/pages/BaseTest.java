@@ -15,6 +15,7 @@ import org.junit.jupiter.api.extension.AfterEachCallback;
 import org.junit.jupiter.api.extension.BeforeEachCallback;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.api.extension.ExtensionContext;
+import org.junit.jupiter.api.function.Executable;
 import org.openqa.selenium.WebDriver;
 
 @Log4j2
@@ -43,6 +44,10 @@ public abstract class BaseTest extends ConciseAPI {
     public static <T> void assertThat(String reason, T actual, Matcher<? super T> matcher) {
         log.info("Asserting that [{}] [{}]", actual, matcher.toString());
         MatcherAssert.assertThat(reason, actual, matcher);
+    }
+
+    public static void assertAll(Executable... executables){
+        org.junit.jupiter.api.Assertions.assertAll(executables);
     }
 }
 
