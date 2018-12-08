@@ -1,5 +1,6 @@
 package com.viktor.timeofftests.pages;
 
+import com.viktor.timeofftests.pages.partials.settings.BankHolidaySettings;
 import com.viktor.timeofftests.pages.partials.settings.CompanyScheduleSettings;
 import com.viktor.timeofftests.pages.partials.settings.CompanySettings;
 import com.viktor.timeofftests.pages.partials.settings.LeaveTypesSettings;
@@ -12,6 +13,7 @@ public class GeneralSettingsPage extends BasePage {
     public CompanySettings companySettings;
     public CompanyScheduleSettings companyScheduleSettings;
     public LeaveTypesSettings leaveTypesSettings;
+    public BankHolidaySettings bankHolidaySettings;
     private By alert = By.xpath("//div[@role='alert']");
     public GeneralSettingsPage(WebDriver driver){
         super(driver);
@@ -19,6 +21,7 @@ public class GeneralSettingsPage extends BasePage {
         this.companySettings = new CompanySettings(driver);
         this.companyScheduleSettings = new CompanyScheduleSettings(driver);
         this.leaveTypesSettings = new LeaveTypesSettings(driver);
+        this.bankHolidaySettings = new BankHolidaySettings(driver);
     }
 
     void navigate(){

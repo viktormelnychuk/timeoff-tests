@@ -1,9 +1,6 @@
 package com.viktor.timeofftests.pages;
 
-import com.viktor.timeofftests.models.Company;
-import com.viktor.timeofftests.models.LeaveType;
-import com.viktor.timeofftests.models.Schedule;
-import com.viktor.timeofftests.models.User;
+import com.viktor.timeofftests.models.*;
 import com.viktor.timeofftests.pages.partials.modals.AddNewLeaveTypeModal;
 import com.viktor.timeofftests.pages.partials.modals.NewAbsenceModal;
 import com.viktor.timeofftests.pages.partials.settings.CompanySettings;
@@ -15,9 +12,13 @@ import com.viktor.timeofftests.services.UserService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.util.Date;
+import java.util.ArrayList;
 import java.util.List;
 
 import static org.hamcrest.Matchers.*;
+
+import static com.viktor.timeofftests.matcher.CollectionMatcher.hasAllItemsExcludingProperties;
 
 public class GeneralSettingsTests extends BaseTest {
     private UserService userService = UserService.getInstance();
@@ -208,8 +209,8 @@ public class GeneralSettingsTests extends BaseTest {
         List<LeaveType> displayedLeaveTypes = generalSettingsPage.leaveTypesSettings.getDisplayedLeaveTypes();
         NewAbsenceModal modal = generalSettingsPage.menuBar.openNewAbsenceModal();
         assertAll(
-                ()->assertThat(generalSettingsPage.getAlertText(), is("Changes to leave types were saved")),
-                ()->assertThat(inDbLeaveTypes, is(displayedLeaveTypes)),
+                ()-> assertThat(generalSettingsPage.getAlertText(), is("Changes to leave types were saved")),
+                ()-> assertThat(inDbLeaveTypes, is(displayedLeaveTypes)),
                 ()-> assertThat(modal.getDisplayedLeaveTypesAsString(), emptyIterable())
         );
     }
@@ -230,6 +231,23 @@ public class GeneralSettingsTests extends BaseTest {
                 ()->assertThat(inDbLeaveTypes, containsInAnyOrder(displayedLeaveTypes.toArray())),
                 ()->assertThat(newAbsenceModal.getDisplayedLeaveTypesAsString(), containsInAnyOrder("Holiday","Sick Leave","New leave"))
         );
+    }
+
+    @Test
+    void allHolidaysDisplayed(){
+        List<BankHoliday> displayed = generalSettingsPage.bankHolidaySettings.getAllDisplayedHolidays();
+    }
+
+    @Test
+    void testing(){
+        List<BankHoliday> actual = new ArrayList<>();
+        List<BankHoliday> expected = new ArrayList<>();
+        BankHoliday bankHoliday = new BankHoliday();
+        bankHoliday.setName("1");
+        bankHoliday.setDate(new Date());
+        actual.add(bankHoliday);
+        expected.add(new BankHoliday());
+        assertThat(actual, hasAllItemsExcludingProperties(expected));
     }
 
 }

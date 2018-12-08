@@ -8,12 +8,18 @@ import com.viktor.timeofftests.common.db.DbConnection;
 import com.viktor.timeofftests.models.BankHoliday;
 import com.viktor.timeofftests.models.Company;
 import lombok.extern.log4j.Log4j2;
+import org.openqa.selenium.By;
+import org.openqa.selenium.WebElement;
 
 import java.io.File;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.Timestamp;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 
 @Log4j2
@@ -55,6 +61,19 @@ public class BankHolidaysService {
         } finally {
             DBUtil.closeConnection(connection);
         }
+    }
+
+    public List<BankHoliday> deserializeBankHolidays(List<WebElement> rows) throws ParseException {
+        List<BankHoliday> result = new ArrayList<>();
+        for (WebElement row : rows) {
+            BankHoliday bankHoliday = new BankHoliday();
+            WebElement inputDate = row.findElement(By.xpath(".//div[@class='input-append date']/input"));
+            SimpleDateFormat format = new SimpleDateFormat(inputDate.getAttribute("data-date-format"));
+            bankHoliday.setDate(format.parse(inputDate.getAttribute("value")));
+            bankHoliday.setName(row.findElement(By.xpath(".//div/input[contains(@name,'name')]")).getAttribute("value"));
+            result.add(bankHoliday);
+        }
+        return result;
     }
 
     private BankHoliday[] getHolidaysForCountry(String countryCode){

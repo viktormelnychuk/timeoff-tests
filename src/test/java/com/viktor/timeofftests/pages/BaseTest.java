@@ -9,24 +9,38 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.hamcrest.Matcher;
 import org.hamcrest.MatcherAssert;
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.extension.AfterEachCallback;
 import org.junit.jupiter.api.extension.BeforeEachCallback;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.api.extension.ExtensionContext;
 import org.junit.jupiter.api.function.Executable;
+import org.junit.jupiter.api.parallel.Execution;
+import org.junit.jupiter.api.parallel.ExecutionMode;
 import org.openqa.selenium.WebDriver;
 
 @Log4j2
 @ExtendWith(TraceUnitExtension.class)
 public abstract class BaseTest extends ConciseAPI {
-    private WebDriver driver;
+    private static WebDriver driver;
     @Override
     public WebDriver getDriver() {
-        this.driver = DriverUtil.getDriver(DriverEnum.CHROME);
-        return this.driver;
+        return driver;
     }
+
+    @BeforeAll
+    static void beforeAll(){
+        driver = DriverUtil.getDriver(DriverEnum.CHROME);
+    }
+
+    @AfterAll
+    static void afterAll(){
+        driver.quit();
+    }
+
     @BeforeEach
    public void cleanDB(){
       DBUtil.cleanDB();
@@ -34,7 +48,7 @@ public abstract class BaseTest extends ConciseAPI {
 
     @AfterEach
     public void tearDown(){
-        this.driver.quit();
+        driver.manage().deleteAllCookies();
     }
 
     public static <T> void assertThat(T actual, Matcher<? super T> matcher) {
