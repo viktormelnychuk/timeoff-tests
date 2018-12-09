@@ -14,6 +14,7 @@ import org.openqa.selenium.WebElement;
 import java.io.File;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.Timestamp;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -63,13 +64,58 @@ public class BankHolidaysService {
         }
     }
 
+    public List<BankHoliday> getAllBankHolidaysForCompany(int companyID){
+        log.info("Getting bank holidays fro company with id={}", companyID);
+        Connection connection = DbConnection.getConnection();
+        try {
+            String sql = "SELECT * FROM \"BankHolidays\" WHERE \"companyId\"=?";
+            PreparedStatement statement = connection.prepareStatement(sql);
+            statement.setInt(1, companyID);
+            log.info("Executing ", statement);
+            ResultSet set = statement.executeQuery();
+            if(set.next()){
+                return deserializeBankHolidays(set);
+            } else {
+                return new ArrayList<>();
+            }
+        } catch (Exception e){
+            log.error("Error getting holidays for company with id={}", companyID, e);
+            return new ArrayList<>();
+        } finally {
+            DBUtil.closeConnection(connection);
+        }
+    }
+
+    public List<BankHoliday> deserializeBankHolidays (ResultSet set){
+        try {
+            List<BankHoliday> result = new ArrayList<>();
+            do {
+                BankHoliday bankHoliday = new BankHoliday();
+                bankHoliday.setName(set.getString("name"));
+                Date resultDate = new Date(set.getDate("date").getTime());
+                bankHoliday.setDate(resultDate);
+                bankHoliday.setId(set.getInt("id"));
+                bankHoliday.setCompanyId(set.getInt("companyId"));
+                result.add(bankHoliday);
+            } while ((set.next()));
+            return result;
+        } catch (Exception e){
+            log.error("Error deserializing bank holidays", e);
+            return new ArrayList<>();
+        }
+    }
+
     public List<BankHoliday> deserializeBankHolidays(List<WebElement> rows) throws ParseException {
         List<BankHoliday> result = new ArrayList<>();
         for (WebElement row : rows) {
             BankHoliday bankHoliday = new BankHoliday();
             WebElement inputDate = row.findElement(By.xpath(".//div[@class='input-append date']/input"));
-            SimpleDateFormat format = new SimpleDateFormat(inputDate.getAttribute("data-date-format"));
-            bankHoliday.setDate(format.parse(inputDate.getAttribute("value")));
+            String dateFormat = inputDate.getAttribute("data-date-format");
+            // Replace mm to MM to correctly parse date
+            dateFormat = dateFormat.replaceAll("mm","MM");
+            SimpleDateFormat format = new SimpleDateFormat(dateFormat);
+            Date date = format.parse(inputDate.getAttribute("value"));
+            bankHoliday.setDate(date);
             bankHoliday.setName(row.findElement(By.xpath(".//div/input[contains(@name,'name')]")).getAttribute("value"));
             result.add(bankHoliday);
         }

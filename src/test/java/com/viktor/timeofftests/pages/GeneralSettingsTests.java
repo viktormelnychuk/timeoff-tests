@@ -3,22 +3,22 @@ package com.viktor.timeofftests.pages;
 import com.viktor.timeofftests.models.*;
 import com.viktor.timeofftests.pages.partials.modals.AddNewLeaveTypeModal;
 import com.viktor.timeofftests.pages.partials.modals.NewAbsenceModal;
+import com.viktor.timeofftests.pages.partials.settings.BankHolidaySettings;
 import com.viktor.timeofftests.pages.partials.settings.CompanySettings;
 import com.viktor.timeofftests.pages.partials.settings.LeaveTypesSettings;
-import com.viktor.timeofftests.services.CompanyService;
-import com.viktor.timeofftests.services.LeaveTypeService;
-import com.viktor.timeofftests.services.ScheduleService;
-import com.viktor.timeofftests.services.UserService;
+import com.viktor.timeofftests.services.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.util.Comparator;
 import java.util.Date;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.viktor.timeofftests.common.Utils.getRandomIndexes;
 import static org.hamcrest.Matchers.*;
 
-import static com.viktor.timeofftests.matcher.CollectionMatcher.hasAllItemsExcludingProperties;
+import static com.viktor.timeofftests.matcher.CollectionMatchers.hasAllItemsExcludingProperties;
 
 public class GeneralSettingsTests extends BaseTest {
     private UserService userService = UserService.getInstance();
@@ -236,18 +236,23 @@ public class GeneralSettingsTests extends BaseTest {
     @Test
     void allHolidaysDisplayed(){
         List<BankHoliday> displayed = generalSettingsPage.bankHolidaySettings.getAllDisplayedHolidays();
+        List<BankHoliday> inDb = BankHolidaysService.getInstance().getAllBankHolidaysForCompany(user.getCompanyID());
+        inDb.sort(Comparator.comparing(BankHoliday::getDate));
+        assertThat(displayed, hasAllItemsExcludingProperties(inDb,"id","companyId"));
     }
 
     @Test
-    void testing(){
-        List<BankHoliday> actual = new ArrayList<>();
-        List<BankHoliday> expected = new ArrayList<>();
-        BankHoliday bankHoliday = new BankHoliday();
-        bankHoliday.setName("1");
-        bankHoliday.setDate(new Date());
-        actual.add(bankHoliday);
-        expected.add(new BankHoliday());
-        assertThat(actual, hasAllItemsExcludingProperties(expected));
+    void editBankHolidayName(){
+        BankHolidaySettings bankHolidaySettings = generalSettingsPage.bankHolidaySettings;
+        List<BankHoliday> displayed = bankHolidaySettings.getAllDisplayedHolidays();
+        int[] indexes = getRandomIndexes(displayed, displayed.size()/2);
+        GeneralSettingsPage generalSettingsPage =
+                bankHolidaySettings
+                .editMultipleHolidayNamesWithRandomString(indexes)
+                .clickSubmitButton();
+        displayed = generalSettingsPage.bankHolidaySettings.getAllDisplayedHolidays();
+        List<BankHoliday> inDb = BankHolidaysService.getInstance().getAllBankHolidaysForCompany(user.getCompanyID());
+        inDb.sort(Comparator.comparing(BankHoliday::getDate));
+        assertThat(displayed, hasAllItemsExcludingProperties(inDb, "id","companyId"));
     }
-
 }

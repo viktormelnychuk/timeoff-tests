@@ -12,16 +12,21 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 
 
-public class CollectionMatcher extends TypeSafeDiagnosingMatcher<List>{
+public class CollectionMatchers{
+    public static Matcher<List> hasAllItemsExcludingProperties(List expected, String... prosToIgnore){
+        return new HasAllIgnoringPros(expected, prosToIgnore);
+    }
+}
 
+class HasAllIgnoringPros extends TypeSafeDiagnosingMatcher<List>{
     private List expected;
     private List<String> prosToIgnore;
     private List actual;
-    private CollectionMatcher(List expected, String[] propsToIgnore){
+
+    HasAllIgnoringPros(List expected, String[] propsToIgnore){
         this.expected = expected;
         this.prosToIgnore = Arrays.asList(propsToIgnore);
     }
-
     @Override
     protected boolean matchesSafely(List actual, Description description) {
         if(actual.size() != expected.size()){
@@ -52,12 +57,12 @@ public class CollectionMatcher extends TypeSafeDiagnosingMatcher<List>{
                 Object actualObj = actual.get(i);
                 try {
                     if(!Objects.equals(field.get(actualObj), field.get(expectedObj))){
-                       Error error = new Error();
-                       error.setActual(field.get(actualObj));
-                       error.setExpected(field.get(expectedObj));
-                       error.setField(field.getName());
-                       error.setIndex(i);
-                       errors.add(error);
+                        Error error = new Error();
+                        error.setActual(field.get(actualObj));
+                        error.setExpected(field.get(expectedObj));
+                        error.setField(field.getName());
+                        error.setIndex(i);
+                        errors.add(error);
                     }
                 } catch (IllegalAccessException e) {
                     /*ignore because exception will not be thrown*/
@@ -75,14 +80,7 @@ public class CollectionMatcher extends TypeSafeDiagnosingMatcher<List>{
         } else {
             return true;
         }
-
     }
-
-
-    public static Matcher<List> hasAllItemsExcludingProperties(List expected, String... prosToIgnore){
-        return new CollectionMatcher(expected, prosToIgnore);
-    }
-
     @Override
     public void describeTo(Description description) {
         String actualList = String.valueOf(actual);
@@ -92,6 +90,7 @@ public class CollectionMatcher extends TypeSafeDiagnosingMatcher<List>{
         description.appendText(result);
     }
 }
+
 @Data
 class Error {
     Object expected;

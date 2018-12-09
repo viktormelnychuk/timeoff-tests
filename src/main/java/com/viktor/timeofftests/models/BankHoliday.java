@@ -8,4 +8,6 @@ import java.util.Date;
 public class BankHoliday {
     private Date date;
     private String name;
+    private int id;
+    private int companyId;
 }
