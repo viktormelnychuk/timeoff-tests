@@ -19,7 +19,7 @@ session id generated with uid(24) where uid is [https://www.npmjs.com/package/ui
 1. Figure out how to make sure order does not matter when creating user (inCompany and inDepartment can be used in any order)
 2. Run all migrations! it is important!
 3. ~~Rewrite to use assertAll when there are multiple asserts per test method~~ [DONE]
-
+4. Examine and improve logging of all steps taken (e.g when using findOrCreate company it is not indicated that company was not fund)
 # Features
 1. Prepare poll of 2 or 3 drivers to get from so they are prepared when user tries to run tests [NEXT]
 2. Make all tests parametrized! get test data from the csv/json/yml/xml (Use Junit5 parametrization and arguments + arguments resolver)(**may not be needed**)
