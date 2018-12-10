@@ -7,9 +7,15 @@ public class Utils {
     public static int[] getRandomIndexes(List list, int count){
         Random random = new Random();
         Set<Integer> generated = new LinkedHashSet<>();
+        int listSize = list.size();
         while (generated.size() < count){
-            Integer next = random.nextInt(list.size());
-            generated.add(next);
+            Double next = Math.random() * listSize;
+            int nextValue = next.intValue();
+            if(next < 0){
+                continue;
+            }
+            generated.add(nextValue);
+            listSize--;
         }
         return convertArrays(generated.toArray(new Integer[generated.size()]));
     }

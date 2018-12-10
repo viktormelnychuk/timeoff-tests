@@ -12,10 +12,10 @@ import org.junit.jupiter.api.Test;
 
 import java.util.Comparator;
 import java.util.Date;
-import java.util.ArrayList;
 import java.util.List;
 
 import static com.viktor.timeofftests.common.Utils.getRandomIndexes;
+import static com.viktor.timeofftests.matcher.StringMatchers.stringContainsAllSubstringsInAnyOrder;
 import static org.hamcrest.Matchers.*;
 
 import static com.viktor.timeofftests.matcher.CollectionMatchers.hasAllItemsExcludingProperties;
@@ -267,5 +267,32 @@ public class GeneralSettingsTests extends BaseTest {
         List<BankHoliday> inDb = BankHolidaysService.getInstance().getAllBankHolidaysForCompany(user.getCompanyID());
         inDb.sort(Comparator.comparing(BankHoliday::getDate));
         assertThat(displayed, hasAllItemsExcludingProperties(inDb, "id","companyId"));
+    }
+
+    @Test
+    void addNewBankHoliday(){
+        BankHolidaySettings bankHolidaySettings = generalSettingsPage.bankHolidaySettings;
+        GeneralSettingsPage generalSettingsPage = bankHolidaySettings
+                .clickAddNewButton()
+                .fillName("New Holiday")
+                .fillDate(new Date())
+                .clickCreateButton();
+        List<BankHoliday> displayed = generalSettingsPage.bankHolidaySettings.getAllDisplayedHolidays();
+        List<BankHoliday> inDb = BankHolidaysService.getInstance().getAllBankHolidaysForCompany(user.getCompanyID());
+        inDb.sort(Comparator.comparing(BankHoliday::getDate));
+        assertThat(displayed, hasAllItemsExcludingProperties(inDb, "id","companyId"));
+    }
+
+    @Test
+    void importDefaultBankHolidays(){
+        BankHolidaySettings bankHolidaySettings = generalSettingsPage.bankHolidaySettings;
+        List<BankHoliday> bankHolidays = bankHolidaySettings.getAllDisplayedHolidays();
+        int[] indexes = getRandomIndexes(bankHolidays, 4);
+        bankHolidaySettings.deleteMultipleHolidays(indexes);
+        List<String> deletedHolidays = bankHolidaySettings.getDeletedHolidays();
+        generalSettingsPage = generalSettingsPage.bankHolidaySettings.clickImportDefaultButton();
+        String expected = "New bank holidays were added: ";
+        assertThat(generalSettingsPage.getAlertText(), is(containsString(expected)));
+        assertThat(generalSettingsPage.getAlertText(), stringContainsAllSubstringsInAnyOrder(deletedHolidays));
     }
 }

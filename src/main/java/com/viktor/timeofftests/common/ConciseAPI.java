@@ -90,7 +90,7 @@ public abstract class ConciseAPI {
         }
         public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
             try{
-                return method.invoke(new WebDriverWait(getDriver(), 10)
+                return method.invoke(new WebDriverWait(getDriver(), 2)
                         .until(ExpectedConditions.visibilityOfElementLocated(elementLocator)), args);
             } catch (InvocationTargetException e){
                 throw e.getCause();
@@ -217,7 +217,7 @@ public abstract class ConciseAPI {
 
         public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
             try {
-                return method.invoke(new WebDriverWait(getDriver(), 10)
+                return method.invoke(new WebDriverWait(getDriver(), 2)
                         .until(ExpectedConditions.visibilityOfAllElementsLocatedBy(elementsLocator)), args);
             } catch (InvocationTargetException e){
                 throw e.getCause();

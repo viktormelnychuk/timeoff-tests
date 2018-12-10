@@ -127,7 +127,9 @@ public class UserService {
                 .inCompany("Acme")
                 .inDepartment("Sales")
                 .build();
-        return createNewUser(user);
+        user = createNewUser(user);
+        makeDepartmentAdmin(user);
+        return user;
     }
 
 }
