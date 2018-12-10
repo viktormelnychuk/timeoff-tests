@@ -1,23 +1,28 @@
 package com.viktor.timeofftests.common;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Random;
+import java.util.*;
 
 public class Utils {
 
     public static int[] getRandomIndexes(List list, int count){
-        int listSize = list.size();
         Random random = new Random();
-        int[] result = new int[count];
-        for (int i = 0; i < count; i++){
-            result[i] = random.nextInt(listSize);
+        Set<Integer> generated = new LinkedHashSet<>();
+        while (generated.size() < count){
+            Integer next = random.nextInt(list.size());
+            generated.add(next);
         }
-        return result;
+        return convertArrays(generated.toArray(new Integer[generated.size()]));
     }
 
     public static int[] getRandomIndexes(Object[] arr, int count){
         return getRandomIndexes(Arrays.asList(arr), count);
+    }
+
+    private static int[] convertArrays(Integer[] arr){
+        int[] result = new int[arr.length];
+        for(int i = 0; i < arr.length; i++){
+            result[i] = arr[i];
+        }
+        return result;
     }
 }

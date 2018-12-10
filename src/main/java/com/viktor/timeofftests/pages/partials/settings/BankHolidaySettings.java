@@ -19,6 +19,7 @@ public class BankHolidaySettings extends BasePage {
     private WebDriver driver;
     private By rows = By.xpath("//form[@id='update_bankholiday_form']//div[@class='input-append date']/../..");
     private String nameByIndexQuery = "//form[@id='update_bankholiday_form']//input[@name='name__%s']";
+    private String deleteByttonByIndexQuery = "//form[@id='update_bankholiday_form']//button[@value='%s']";
     private By submitButton = By.xpath("//form[@id='update_bankholiday_form']//button[@type='submit']");
 
     public BankHolidaySettings(WebDriver driver){
@@ -49,7 +50,15 @@ public class BankHolidaySettings extends BasePage {
 
     public BankHolidaySettings editMultipleHolidayNamesWithRandomString(int[] indexes){
         for(int i = 0; i < indexes.length; i++){
-            editHolidayNameWithRandomStringByIndex(i);
+            editHolidayNameWithRandomStringByIndex(indexes[i]);
+        }
+        return this;
+    }
+
+    public BankHolidaySettings deleteMultipleHolidays(int... indexes){
+        for(int i = 0; i < indexes.length; i++){
+            By locator = By.xpath(String.format(deleteByttonByIndexQuery,indexes[i]));
+            clickButton(locator);
         }
         return this;
     }

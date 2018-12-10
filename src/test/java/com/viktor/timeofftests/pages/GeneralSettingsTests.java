@@ -255,4 +255,17 @@ public class GeneralSettingsTests extends BaseTest {
         inDb.sort(Comparator.comparing(BankHoliday::getDate));
         assertThat(displayed, hasAllItemsExcludingProperties(inDb, "id","companyId"));
     }
+
+    @Test
+    void deleteMultipleBankHolidays(){
+        BankHolidaySettings bankHolidaySettings = generalSettingsPage.bankHolidaySettings;
+        GeneralSettingsPage generalSettingsPage =
+                bankHolidaySettings
+                .deleteMultipleHolidays(0,1,2,3)
+                .clickSubmitButton();
+        List<BankHoliday> displayed = generalSettingsPage.bankHolidaySettings.getAllDisplayedHolidays();
+        List<BankHoliday> inDb = BankHolidaysService.getInstance().getAllBankHolidaysForCompany(user.getCompanyID());
+        inDb.sort(Comparator.comparing(BankHoliday::getDate));
+        assertThat(displayed, hasAllItemsExcludingProperties(inDb, "id","companyId"));
+    }
 }
