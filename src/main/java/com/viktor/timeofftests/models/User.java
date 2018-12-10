@@ -28,7 +28,7 @@ public class User {
     private int companyID;
     private int departmentID;
 
-    private User(){}
+    public User(){}
 
     @Log4j2
     public static class Builder {

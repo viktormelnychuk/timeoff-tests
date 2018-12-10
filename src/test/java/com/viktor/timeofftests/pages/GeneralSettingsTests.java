@@ -3,6 +3,7 @@ package com.viktor.timeofftests.pages;
 import com.viktor.timeofftests.models.*;
 import com.viktor.timeofftests.pages.partials.modals.AddNewLeaveTypeModal;
 import com.viktor.timeofftests.pages.partials.modals.NewAbsenceModal;
+import com.viktor.timeofftests.pages.partials.modals.RemoveCompanyModal;
 import com.viktor.timeofftests.pages.partials.settings.BankHolidaySettings;
 import com.viktor.timeofftests.pages.partials.settings.CompanySettings;
 import com.viktor.timeofftests.pages.partials.settings.LeaveTypesSettings;
@@ -294,5 +295,35 @@ public class GeneralSettingsTests extends BaseTest {
         String expected = "New bank holidays were added: ";
         assertThat(generalSettingsPage.getAlertText(), is(containsString(expected)));
         assertThat(generalSettingsPage.getAlertText(), stringContainsAllSubstringsInAnyOrder(deletedHolidays));
+    }
+
+    @Test
+    void cannotDeleteCompanyWithIncorrectName(){
+        Company currentCompany = companyService.getCompanyWithId(user.getCompanyID());
+        RemoveCompanyModal removeCompanyModal = generalSettingsPage.clickDeleteCompanyButton();
+        generalSettingsPage = removeCompanyModal
+                .fillCompanyName(currentCompany.getName()+"Random addition")
+                .clickDeleteButtonExpectingFailure();
+        String expectedMessage = "Failed to remove company. Reason: Provided name confirmation does not match company one";
+        assertAll(
+                ()->assertThat(generalSettingsPage.getAlertText(), is(expectedMessage)),
+                ()->assertThat(companyService.getCompanyWithId(currentCompany.getId()), is(notNullValue()))
+        );
+    }
+
+    @Test
+    void canDeleteCompanyWithCorrectName(){
+        Company currentCompany = companyService.getCompanyWithId(user.getCompanyID());
+        RemoveCompanyModal removeCompanyModal = generalSettingsPage.clickDeleteCompanyButton();
+        LoginPage loginPage = removeCompanyModal
+                .fillCompanyName(currentCompany.getName())
+                .clickDeleteButtonExpectingSuccess();
+        String expectedMessage = "Company Acme and related data were successfully removed";
+        assertAll(
+                ()->assertThat(generalSettingsPage.getAlertText(), is(expectedMessage)),
+                ()->assertThat(companyService.getCompanyWithId(currentCompany.getId()), is(nullValue())),
+                ()->assertThat(loginPage.getDriver().getCurrentUrl(), is(containsString(loginPage.getBaseUrl()))),
+                ()->assertThat(userService.getUserWithEmail(user.getEmail()), is(nullValue()))
+        );
     }
 }

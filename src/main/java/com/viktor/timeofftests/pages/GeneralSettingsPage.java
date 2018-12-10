@@ -1,5 +1,6 @@
 package com.viktor.timeofftests.pages;
 
+import com.viktor.timeofftests.pages.partials.modals.RemoveCompanyModal;
 import com.viktor.timeofftests.pages.partials.settings.BankHolidaySettings;
 import com.viktor.timeofftests.pages.partials.settings.CompanyScheduleSettings;
 import com.viktor.timeofftests.pages.partials.settings.CompanySettings;
@@ -14,6 +15,7 @@ public class GeneralSettingsPage extends BasePage {
     public CompanyScheduleSettings companyScheduleSettings;
     public LeaveTypesSettings leaveTypesSettings;
     public BankHolidaySettings bankHolidaySettings;
+    private By removeCompanyButton = By.xpath("//button[@data-target='#remove_company_modal']");
     private By alert = By.xpath("//div[@role='alert']");
     public GeneralSettingsPage(WebDriver driver){
         super(driver);
@@ -29,6 +31,11 @@ public class GeneralSettingsPage extends BasePage {
         loginPage.open();
         loginPage.loginWithDefaultUser();
         driver.get(getBaseUrl());
+    }
+
+    public RemoveCompanyModal clickDeleteCompanyButton(){
+        clickButton(removeCompanyButton);
+        return new RemoveCompanyModal(this.driver);
     }
 
     @Override

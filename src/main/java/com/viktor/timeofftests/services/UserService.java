@@ -102,23 +102,31 @@ public class UserService {
         }
     }
 
-    public boolean userIsAdmin (String  userEmail){
+    public User getUserWithEmail(String email){
+        log.info("Getting user with email={}", email);
         Connection connection = DbConnection.getConnection();
-        String sql = "SELECT \"admin\" FROM \"Users\" WHERE email=? LIMIT 1";
-        try {
-            log.info("Validating user with email {} is admin", userEmail);
-            PreparedStatement selectUser = connection.prepareStatement(sql);
-            selectUser.setString(1, userEmail);
-            log.info("Executing {}", selectUser.toString());
-            ResultSet resultSet = selectUser.executeQuery();
-            resultSet.next();
-            return resultSet.getBoolean("admin");
+        try{
+            String sql = "SELECT * FROM \"Users\" WHERE email=? LIMIT 1";
+            PreparedStatement statement = connection.prepareStatement(sql);
+            statement.setString(1, email);
+            log.info("Executing {}", statement);
+            ResultSet set = statement.executeQuery();
+            if(set.next()){
+                return deserializeUser(set);
+            } else {
+                return null;
+            }
         } catch (Exception e){
-            log.error("Error fetching user", e);
-            return false;
+            log.error("Error getting user with email={}", email, e);
+            return null;
         } finally {
             DBUtil.closeConnection(connection);
         }
+    }
+
+    public boolean userIsAdmin (String  userEmail){
+       User user = getUserWithEmail(userEmail);
+       return user.isAdmin();
     }
 
     public User createDefaultAdmin(){
@@ -130,6 +138,28 @@ public class UserService {
         user = createNewUser(user);
         makeDepartmentAdmin(user);
         return user;
+    }
+
+    private User deserializeUser (ResultSet set){
+        User user = new User();
+        try{
+            user.setId(set.getInt("id"));
+            user.setEmail(set.getString("email"));
+            user.setPassword(set.getString("password"));
+            user.setName(set.getString("name"));
+            user.setLastName(set.getString("lastname"));
+            user.setActivated(set.getBoolean("activated"));
+            user.setAdmin(set.getBoolean("admin"));
+            user.setAutoApprove(set.getBoolean("auto_approve"));
+            user.setStartDate(set.getTimestamp("start_date"));
+            user.setEndDate(set.getTimestamp("end_date"));
+            user.setCompanyID(set.getInt("companyId"));
+            user.setDepartmentID(set.getInt("DepartmentId"));
+            return user;
+        } catch (Exception e){
+            log.error("Error deserializing user", e);
+            return null;
+        }
     }
 
 }
