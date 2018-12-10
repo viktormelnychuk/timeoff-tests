@@ -5,10 +5,10 @@ import com.viktor.timeofftests.common.db.DbConnection;
 import com.viktor.timeofftests.models.Department;
 import lombok.extern.log4j.Log4j2;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.Timestamp;
+import java.sql.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 @Log4j2
 public class DepartmentService {
@@ -40,18 +40,10 @@ public class DepartmentService {
         String sql = "SELECT * FROM \"Departments\" WHERE name=? AND \"companyId\"= ? LIMIT 1";
         log.info("Getting department with name=[{}] and companyId=[{}]",name,companyId);
         try {
-            PreparedStatement getDepartment = connection.prepareStatement(sql);
-            getDepartment.setString(1, name);
-            getDepartment.setInt(2, companyId);
-            log.info("Executing {}", getDepartment.toString());
-            ResultSet resultSet = getDepartment.executeQuery();
-            resultSet.next();
-            if(resultSet.next()){
-                return deserializeDepartment(resultSet);
-            } else {
-                return null;
-            }
-
+            PreparedStatement statement = connection.prepareStatement(sql);
+            statement.setString(1, name);
+            statement.setInt(2, companyId);
+            return getDepartment(statement);
         } catch (Exception e){
             log.error("Error occurred", e);
             return null;
@@ -59,6 +51,23 @@ public class DepartmentService {
             DBUtil.closeConnection(connection);
         }
     }
+
+    public Department getDepartmentWithId(int id) {
+        Connection connection = DbConnection.getConnection();
+        log.info("Getting department with id={}",id);
+        try{
+            String sql = "SELECT * FROM \"Departments\" WHERE id=?";
+            PreparedStatement statement = connection.prepareStatement(sql);
+            statement.setInt(1, id);
+            return getDepartment(statement);
+        } catch (SQLException e){
+            log.error("Error occurred", e);
+            return null;
+        }finally {
+            DBUtil.closeConnection(connection);
+        }
+    }
+
     public Department getDepartmentWithName (String name){
         Connection connection = DbConnection.getConnection();
         String sql = "SELECT * FROM \"Departments\" WHERE name=? LIMIT 1;";
@@ -66,16 +75,39 @@ public class DepartmentService {
         try {
             PreparedStatement statement = connection.prepareStatement(sql);
             statement.setString(1, name);
-            log.info("Executing {}", statement);
-            ResultSet resultSet = statement.executeQuery();
-            resultSet.next();
-            return deserializeDepartment(resultSet);
+            return getDepartment(statement);
         } catch (Exception e){
             log.error("Error ocurred", e);
             return null;
         } finally {
             DBUtil.closeConnection(connection);
         }
+    }
+    private Department getDepartment (PreparedStatement statement){
+        log.info("Executing {}", statement);
+        try {
+            ResultSet resultSet = statement.executeQuery();
+            if (resultSet.next()) {
+                return deserializeDepartment(resultSet);
+            } else {
+                return null;
+            }
+        } catch (SQLException e){
+            log.error("Error getting department", e);
+            return null;
+        }
+    }
+
+    public List<Department> insertDepartmentsForCompany(List<Department> departments){
+        List<Department> result = new ArrayList<>();
+        for (Department department : departments) {
+            result.add(saveDepartment(department));
+        }
+        return result;
+    }
+
+    public List<Department> insertDepartments (Department... departments){
+        return insertDepartmentsForCompany(Arrays.asList(departments));
     }
 
     public Department saveDepartment(Department department){
@@ -146,4 +178,5 @@ public class DepartmentService {
             return null;
         }
     }
+
 }
