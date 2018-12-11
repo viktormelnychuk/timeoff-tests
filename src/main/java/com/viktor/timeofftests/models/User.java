@@ -30,6 +30,10 @@ public class User {
 
     public User(){}
 
+    public String getFullName(){
+        return this.name + " " + this.lastName;
+    }
+
     @Log4j2
     public static class Builder {
         private String email = Constants.DEFAULT_USER_EMAIL;

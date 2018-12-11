@@ -8,10 +8,7 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 
 import java.sql.*;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
 @Log4j2
 public class DepartmentService {
@@ -111,6 +108,31 @@ public class DepartmentService {
 
     public List<Department> insertDepartments (Department... departments){
         return insertDepartmentsForCompany(Arrays.asList(departments));
+    }
+
+    public Integer getAmountOfUserInDepartment(Department department){
+        log.info("Getting amount of users in department {}", department);
+        Connection connection = DbConnection.getConnection();
+        try{
+            String sql = "SELECT * FROM \"Users\" WHERE \"DepartmentId\"=?";
+            PreparedStatement statement = connection.prepareStatement(sql, ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_READ_ONLY);
+            statement.setInt(1, department.getId());
+            log.info("Executing {}", statement);
+            ResultSet set = statement.executeQuery();
+            set.last();
+            return set.getRow();
+        } catch (Exception e){
+            log.error("Error getting users for department {}", department);
+            return null;
+        }
+    }
+
+    public Map<String, Integer> getAmountOfUsersInDepartments(List<Department> departments){
+        Map<String, Integer> result = new HashMap<>();
+        for (Department department : departments) {
+            result.put(department.getName(), getAmountOfUserInDepartment(department));
+        }
+        return result;
     }
 
     public Department saveDepartment(Department department){
