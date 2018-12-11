@@ -4,11 +4,14 @@ import com.viktor.timeofftests.common.db.DBUtil;
 import com.viktor.timeofftests.common.db.DbConnection;
 import com.viktor.timeofftests.models.Department;
 import lombok.extern.log4j.Log4j2;
+import org.openqa.selenium.By;
+import org.openqa.selenium.WebElement;
 
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 
 @Log4j2
 public class DepartmentService {
@@ -128,13 +131,15 @@ public class DepartmentService {
 
             log.info("Getting id of department with name {}",department.getName());
 
-            String selectSql = "SELECT id FROM \"Departments\" WHERE  \"Departments\".name = ? LIMIT 1";
+            String selectSql = "SELECT * FROM \"Departments\" WHERE  \"Departments\".name = ? LIMIT 1";
             PreparedStatement selectDep = connection.prepareStatement(selectSql);
             selectDep.setString(1,department.getName());
             log.info("Executing {}", selectDep.toString());
             ResultSet set = selectDep.executeQuery();
             set.next();
             department.setId(set.getInt("id"));
+            department.setCompanyId(set.getInt("companyId"));
+            department.setBossId(set.getInt("bossId"));
             return department;
 
         } catch (Exception e){
@@ -165,18 +170,54 @@ public class DepartmentService {
 
     private Department deserializeDepartment(ResultSet set){
         try{
-            return new Department.Builder()
-                    .withName(set.getString("name"))
-                    .withAllowance(set.getInt("allowance"))
-                    .includePublicHolidays(set.getBoolean("include_public_holidays"))
-                    .isAccuredAllowance(set.getBoolean("is_accrued_allowance"))
-                    .inCompany(set.getInt("companyId"))
-                    .withAdminUserId(set.getInt("bossId"))
-                    .build();
+            Department department = new Department();
+            department.setName(set.getString("name"));
+            department.setAllowance(set.getInt("allowance"));
+            department.setAccuredAllowance(set.getBoolean("is_accrued_allowance"));
+            department.setIncludePublicHolidays(set.getBoolean("include_public_holidays"));
+            department.setId(set.getInt("id"));
+            department.setCompanyId(set.getInt("companyId"));
+            department.setBossId(set.getInt("bossId"));
+            return department;
         } catch (Exception e){
             log.error("Error deserializing department", e);
             return null;
         }
     }
 
+    public List<Department> deserializeDepartments(List<WebElement> table) {
+        List<Department> result = new ArrayList<>();
+        for (WebElement row:table) {
+            Department department = new Department();
+            String depLink = row.findElement(By.xpath(".//td[1]/a")).getAttribute("href");
+            String depId = depLink.split("/departments/edit/")[1].split("/")[0];
+            department.setId(Integer.parseInt(depId));
+
+            String bossLink = row.findElement(By.xpath(".//td[2]/a")).getAttribute("href");
+            try {
+                String bossId = bossLink.split("/users/edit/")[1].split("/")[0];
+                department.setBossId(Integer.parseInt(bossId));
+            } catch (IndexOutOfBoundsException e){
+                department.setBossId(0);
+            }
+
+            department.setName(row.findElement(By.xpath(".//td[1]")).getText());
+
+            int allowance = Integer.parseInt(row.findElement(By.xpath(".//td[3]")).getText());
+            department.setAllowance(allowance);
+
+            String publicHolidays = row.findElement(By.xpath(".//td[5]")).getText();
+            department.setIncludePublicHolidays(getBoolFromYesNo(publicHolidays));
+
+            String accruedAllowance = row.findElement(By.xpath(".//td[6]")).getText();
+            department.setAccuredAllowance(getBoolFromYesNo(accruedAllowance));
+            department.setCompanyId(CompanyService.getInstance().getCompanyForDepartmentWithId(department.getId()).getId());
+            result.add(department);
+        }
+        return result;
+    }
+
+    private boolean getBoolFromYesNo(String word){
+        return Objects.equals(word, "Yes");
+    }
 }

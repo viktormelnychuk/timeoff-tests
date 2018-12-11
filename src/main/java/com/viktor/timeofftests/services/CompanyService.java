@@ -5,6 +5,7 @@ import com.viktor.timeofftests.common.db.DBUtil;
 import com.viktor.timeofftests.common.db.DbConnection;
 import com.viktor.timeofftests.models.Company;
 import com.viktor.timeofftests.models.Schedule;
+import com.viktor.timeofftests.steps.PreparationSteps;
 import lombok.extern.log4j.Log4j2;
 
 import java.sql.Connection;
@@ -33,6 +34,26 @@ public class CompanyService {
             return saveCompany(newCompany);
         } else {
             return company;
+        }
+    }
+
+    public Company getCompanyForDepartmentWithId(int departmentId){
+        Connection connection = DbConnection.getConnection();
+        log.info("Getting company of department[id={}]", departmentId);
+        try{
+            String sql = "SELECT * FROM \"Companies\" WHERE id=(SELECT \"companyId\" FROM \"Departments\" WHERE id=?)";
+            PreparedStatement statement = connection.prepareStatement(sql);
+            statement.setInt(1, departmentId);
+            log.info("Executing {}", statement);
+            ResultSet set = statement.executeQuery();
+            if(set.next()){
+                return deserializeComapny(set);
+            } else {
+                return null;
+            }
+        } catch (Exception e){
+            log.error("Error getting company", e);
+            return null;
         }
     }
 

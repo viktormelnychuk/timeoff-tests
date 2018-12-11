@@ -73,6 +73,11 @@ public class User {
             return this;
         }
 
+        public Builder inCompany(int companyID){
+            this.companyID = companyID;
+            return this;
+        }
+
         public Builder inCompany(String companyName){
             Company company = CompanyService.getInstance().getOrCreateCompanyWithName(companyName);
             this.companyID = company.getId();

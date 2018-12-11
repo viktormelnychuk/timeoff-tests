@@ -16,7 +16,7 @@ public class Department {
     private int companyId;
     private int bossId;
 
-    private Department(){}
+    public Department(){}
 
     @Log4j2
     public static class Builder {
