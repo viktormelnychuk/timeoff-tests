@@ -1,6 +1,7 @@
 package com.viktor.timeofftests.pages;
 
 import com.viktor.timeofftests.models.Department;
+import com.viktor.timeofftests.pages.partials.modals.AddNewDepartmentModal;
 import com.viktor.timeofftests.services.DepartmentService;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
@@ -14,6 +15,7 @@ public class DepartmentsPage extends BasePage {
     private WebDriver driver;
     private DepartmentService departmentService = DepartmentService.getInstance();
     private By departmentsTable = By.xpath("//table[@class='table table-hover']//tbody/tr");
+    private By addNewDepartmentButton = By.id("add_new_department_btn");
     public DepartmentsPage (WebDriver driver){
         super(driver);
         this.driver = driver;
@@ -56,5 +58,10 @@ public class DepartmentsPage extends BasePage {
             result.put(department.getName(), numberOfEmployeesDisplayed);
         }
         return result;
+    }
+
+    public AddNewDepartmentModal clickAddNewDepartmentButton(){
+        clickButton(addNewDepartmentButton);
+        return new AddNewDepartmentModal(this.driver);
     }
 }
