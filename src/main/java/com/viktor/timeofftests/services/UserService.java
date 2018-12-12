@@ -4,6 +4,7 @@ import com.viktor.timeofftests.common.db.DBUtil;
 import com.viktor.timeofftests.common.db.DbConnection;
 import com.viktor.timeofftests.models.Company;
 import com.viktor.timeofftests.models.User;
+import com.viktor.timeofftests.pools.UserPool;
 import lombok.extern.log4j.Log4j2;
 
 import java.sql.Connection;
@@ -90,7 +91,7 @@ public class UserService {
             log.info("Executing {}", statement.toString());
             ResultSet resultSet = statement.executeQuery();
             if(resultSet.next()){
-                return companyService.deserializeComapny(resultSet);
+                return companyService.deserializeCompany(resultSet);
             } else {
                 return null;
             }
@@ -162,4 +163,13 @@ public class UserService {
         }
     }
 
+    public User createRandomUser() {
+        User user = new User.Builder()
+                .withEmail(UserPool.getEmail())
+                .withName(UserPool.getName())
+                .withLastName(UserPool.getLastName())
+                .build();
+        log.info("Creating user {}", user);
+        return createNewUser(user);
+    }
 }

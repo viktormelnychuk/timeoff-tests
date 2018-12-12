@@ -4,14 +4,9 @@ import com.viktor.timeofftests.common.Constants;
 import com.viktor.timeofftests.common.db.DBUtil;
 import com.viktor.timeofftests.common.db.DbConnection;
 import com.viktor.timeofftests.models.Company;
-import com.viktor.timeofftests.models.Schedule;
-import com.viktor.timeofftests.steps.PreparationSteps;
 import lombok.extern.log4j.Log4j2;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.Timestamp;
+import java.sql.*;
 
 @Log4j2
 public class CompanyService {
@@ -36,6 +31,27 @@ public class CompanyService {
             return company;
         }
     }
+    public Company getOneExistingCompany() {
+        Connection connection = DbConnection.getConnection();
+        log.info("Getting company");
+        try{
+            String sql = "SELECT * FROM \"Companies\"";
+            PreparedStatement statement = connection.prepareStatement(sql, ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_READ_ONLY);
+            log.info("Executing {}", statement);
+            ResultSet set = statement.executeQuery();
+            set.last();
+            if(set.getRow() > 1){
+                throw new Exception("More than one company was found. Please set companyId explicitly");
+            }
+            set.first();
+            return deserializeCompany(set);
+        } catch (Exception e){
+            log.error("Error getting companies", e);
+            return null;
+        } finally {
+            DBUtil.closeConnection(connection);
+        }
+    }
 
     public Company getCompanyForDepartmentWithId(int departmentId){
         Connection connection = DbConnection.getConnection();
@@ -47,7 +63,7 @@ public class CompanyService {
             log.info("Executing {}", statement);
             ResultSet set = statement.executeQuery();
             if(set.next()){
-                return deserializeComapny(set);
+                return deserializeCompany(set);
             } else {
                 return null;
             }
@@ -67,7 +83,7 @@ public class CompanyService {
             log.info("Executing {}", getCompany);
             ResultSet set = getCompany.executeQuery();
             if(set.next()){
-                return deserializeComapny(set);
+                return deserializeCompany(set);
             } else {
                 return null;
             }
@@ -89,7 +105,7 @@ public class CompanyService {
             log.info("Executing {}", getCompany);
             ResultSet set = getCompany.executeQuery();
             if (set.next()){
-                return deserializeComapny(set);
+                return deserializeCompany(set);
             } else {
                 return null;
             }
@@ -150,7 +166,7 @@ public class CompanyService {
 
     }
 
-    Company deserializeComapny(ResultSet resultSet){
+    Company deserializeCompany(ResultSet resultSet){
         try {
             return new Company.Builder()
                     .withId(resultSet.getInt("id"))

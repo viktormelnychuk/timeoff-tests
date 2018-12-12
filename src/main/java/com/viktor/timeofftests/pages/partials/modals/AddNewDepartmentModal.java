@@ -10,10 +10,11 @@ public class AddNewDepartmentModal extends BasePage {
     private WebDriver driver;
     private By nameInput = By.id("department_name_new");
     private By allowanceSelect = By.xpath("//select[@name='allowance__new']");
-    private By includePublicChk = By.id("include_public_holidays__new");
+    private By includePublicChk = By.id("department_include_public_holiday_new");
     private By accruedAllowanceChk = By.id("department_is_accrued_allowance_new");
     private By bossSelect = By.xpath("//select[@name='boss_id__new']");
-    private By createButton = By.xpath("//form[@id='add_new_department_form'//button[@type='submit']");
+    private By createButton = By.xpath("//form[@id='add_new_department_form']//button[@type='submit']");
+    private By form = By.id("add_new_department_form");
     public AddNewDepartmentModal(WebDriver driver){
         super(driver);
         this.driver = driver;
@@ -45,9 +46,32 @@ public class AddNewDepartmentModal extends BasePage {
         return this;
     }
 
+    public AddNewDepartmentModal setBoss (int userId){
+        selectOption(bossSelect, String.valueOf(userId));
+        return this;
+    }
+
+    public boolean publicHolidaysChecked(){
+        return findOne(includePublicChk).isSelected();
+    }
+
+    public boolean accruedChecked(){
+        return findOne(accruedAllowanceChk).isSelected();
+    }
+
+
     public DepartmentsPage clickCreateButtonExpectingSuccess(){
         clickButton(createButton);
         return new DepartmentsPage(this.driver);
+    }
+
+    public AddNewDepartmentModal clickCreateButtonExpectingFailure(){
+        clickButton(createButton);
+        return this;
+    }
+
+    public boolean modalDisplayed(){
+        return findOne(form).isDisplayed();
     }
 
     @Override

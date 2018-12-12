@@ -57,12 +57,59 @@ public class DepartmentsTest extends BaseTest {
 
     @Test
     void addNewDepartment(){
+        User secondUser = userService.createRandomUser();
         departmentsPage.navigate();
-        AddNewDepartmentModal modal = departmentsPage.clickAddNewDepartmentButton();
-        departmentsPage = modal.fillName("Name")
+        AddNewDepartmentModal addFirst = departmentsPage.clickAddNewDepartmentButton();
+        departmentsPage = addFirst.fillName("Department1")
                 .selectAllowance("20")
                 .setIncludePublicHolidays(true)
                 .setAccruedAllowance(true)
+                .setBoss(secondUser.getId())
                 .clickCreateButtonExpectingSuccess();
+        AddNewDepartmentModal addSecond = departmentsPage.clickAddNewDepartmentButton();
+        departmentsPage = addSecond
+                .fillName("Department2")
+                .selectAllowance("30")
+                .setIncludePublicHolidays(false)
+                .setAccruedAllowance(true)
+                .setBoss(user.getId())
+                .clickCreateButtonExpectingSuccess();
+        AddNewDepartmentModal addThird = departmentsPage.clickAddNewDepartmentButton();
+        departmentsPage = addThird
+                .fillName("Department3")
+                .selectAllowance("2")
+                .setIncludePublicHolidays(true)
+                .setAccruedAllowance(false)
+                .setBoss(secondUser.getId())
+                .clickCreateButtonExpectingSuccess();
+        AddNewDepartmentModal addFourth = departmentsPage.clickAddNewDepartmentButton();
+        departmentsPage = addThird
+                .fillName("Department3")
+                .selectAllowance("0")
+                .setIncludePublicHolidays(true)
+                .setAccruedAllowance(false)
+                .setBoss(secondUser.getId())
+                .clickCreateButtonExpectingSuccess();
+        List<Department> visible = departmentsPage.getDisplayedDepartments();
+        List<Department> inDb = departmentService.getAllDepartmentsForCompany(secondUser.getCompanyID());
+        assertThat(visible, containsInAnyOrder(inDb.toArray(new Department[inDb.size()])));
+    }
+
+    @Test
+    void nameRequiredWhenCreatingDepartment(){
+        departmentsPage.navigate();
+        AddNewDepartmentModal modal = departmentsPage.clickAddNewDepartmentButton();
+        modal = modal.clickCreateButtonExpectingFailure();
+        assertThat(modal.modalDisplayed(), describedAs("modal displayed",is(true)));
+    }
+
+    @Test
+    void checkDefaultModalState(){
+        departmentsPage.navigate();
+        AddNewDepartmentModal modal = departmentsPage.clickAddNewDepartmentButton();
+        assertAll(
+                ()-> assertThat(modal.publicHolidaysChecked(), describedAs("public holidays checked",is(true))),
+                ()-> assertThat(modal.accruedChecked(), describedAs("accrued checked",is(false)))
+        );
     }
 }

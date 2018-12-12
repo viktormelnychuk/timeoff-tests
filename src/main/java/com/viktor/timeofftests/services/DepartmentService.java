@@ -83,6 +83,50 @@ public class DepartmentService {
             DBUtil.closeConnection(connection);
         }
     }
+    public Department getOneExistingDepartment(int companyID) {
+        log.info("Getting 1 department in company with id={}", companyID);
+        Connection connection = DbConnection.getConnection();
+        try{
+            String sql = "SELECT * FROM \"Departments\" WHERE \"companyId\"=?";
+            PreparedStatement statement = connection.prepareStatement(sql, ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_READ_ONLY);
+            statement.setInt(1, companyID);
+            log.info("Executing {}", statement);
+            ResultSet set = statement.executeQuery();
+            set.last();
+            if(set.getRow() > 1){
+                throw new Exception(String.format("Company with id=%d contains more than 1 department." +
+                        " Please set departmentId explicitly", companyID));
+            }
+            set.first();
+            return deserializeDepartment(set);
+        } catch (Exception e){
+            log.error("Error getting department for company with id={}", companyID, e);
+            return null;
+        }
+    }
+
+    public List<Department> getAllDepartmentsForCompany(int companyID) {
+        log.info("Getting all departments for company with id={}", companyID);
+        Connection connection = DbConnection.getConnection();
+        try{
+            List<Department> result = new ArrayList<>();
+            String sql = "SELECT * FROM \"Departments\" WHERE \"companyId\"=?";
+            PreparedStatement statement = connection.prepareStatement(sql);
+            statement.setInt(1, companyID);
+            log.info("Executing {}", statement);
+            ResultSet set = statement.executeQuery();
+            while (set.next()) {
+                result.add(deserializeDepartment(set));
+            }
+            return result;
+        } catch (Exception e){
+            log.error("Error getting departments", e);
+            return null;
+        } finally {
+            DBUtil.closeConnection(connection);
+        }
+    }
+
     private Department getDepartment (PreparedStatement statement){
         log.info("Executing {}", statement);
         try {

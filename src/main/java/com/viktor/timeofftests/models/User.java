@@ -98,6 +98,11 @@ public class User {
             return this;
         }
 
+        public Builder inDepartment (int departmentID){
+            this.departmentID = departmentID;
+            return this;
+        }
+
         public Builder isAdmin(){
             this.admin = true;
             return this;
@@ -124,6 +129,12 @@ public class User {
         }
 
         public User build(){
+            if(this.companyID == 0){
+                this.companyID = CompanyService.getInstance().getOneExistingCompany().getId();
+            }
+            if(this.departmentID == 0){
+                this.departmentID = DepartmentService.getInstance().getOneExistingDepartment(this.companyID).getId();
+            }
             User user = new User();
             user.setEmail(this.email);
             user.setPassword(this.password);
