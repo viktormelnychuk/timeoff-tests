@@ -268,8 +268,13 @@ public class DepartmentService {
             }
 
             department.setName(row.findElement(By.xpath(".//td[1]")).getText());
-
-            int allowance = Integer.parseInt(row.findElement(By.xpath(".//td[3]")).getText());
+            String allowanceString = row.findElement(By.xpath(".//td[3]")).getText();
+            int allowance;
+            if(allowanceString.equals("None")){
+                allowance = 0;
+            } else {
+                allowance = Integer.parseInt(allowanceString);
+            }
             department.setAllowance(allowance);
 
             String publicHolidays = row.findElement(By.xpath(".//td[5]")).getText();
