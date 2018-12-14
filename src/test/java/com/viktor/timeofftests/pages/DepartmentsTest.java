@@ -57,41 +57,44 @@ public class DepartmentsTest extends BaseTest {
 
     @Test
     void addNewDepartment(){
+        User firstUser = userService.createRandomUser();
         User secondUser = userService.createRandomUser();
+        User thirdUser = userService.createRandomUser();
+        User fourthUser = userService.createRandomUser();
         departmentsPage.navigate();
-        AddNewDepartmentModal addFirst = departmentsPage.clickAddNewDepartmentButton();
-        departmentsPage = addFirst.fillName("Department1")
+        AddNewDepartmentModal addNewDepartmentModal = departmentsPage.clickAddNewDepartmentButton();
+        departmentsPage = addNewDepartmentModal.fillName("Department1")
                 .selectAllowance("20")
                 .setIncludePublicHolidays(true)
                 .setAccruedAllowance(true)
-                .setBoss(secondUser.getId())
+                .setBoss(firstUser.getId())
                 .clickCreateButtonExpectingSuccess();
-        AddNewDepartmentModal addSecond = departmentsPage.clickAddNewDepartmentButton();
-        departmentsPage = addSecond
+        departmentsPage.clickAddNewDepartmentButton();
+        departmentsPage = addNewDepartmentModal
                 .fillName("Department2")
                 .selectAllowance("30")
                 .setIncludePublicHolidays(false)
                 .setAccruedAllowance(true)
-                .setBoss(user.getId())
+                .setBoss(secondUser.getId())
                 .clickCreateButtonExpectingSuccess();
-        AddNewDepartmentModal addThird = departmentsPage.clickAddNewDepartmentButton();
-        departmentsPage = addThird
+        departmentsPage.clickAddNewDepartmentButton();
+        departmentsPage = addNewDepartmentModal
                 .fillName("Department3")
                 .selectAllowance("2")
                 .setIncludePublicHolidays(true)
                 .setAccruedAllowance(false)
-                .setBoss(secondUser.getId())
+                .setBoss(thirdUser.getId())
                 .clickCreateButtonExpectingSuccess();
-        AddNewDepartmentModal addFourth = departmentsPage.clickAddNewDepartmentButton();
-        departmentsPage = addThird
+        departmentsPage.clickAddNewDepartmentButton();
+        departmentsPage = addNewDepartmentModal
                 .fillName("Department3")
                 .selectAllowance("0")
                 .setIncludePublicHolidays(true)
                 .setAccruedAllowance(false)
-                .setBoss(secondUser.getId())
+                .setBoss(fourthUser.getId())
                 .clickCreateButtonExpectingSuccess();
         List<Department> visible = departmentsPage.getDisplayedDepartments();
-        List<Department> inDb = departmentService.getAllDepartmentsForCompany(secondUser.getCompanyID());
+        List<Department> inDb = departmentService.getAllDepartmentsForCompany(user.getCompanyID());
         assertThat(visible, containsInAnyOrder(inDb.toArray(new Department[inDb.size()])));
     }
 

@@ -29,5 +29,7 @@ session id generated with uid(24) where uid is [https://www.npmjs.com/package/ui
 1. Make db clearing run on before class instead of before method (increase performance?, allow to process same preconditons in @BeforeAll)
 2. ~~Move to AssertJ~~ [NOPE]
 
-# !!!Very important!!!
-ADD NEW LAYER: Add layer of test steps (e.g. UserSteps should create new user in db in necessary, contain assertions via `validate*` methods
+
+# Bugs
+1. In the DepartmentsTest::addNewDepartment department managers are not part of the department.
+Looks like bug for me
