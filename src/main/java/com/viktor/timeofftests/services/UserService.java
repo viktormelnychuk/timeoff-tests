@@ -3,7 +3,9 @@ package com.viktor.timeofftests.services;
 import com.viktor.timeofftests.common.db.DBUtil;
 import com.viktor.timeofftests.common.db.DbConnection;
 import com.viktor.timeofftests.models.Company;
+import com.viktor.timeofftests.models.Department;
 import com.viktor.timeofftests.models.User;
+import com.viktor.timeofftests.pools.DepartmentPool;
 import com.viktor.timeofftests.pools.UserPool;
 import lombok.extern.log4j.Log4j2;
 
@@ -11,7 +13,9 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Timestamp;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 @Log4j2
 public class UserService {
@@ -102,7 +106,27 @@ public class UserService {
             DBUtil.closeConnection(connection);
         }
     }
-
+    public List<User> getAllUsersInDepartment(Department department) {
+        log.info("Getting all users in department id={}", department.getId());
+        Connection connection = DbConnection.getConnection();
+        List<User> users = new ArrayList<>();
+        try{
+            String sql = "SELECT * FROM \"Users\" WHERE \"DepartmentId\"=?";
+            PreparedStatement statement = connection.prepareStatement(sql);
+            statement.setInt(1, department.getId());
+            log.info("Executin {}", statement);
+            ResultSet set = statement.executeQuery();
+            while (set.next()){
+                users.add(deserializeUser(set));
+            }
+            return users;
+        } catch (Exception e){
+            log.error("Error getting all users in department id={}", department.getId(), e);
+            return null;
+        } finally {
+            DBUtil.closeConnection(connection);
+        }
+    }
     public User getUserWithEmail(String email){
         log.info("Getting user with email={}", email);
         Connection connection = DbConnection.getConnection();
@@ -135,6 +159,7 @@ public class UserService {
                 .isAdmin()
                 .inCompany("Acme")
                 .inDepartment("Sales")
+                .isAutoApproved()
                 .build();
         user = createNewUser(user);
         makeDepartmentAdmin(user);
@@ -168,6 +193,17 @@ public class UserService {
                 .withEmail(UserPool.getEmail())
                 .withName(UserPool.getName())
                 .withLastName(UserPool.getLastName())
+                .build();
+        log.info("Creating user {}", user);
+        return createNewUser(user);
+    }
+
+    public User createRandomUsersInDifferentDepartments() {
+        User user = new User.Builder()
+                .withEmail(UserPool.getEmail())
+                .withName(UserPool.getName())
+                .withLastName(UserPool.getLastName())
+                .inDepartment(DepartmentPool.getDepartmentName())
                 .build();
         log.info("Creating user {}", user);
         return createNewUser(user);

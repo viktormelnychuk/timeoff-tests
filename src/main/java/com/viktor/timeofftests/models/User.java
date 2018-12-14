@@ -44,7 +44,7 @@ public class User {
         private String lastName = Constants.DEFAULT_USER_LAST_NAME;
         private boolean activated = true;
         private boolean admin = false;
-        private boolean autoApprove = true;
+        private boolean autoApprove = false;
         private Timestamp startDate = new Timestamp(new Date().getTime());
         private Timestamp endDate;
         private int companyID;
@@ -94,6 +94,9 @@ public class User {
         }
 
         public Builder inDepartment (String departmentName){
+            if(this.companyID == 0){
+                this.companyID = CompanyService.getInstance().getOneExistingCompany().getId();
+            }
             this.departmentID = DepartmentService.getInstance().getOrCreateDepartmentWithName(departmentName,this.companyID).getId();
             return this;
         }

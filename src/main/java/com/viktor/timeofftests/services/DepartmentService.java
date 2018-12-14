@@ -3,6 +3,7 @@ package com.viktor.timeofftests.services;
 import com.viktor.timeofftests.common.db.DBUtil;
 import com.viktor.timeofftests.common.db.DbConnection;
 import com.viktor.timeofftests.models.Department;
+import com.viktor.timeofftests.models.User;
 import lombok.extern.log4j.Log4j2;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
@@ -231,6 +232,16 @@ public class DepartmentService {
             log.error("Error updating department", e);
         } finally {
             DBUtil.closeConnection(connection);
+        }
+    }
+
+    public void setBossesForAllDepartments(int companyID){
+        List<Department> departments = getAllDepartmentsForCompany(companyID);
+        for (Department department : departments) {
+            List<User> usersInDepartment = UserService.getInstance().getAllUsersInDepartment(department);
+            for (User user : usersInDepartment) {
+                UserService.getInstance().makeDepartmentAdmin(user);
+            }
         }
     }
 
