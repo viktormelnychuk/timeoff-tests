@@ -26,12 +26,8 @@ public class DepartmentsPage extends BasePage {
     public DepartmentsPage navigate(){
         if(DriverUtil.sessionCookiePresent(this.driver)){
            return menuBar.navigateToDepartments();
-        } else {
-            LoginPage loginPage = new LoginPage(driver);
-            loginPage.open();
-            loginPage.loginWithDefaultUser();
-            return menuBar.navigateToDepartments();
         }
+        else return null;
     }
 
     public List<Department> getDisplayedDepartments(){

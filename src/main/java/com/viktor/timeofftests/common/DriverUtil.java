@@ -1,6 +1,7 @@
 package com.viktor.timeofftests.common;
 
 import com.viktor.timeofftests.models.Session;
+import com.viktor.timeofftests.services.SessionService;
 import lombok.extern.log4j.Log4j2;
 import org.openqa.selenium.Cookie;
 import org.openqa.selenium.WebDriver;
@@ -26,7 +27,7 @@ public class DriverUtil {
         } else if (driverType == DriverEnum.CHROME){
             ChromeOptions chromeOptions = new ChromeOptions();
             chromeOptions.addArguments("headless");
-            return new ChromeDriver();
+            return new ChromeDriver(chromeOptions);
         }
         return new FirefoxDriver();
     }
@@ -54,12 +55,20 @@ public class DriverUtil {
         }
     }
 
+    public static void simulateLoginForUser(int userId, WebDriver driver){
+        log.info("Inserting cookies for user with id={}", userId);
+        Session s = SessionService.getInstance().insertNewSessionForUserId(userId);
+        setSessionCookie(s, driver);
+        log.info("Navigating to Calendar page");
+        driver.get("http://localhost:3000/calendar/");
+    }
+
     public static void setSessionCookie(Session session, WebDriver driver){
         Calendar calendar = Calendar.getInstance();
         driver.get("http://localhost:3000/404");
         calendar.roll(Calendar.YEAR, -10);
         Date expiry = calendar.getTime();
-        Cookie cookie = new Cookie("connection.sid", session.getSid());
+        Cookie cookie = new Cookie("connect.sid", session.getSid());
         driver.manage().addCookie(cookie);
     }
 

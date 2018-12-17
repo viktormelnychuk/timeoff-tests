@@ -1,5 +1,6 @@
 package com.viktor.timeofftests.pages;
 
+import com.viktor.timeofftests.common.DriverUtil;
 import com.viktor.timeofftests.models.Department;
 import com.viktor.timeofftests.models.User;
 import com.viktor.timeofftests.pages.partials.modals.AddNewDepartmentModal;
@@ -9,6 +10,7 @@ import com.viktor.timeofftests.steps.PreparationSteps;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.openqa.selenium.WebDriver;
 
 import java.util.List;
 import java.util.Map;
@@ -23,8 +25,10 @@ public class DepartmentsTest extends BaseTest {
     private DepartmentsPage departmentsPage;
     @BeforeEach
     void prepare(){
+        WebDriver driver = getDriver();
         user = userService.createDefaultAdmin();
-        departmentsPage = new DepartmentsPage(getDriver());
+        DriverUtil.simulateLoginForUser(user.getId(), driver);
+        departmentsPage = new DepartmentsPage(driver);
     }
 
     @Test

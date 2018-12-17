@@ -1,5 +1,6 @@
 package com.viktor.timeofftests.pages;
 
+import com.viktor.timeofftests.common.DriverUtil;
 import com.viktor.timeofftests.models.*;
 import com.viktor.timeofftests.pages.partials.modals.AddNewLeaveTypeModal;
 import com.viktor.timeofftests.pages.partials.modals.NewAbsenceModal;
@@ -10,6 +11,7 @@ import com.viktor.timeofftests.pages.partials.settings.LeaveTypesSettings;
 import com.viktor.timeofftests.services.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.openqa.selenium.WebDriver;
 
 import java.util.Comparator;
 import java.util.Date;
@@ -29,8 +31,10 @@ public class GeneralSettingsTests extends BaseTest {
     private User user;
     @BeforeEach
     void prepare(){
+        WebDriver driver = getDriver();
         user = userService.createDefaultAdmin();
-        generalSettingsPage = new GeneralSettingsPage(getDriver());
+        DriverUtil.simulateLoginForUser(user.getId(), driver);
+        generalSettingsPage = new GeneralSettingsPage(driver);
         generalSettingsPage.navigate();
     }
 

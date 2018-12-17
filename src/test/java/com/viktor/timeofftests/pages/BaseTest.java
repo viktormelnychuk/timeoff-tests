@@ -38,7 +38,7 @@ public abstract class BaseTest extends ConciseAPI {
 
     @AfterAll
     static void afterAll(){
-        //driver.quit();
+        driver.quit();
     }
 
     @BeforeEach
