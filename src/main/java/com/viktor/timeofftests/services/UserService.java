@@ -188,10 +188,24 @@ public class UserService {
         }
     }
 
-    public User createRandomUser() {
+    public User createRandomUserInCompany(int companyId) {
         User user = new User.Builder()
                 .withEmail(UserPool.getEmail())
                 .withName(UserPool.getName())
+                .inCompany(companyId)
+                .withLastName(UserPool.getLastName())
+                .build();
+        log.info("Creating user {}", user);
+        return createNewUser(user);
+    }
+
+    public User createRandomUserInDepartment(int departmentId){
+        int companyId = DepartmentService.getInstance().getDepartmentWithId(departmentId).getCompanyId();
+        User user = new User.Builder()
+                .withEmail(UserPool.getEmail())
+                .withName(UserPool.getName())
+                .inCompany(companyId)
+                .inDepartment(departmentId)
                 .withLastName(UserPool.getLastName())
                 .build();
         log.info("Creating user {}", user);

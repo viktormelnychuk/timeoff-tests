@@ -64,4 +64,9 @@ public class DepartmentsPage extends BasePage {
         clickButton(addNewDepartmentButton);
         return new AddNewDepartmentModal(this.driver);
     }
+
+    public DepartmentPage clickDepartmentLink(String name) {
+        clickButton(By.linkText(name));
+        return new DepartmentPage(this.driver);
+    }
 }

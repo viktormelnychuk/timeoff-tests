@@ -57,10 +57,10 @@ public class DepartmentsTest extends BaseTest {
 
     @Test
     void addNewDepartment(){
-        User firstUser = userService.createRandomUser();
-        User secondUser = userService.createRandomUser();
-        User thirdUser = userService.createRandomUser();
-        User fourthUser = userService.createRandomUser();
+        User firstUser = userService.createRandomUserInCompany(user.getCompanyID());
+        User secondUser = userService.createRandomUserInCompany(user.getCompanyID());
+        User thirdUser = userService.createRandomUserInCompany(user.getCompanyID());
+        User fourthUser = userService.createRandomUserInCompany(user.getCompanyID());
         departmentsPage.navigate();
         AddNewDepartmentModal addNewDepartmentModal = departmentsPage.clickAddNewDepartmentButton();
         departmentsPage = addNewDepartmentModal.fillName("Department1")
@@ -113,6 +113,33 @@ public class DepartmentsTest extends BaseTest {
         assertAll(
                 ()-> assertThat(modal.publicHolidaysChecked(), describedAs("public holidays checked",is(true))),
                 ()-> assertThat(modal.accruedChecked(), describedAs("accrued checked",is(false)))
+        );
+    }
+
+    @Test
+    void adminCanChangeDepartmentName(){
+        String newDepartmentName = "Department 2";
+        Department department = new Department.Builder()
+                .withName("Department 1")
+                .withAllowance(20)
+                .inCompany(user.getCompanyID())
+                .includePublicHolidays(true)
+                .isAccuredAllowance(false)
+                .build();
+        departmentService.saveDepartment(department);
+        User secondUser = userService.createRandomUserInDepartment(department.getId());
+        userService.makeDepartmentAdmin(secondUser);
+        departmentsPage.navigate();
+
+        DepartmentPage departmentPage = departmentsPage.clickDepartmentLink(department.getName());
+        departmentPage = departmentPage
+                .fillName(newDepartmentName)
+                .clickSaveButton();
+        String alert = departmentPage.getAlert();
+        String expectedAlert = "Department "+ newDepartmentName + " was updated";
+        assertAll(
+                ()-> assertThat(alert, is(expectedAlert)),
+                ()-> assertThat(departmentService.getDepartmentWithId(department.getId()).getName(), is("Department 2"))
         );
     }
 }
