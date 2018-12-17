@@ -137,9 +137,13 @@ public class DepartmentsTest extends BaseTest {
                 .clickSaveButton();
         String alert = departmentPage.getAlert();
         String expectedAlert = "Department "+ newDepartmentName + " was updated";
+        departmentsPage = departmentsPage.navigate();
+        List<Department> displayedDepartments = departmentsPage.getDisplayedDepartments();
+        List<Department> allDepartmentsForCompany = departmentService.getAllDepartmentsForCompany(secondUser.getCompanyID());
         assertAll(
                 ()-> assertThat(alert, is(expectedAlert)),
-                ()-> assertThat(departmentService.getDepartmentWithId(department.getId()).getName(), is("Department 2"))
+                ()-> assertThat(departmentService.getDepartmentWithId(department.getId()).getName(), is("Department 2")),
+                ()-> assertThat(displayedDepartments, containsInAnyOrder(allDepartmentsForCompany.toArray()))
         );
     }
 }

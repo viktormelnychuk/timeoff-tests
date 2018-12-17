@@ -11,6 +11,8 @@ import org.openqa.selenium.firefox.FirefoxDriver;
 import java.io.UnsupportedEncodingException;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Objects;
+
 @Log4j2
 public class DriverUtil {
     private WebDriver driver;
@@ -24,14 +26,18 @@ public class DriverUtil {
         } else if (driverType == DriverEnum.CHROME){
             ChromeOptions chromeOptions = new ChromeOptions();
             chromeOptions.addArguments("headless");
-            return new ChromeDriver(chromeOptions);
+            return new ChromeDriver();
         }
         return new FirefoxDriver();
     }
 
     private static String getDriverCookie(String key, WebDriver driver){
         Cookie cookie = driver.manage().getCookieNamed(key);
-        return cookie.getValue();
+        if(Objects.isNull(cookie)){
+            return null;
+        } else {
+            return cookie.getValue();
+        }
     }
 
     public static String getSidFromCookies(WebDriver driver){
@@ -55,5 +61,10 @@ public class DriverUtil {
         Date expiry = calendar.getTime();
         Cookie cookie = new Cookie("connection.sid", session.getSid());
         driver.manage().addCookie(cookie);
+    }
+
+    public static boolean sessionCookiePresent(WebDriver driver){
+        String cookie = getDriverCookie("connect.sid", driver);
+        return Objects.nonNull(cookie);
     }
 }

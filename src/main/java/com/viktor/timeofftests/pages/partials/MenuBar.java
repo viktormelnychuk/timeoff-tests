@@ -1,6 +1,7 @@
 package com.viktor.timeofftests.pages.partials;
 
 import com.viktor.timeofftests.pages.BasePage;
+import com.viktor.timeofftests.pages.DepartmentsPage;
 import com.viktor.timeofftests.pages.LoginPage;
 import com.viktor.timeofftests.pages.partials.modals.NewAbsenceModal;
 import org.openqa.selenium.By;
@@ -14,7 +15,8 @@ public class MenuBar extends BasePage {
     private By logOutLink = By.linkText("Logout");
     private By employeesButton = By.linkText("Employees");
     private By newAbsenceButton = By.id("book_time_off_btn");
-
+    private By gearButton = By.xpath("//a[@href='#'][@role='button']");
+    private By departmentsButton = By.linkText("Departments");
     public String getBaseUrl() {
         return null;
     }
@@ -36,6 +38,12 @@ public class MenuBar extends BasePage {
     public NewAbsenceModal openNewAbsenceModal(){
         clickButton(newAbsenceButton);
         return new NewAbsenceModal(this.driver);
+    }
+
+    public DepartmentsPage navigateToDepartments(){
+        clickButton(gearButton);
+        clickButton(departmentsButton);
+        return new DepartmentsPage(this.driver);
     }
 
     public LoginPage logout(){

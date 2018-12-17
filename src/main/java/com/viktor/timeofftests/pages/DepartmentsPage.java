@@ -1,5 +1,6 @@
 package com.viktor.timeofftests.pages;
 
+import com.viktor.timeofftests.common.DriverUtil;
 import com.viktor.timeofftests.models.Department;
 import com.viktor.timeofftests.pages.partials.modals.AddNewDepartmentModal;
 import com.viktor.timeofftests.services.DepartmentService;
@@ -7,6 +8,7 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 
+import java.sql.Driver;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -22,11 +24,14 @@ public class DepartmentsPage extends BasePage {
     }
 
     public DepartmentsPage navigate(){
-        LoginPage loginPage  = new LoginPage(driver);
-        loginPage.open();
-        loginPage.loginWithDefaultUser();
-        driver.get(getBaseUrl());
-        return new DepartmentsPage(driver);
+        if(DriverUtil.sessionCookiePresent(this.driver)){
+           return menuBar.navigateToDepartments();
+        } else {
+            LoginPage loginPage = new LoginPage(driver);
+            loginPage.open();
+            loginPage.loginWithDefaultUser();
+            return menuBar.navigateToDepartments();
+        }
     }
 
     public List<Department> getDisplayedDepartments(){
