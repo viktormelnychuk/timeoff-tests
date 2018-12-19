@@ -10,6 +10,7 @@ import org.openqa.selenium.WebElement;
 
 import java.sql.*;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Log4j2
 public class DepartmentService {
@@ -178,6 +179,59 @@ public class DepartmentService {
             result.put(department.getName(), getAmountOfUserInDepartment(department));
         }
         return result;
+    }
+
+    public List<User> getAllUsersExcludingAdmin(int departmetnId){
+        log.info("Getting all users excluding admin for department id={}", departmetnId);
+        Connection connection = DbConnection.getConnection();
+        try{
+            String sql = "SELECT \"Users\".id FROM \"Users\" WHERE \"DepartmentId\"=?";
+            PreparedStatement statement = connection.prepareStatement(sql);
+            statement.setInt(1, departmetnId);
+            log.info("Executing {}", statement);
+            ResultSet set = statement.executeQuery();
+            List<User> users = new ArrayList<>();
+            int departmentAdminId = getDepartmentWithId(departmetnId).getBossId();
+            while (set.next()){
+                if(set.getInt("id")!=departmentAdminId){
+                    users.add(UserService.getInstance().getUserWithId(set.getInt("id")));
+                }
+
+            }
+            return users;
+        } catch (Exception e){
+            log.error("Error occurred", e);
+            return Collections.emptyList();
+        }
+    }
+
+    public List<Integer> getAllUsersIdsExcludingAdmin(int departmentId){
+        List<User> users = getAllUsersExcludingAdmin(departmentId);
+        return users.stream().map(User::getId).collect(Collectors.toList());
+    }
+
+    public List<User> getDepartmentSupervisors(int departmentId){
+        log.info("Getting department supervisors");
+        Connection connection = DbConnection.getConnection();
+        try{
+            String sql = "SELECT * FROM \"DepartmentSupervisor\" WHERE department_id=?";
+            PreparedStatement statement = connection.prepareStatement(sql);
+            statement.setInt(1, departmentId);
+            log.info("Executing {}", statement);
+            ResultSet set = statement.executeQuery();
+            List<User> users = new ArrayList<>();
+            while (set.next()){
+                users.add(UserService.getInstance().getUserWithId(set.getInt("user_id")));
+            }
+            return users;
+        } catch (Exception e){
+            log.error("Error occurred", e);
+            return Collections.emptyList();
+        }
+    }
+
+    public List<Integer> getDepartmentSupervisorsIds(int departmentId){
+        return getDepartmentSupervisors(departmentId).stream().map(User::getId).collect(Collectors.toList());
     }
 
     public Department saveDepartment(Department department){

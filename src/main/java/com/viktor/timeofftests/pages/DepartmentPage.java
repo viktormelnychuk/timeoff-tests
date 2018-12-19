@@ -1,5 +1,7 @@
 package com.viktor.timeofftests.pages;
 
+import com.viktor.timeofftests.models.Department;
+import com.viktor.timeofftests.pages.partials.modals.AddSupervisorsModal;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
@@ -14,6 +16,7 @@ public class DepartmentPage extends BasePage {
     private By accruedCheck = By.id("is_accrued_allowance_inp");
     private By saveChangesButton = By.id("save_changes_btn");
     private By alert = By.xpath("//div[@role='alert']");
+    private By addNewSecondarySupervisorLink = By.xpath("//form[@id='department_edit_form']//a[@data-vpp-add-new-secondary-supervisor='1']");
     @Override
     public String getBaseUrl() {
         return "http://localhost:3000/settings/departments/edit/%s/";
@@ -58,6 +61,22 @@ public class DepartmentPage extends BasePage {
     public DepartmentPage (WebDriver driver){
         super(driver);
         this.driver = driver;
+    }
+
+    public Department getDisplayedDepartment(){
+        Department department = new Department();
+        department.setName(getInputValue(nameInp));
+        department.setAllowance(Integer.parseInt(getSelectedOption(allowanceSelect)));
+        department.setBossId(Integer.parseInt(getSelectedOptionValue(managerSelect)));
+        department.setIncludePublicHolidays(isCheckboxChecked(usePublicHolidayCheck));
+        department.setAccuredAllowance(isCheckboxChecked(accruedCheck));
+        department.setId(Integer.parseInt(findOne(addNewSecondarySupervisorLink).getAttribute("data-department_id")));
+        return department;
+    }
+
+    public AddSupervisorsModal clickAddSecondarySupervisors(){
+        clickButton(addNewSecondarySupervisorLink);
+        return new AddSupervisorsModal(this.driver);
     }
 
     public String getAlert() {

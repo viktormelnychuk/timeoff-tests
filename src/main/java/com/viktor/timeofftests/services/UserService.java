@@ -149,6 +149,26 @@ public class UserService {
         }
     }
 
+    public User getUserWithId(int userId){
+        log.info("Getting user with id={}", userId);
+        Connection connection = DbConnection.getConnection();
+        try{
+            String sql = "SELECT * FROM \"Users\" WHERE id=?";
+            PreparedStatement statement = connection.prepareStatement(sql);
+            statement.setInt(1, userId);
+            log.info("Executing {}",statement);
+            ResultSet set = statement.executeQuery();
+            if(set.next()){
+                return deserializeUser(set);
+            } else {
+                return null;
+            }
+        } catch (Exception e){
+            log.error("Error getting user with id={}", userId);
+            return null;
+        }
+    }
+
     public boolean userIsAdmin (String  userEmail){
        User user = getUserWithEmail(userEmail);
        return user.isAdmin();
@@ -210,6 +230,14 @@ public class UserService {
                 .build();
         log.info("Creating user {}", user);
         return createNewUser(user);
+    }
+
+    public List<User> createRandomUsersInDepartment(int departmentId, int count){
+        List<User> result = new ArrayList<>();
+        for (int i = 0; i < count; i++){
+            result.add(createRandomUserInDepartment(departmentId));
+        }
+        return result;
     }
 
     public User createRandomUsersInDifferentDepartments() {

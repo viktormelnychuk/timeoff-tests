@@ -4,6 +4,7 @@ import com.viktor.timeofftests.common.DriverUtil;
 import com.viktor.timeofftests.models.Department;
 import com.viktor.timeofftests.models.User;
 import com.viktor.timeofftests.pages.partials.modals.AddNewDepartmentModal;
+import com.viktor.timeofftests.pages.partials.modals.AddSupervisorsModal;
 import com.viktor.timeofftests.services.DepartmentService;
 import com.viktor.timeofftests.services.UserService;
 import com.viktor.timeofftests.steps.PreparationSteps;
@@ -141,13 +142,97 @@ public class DepartmentsTest extends BaseTest {
                 .clickSaveButton();
         String alert = departmentPage.getAlert();
         String expectedAlert = "Department "+ newDepartmentName + " was updated";
-        departmentsPage = departmentsPage.navigate();
-        List<Department> displayedDepartments = departmentsPage.getDisplayedDepartments();
-        List<Department> allDepartmentsForCompany = departmentService.getAllDepartmentsForCompany(secondUser.getCompanyID());
         assertAll(
                 ()-> assertThat(alert, is(expectedAlert)),
-                ()-> assertThat(departmentService.getDepartmentWithId(department.getId()).getName(), is("Department 2")),
-                ()-> assertThat(displayedDepartments, containsInAnyOrder(allDepartmentsForCompany.toArray()))
+                ()-> assertThat(departmentService.getDepartmentWithId(department.getId()).getName(), is("Department 2"))
         );
+    }
+
+    @Test
+    void changeDepartmentAdmin(){
+        Department defaultDep = departmentService.getDepartmentWithId(user.getDepartmentID());
+        User secondUser = userService.createRandomUserInDepartment(defaultDep.getId());
+        departmentsPage.navigate();
+        DepartmentPage departmentPage = departmentsPage.clickDepartmentLink(defaultDep.getName());
+        departmentPage = departmentPage.selectManger(secondUser.getId()).clickSaveButton();
+        String expectedAlert = String.format("Department %s was updated", defaultDep.getName());
+        String actualAlert = departmentPage.getAlert();
+        Department displayedDep = departmentPage.getDisplayedDepartment();
+        Department inDb = departmentService.getDepartmentWithId(defaultDep.getId());
+        assertAll(
+                ()->assertThat(actualAlert, is(expectedAlert)),
+                ()->assertThat(displayedDep, samePropertyValuesAs(inDb, "companyId"))
+        );
+    }
+
+    @Test
+    void changeDepartmentAllowance(){
+        Department defaultDep = departmentService.getDepartmentWithId(user.getDepartmentID());
+        departmentsPage.navigate();
+        DepartmentPage departmentPage = departmentsPage.clickDepartmentLink(defaultDep.getName());
+        departmentPage = departmentPage.setAllowance(22).clickSaveButton();
+        String expectedAlert = String.format("Department %s was updated", defaultDep.getName());
+        String actualAlert = departmentPage.getAlert();
+        Department displayedDep = departmentPage.getDisplayedDepartment();
+        Department inDb = departmentService.getDepartmentWithId(defaultDep.getId());
+        assertAll(
+                ()->assertThat(actualAlert, is(expectedAlert)),
+                ()->assertThat(displayedDep, samePropertyValuesAs(inDb, "companyId"))
+        );
+    }
+
+    @Test
+    void  changeIncludeHolidays(){
+        Department defaultDep = departmentService.getDepartmentWithId(user.getDepartmentID());
+        departmentsPage.navigate();
+        DepartmentPage departmentPage = departmentsPage.clickDepartmentLink(defaultDep.getName());
+
+        departmentPage = departmentPage.setIncludePublicHolidays(!defaultDep.isIncludePublicHolidays()).clickSaveButton();
+
+        String expectedAlert = String.format("Department %s was updated", defaultDep.getName());
+        String actualAlert = departmentPage.getAlert();
+        Department displayedDep = departmentPage.getDisplayedDepartment();
+        Department inDb = departmentService.getDepartmentWithId(defaultDep.getId());
+        assertAll(
+                ()->assertThat(actualAlert, is(expectedAlert)),
+                ()->assertThat(displayedDep, samePropertyValuesAs(inDb, "companyId"))
+        );
+    }
+
+    @Test
+    void  changeAccuredAllowance(){
+        Department defaultDep = departmentService.getDepartmentWithId(user.getDepartmentID());
+        departmentsPage.navigate();
+        DepartmentPage departmentPage = departmentsPage.clickDepartmentLink(defaultDep.getName());
+
+        departmentPage = departmentPage.setAccruedAllowance(!defaultDep.isAccuredAllowance()).clickSaveButton();
+
+        String expectedAlert = String.format("Department %s was updated", defaultDep.getName());
+        String actualAlert = departmentPage.getAlert();
+        Department displayedDep = departmentPage.getDisplayedDepartment();
+        Department inDb = departmentService.getDepartmentWithId(defaultDep.getId());
+        assertAll(
+                ()->assertThat(actualAlert, is(expectedAlert)),
+                ()->assertThat(displayedDep, samePropertyValuesAs(inDb, "companyId"))
+        );
+    }
+
+    @Test
+    void validateAddSecondarySupervisorModal(){
+        Department defaultDep = departmentService.getDepartmentWithId(user.getDepartmentID());
+        userService.createRandomUsersInDepartment(defaultDep.getId(),5);
+        departmentsPage.navigate();
+        DepartmentPage departmentPage = departmentsPage.clickDepartmentLink(defaultDep.getName());
+        AddSupervisorsModal modal = departmentPage.clickAddSecondarySupervisors();
+        String expectedModalTitle = String.format("Add supervisors to %s department", defaultDep.getName());
+        List<Integer> displayedUsers  = modal.getAllDisplayedUsers();
+        List<Integer> usersInDep = departmentService.getAllUsersIdsExcludingAdmin(defaultDep.getId());
+        assertThat(modal.getModalHeader(), is(expectedModalTitle));
+        assertThat(displayedUsers, containsInAnyOrder(usersInDep.toArray()));
+    }
+
+    @Test
+    void canAddSecondarySupervisor(){
+
     }
 }

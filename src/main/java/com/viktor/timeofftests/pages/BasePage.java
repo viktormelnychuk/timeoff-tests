@@ -61,6 +61,8 @@ public abstract class BasePage extends ConciseAPI {
     }
 
     protected String getInputValue (By locator) {
+        Logger logger = LogManager.getLogger(this.getClass());
+        logger.debug("Getting value of input field {}",locator);
         return findOne(locator).getAttribute("value");
     }
     protected String getSelectedOption(By locator){
@@ -71,5 +73,9 @@ public abstract class BasePage extends ConciseAPI {
     protected String getSelectedOptionValue(By locator){
         Select select = new Select(findOne(locator));
         return select.getFirstSelectedOption().getAttribute("value");
+    }
+
+    protected boolean isCheckboxChecked(By locator){
+        return findOne(locator).isSelected();
     }
 }
