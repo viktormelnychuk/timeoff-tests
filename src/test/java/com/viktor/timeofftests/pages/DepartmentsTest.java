@@ -15,6 +15,7 @@ import org.openqa.selenium.WebDriver;
 
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import static com.viktor.timeofftests.matcher.MapMatchers.mapContainsAllElements;
 import static org.hamcrest.Matchers.*;
@@ -233,6 +234,19 @@ public class DepartmentsTest extends BaseTest {
 
     @Test
     void canAddSecondarySupervisor(){
+        Department defaultDep = departmentService.getDepartmentWithId(user.getDepartmentID());
+        List<Integer> usersToAdd = userService.createRandomUsersInDepartment(defaultDep.getId(), 4)
+                .stream()
+                .filter(it-> it.getId()%2 == 0)
+                .map(User::getId)
+                .collect(Collectors.toList());
+        departmentsPage.navigate();
+        DepartmentPage departmentPage = departmentsPage.clickDepartmentLink(defaultDep.getName());
+        AddSupervisorsModal modal = departmentPage.clickAddSecondarySupervisors();
+        departmentPage = modal.checkUser(usersToAdd).clicAddButton();
+        List<Integer> displayedApprovers = departmentPage.getSecondaryApproversIds();
+        List<Integer> approversInDb = departmentService.getDepartmentSupervisorsIds(defaultDep.getId());
+        assertThat(displayedApprovers, containsInAnyOrder(approversInDb.toArray()));
 
     }
 }

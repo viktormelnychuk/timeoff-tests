@@ -6,6 +6,9 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class DepartmentPage extends BasePage {
 
     private final WebDriver driver;
@@ -17,6 +20,7 @@ public class DepartmentPage extends BasePage {
     private By saveChangesButton = By.id("save_changes_btn");
     private By alert = By.xpath("//div[@role='alert']");
     private By addNewSecondarySupervisorLink = By.xpath("//form[@id='department_edit_form']//a[@data-vpp-add-new-secondary-supervisor='1']");
+    private By allSecondaryApprovers = By.xpath("//form[@id='department_edit_form']//ul//li[descendant::button]");
     @Override
     public String getBaseUrl() {
         return "http://localhost:3000/settings/departments/edit/%s/";
@@ -81,5 +85,14 @@ public class DepartmentPage extends BasePage {
 
     public String getAlert() {
         return findOne(alert).getText();
+    }
+
+    public List<Integer> getSecondaryApproversIds() {
+        List<Integer> result = new ArrayList<>();
+        List<WebElement> elements = findAllBy(allSecondaryApprovers);
+        for (WebElement element : elements) {
+            result.add(Integer.parseInt(element.findElement(By.xpath(".//button")).getAttribute("value")));
+        }
+        return result;
     }
 }
