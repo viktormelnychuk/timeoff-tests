@@ -2,6 +2,7 @@ package com.viktor.timeofftests.steps;
 
 import com.viktor.timeofftests.common.DriverEnum;
 import com.viktor.timeofftests.common.DriverUtil;
+import cucumber.api.java.After;
 import cucumber.api.java.Before;
 
 public class Hooks {
@@ -15,5 +16,10 @@ public class Hooks {
     @Before
     public void beforeHook(){
         world.driver = DriverUtil.getDriver(DriverEnum.CHROME);
+    }
+
+    @After
+    public void afterHook(){
+        world.driver.quit();
     }
 }

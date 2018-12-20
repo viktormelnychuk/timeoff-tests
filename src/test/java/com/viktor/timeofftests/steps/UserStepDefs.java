@@ -2,6 +2,7 @@ package com.viktor.timeofftests.steps;
 
 import com.viktor.timeofftests.models.Company;
 import com.viktor.timeofftests.models.User;
+import com.viktor.timeofftests.pages.LoginPage;
 import com.viktor.timeofftests.services.CompanyService;
 import com.viktor.timeofftests.services.UserService;
 import cucumber.api.java.en.And;
@@ -24,9 +25,6 @@ public class UserStepDefs {
         world.defaultUser = UserService.getInstance().createNewUser(user);
     }
 
-    @When("^I login as user \"([^\"]*)\" with password \"([^\"]*)\"$")
-    public void iLoginAsUserWithPassword(String arg0, String arg1) throws Throwable {
 
-    }
 
 }

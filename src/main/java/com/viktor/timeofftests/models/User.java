@@ -83,6 +83,10 @@ public class User {
         }
 
         public Builder inCompany(String companyName){
+            if(companyName == null){
+                this.companyID = 0;
+                return this;
+            }
             Company company = CompanyService.getInstance().getOrCreateCompanyWithName(companyName);
             this.companyID = company.getId();
             return this;
@@ -96,6 +100,10 @@ public class User {
         public Builder inDepartment (String departmentName){
             if(this.companyID == 0){
                 this.companyID = CompanyService.getInstance().getOneExistingCompany().getId();
+            }
+            if(departmentName == null){
+                this.departmentID = 0;
+                return this;
             }
             this.departmentID = DepartmentService.getInstance().getOrCreateDepartmentWithName(departmentName,this.companyID).getId();
             return this;
@@ -111,8 +119,23 @@ public class User {
             return this;
         }
 
+        public Builder admin(boolean b){
+            this.admin = b;
+            return this;
+        }
+
         public Builder isDeactivated(){
             this.activated = false;
+            return this;
+        }
+
+        public Builder activated(boolean b){
+            this.activated = b;
+            return this;
+        }
+
+        public Builder autoApproved(boolean b){
+            this.autoApprove = b;
             return this;
         }
 
@@ -122,11 +145,19 @@ public class User {
         }
 
         public Builder startedOn (Date date){
+            if(date == null){
+                this.startDate = new Timestamp(new Date().getTime());
+                return this;
+            }
             this.startDate = new Timestamp(date.getTime());
             return this;
         }
 
         public Builder endedOn (Date date){
+            if(date == null){
+                this.endDate = null;
+                return this;
+            }
             this.endDate = new Timestamp(date.getTime());
             return this;
         }
@@ -137,6 +168,9 @@ public class User {
             }
             if(this.departmentID == 0){
                 this.departmentID = DepartmentService.getInstance().getOneExistingDepartment(this.companyID).getId();
+            }
+            if(this.startDate == null){
+                this.startDate = new Timestamp(new Date().getTime());
             }
             User user = new User();
             user.setEmail(this.email);

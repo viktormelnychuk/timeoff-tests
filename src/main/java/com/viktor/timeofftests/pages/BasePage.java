@@ -26,7 +26,7 @@ public abstract class BasePage extends ConciseAPI {
     protected void setDriver(WebDriver driver){
         this.driver = driver;
     }
-    void open(){
+    public void open(){
         Logger log = LogManager.getLogger(getClass());
         log.info("Navigating to {}", getBaseUrl());
         this.driver.get(getBaseUrl());
