@@ -19,16 +19,13 @@ import java.util.List;
 
 @Log4j2
 public class UserService {
-    private static UserService userService;
-    private CompanyService companyService = CompanyService.getInstance();
-    public static UserService getInstance(){
-        if(userService == null){
-            return new UserService();
-        } else {
-            return userService;
-        }
+    private CompanyService companyService;
+    private DepartmentService departmentService;
+
+    public UserService(CompanyService companyService, DepartmentService departmentService){
+        this.companyService = companyService;
+        this.departmentService = departmentService;
     }
-    private UserService(){}
 
     public void makeDepartmentAdmin(User user){
         Connection connection = DbConnection.getConnection();
@@ -174,18 +171,6 @@ public class UserService {
        return user.isAdmin();
     }
 
-    public User createDefaultAdmin(){
-        User user = new User.Builder()
-                .isAdmin()
-                .inCompany("Acme")
-                .inDepartment("Sales")
-                .isAutoApproved()
-                .build();
-        user = createNewUser(user);
-        makeDepartmentAdmin(user);
-        return user;
-    }
-
     private User deserializeUser (ResultSet set){
         User user = new User();
         try{
@@ -220,7 +205,7 @@ public class UserService {
     }
 
     public User createRandomUserInDepartment(int departmentId){
-        int companyId = DepartmentService.getInstance().getDepartmentWithId(departmentId).getCompanyId();
+        int companyId = departmentService.getDepartmentWithId(departmentId).getCompanyId();
         User user = new User.Builder()
                 .withEmail(UserPool.getEmail())
                 .withName(UserPool.getName())
@@ -238,16 +223,5 @@ public class UserService {
             result.add(createRandomUserInDepartment(departmentId));
         }
         return result;
-    }
-
-    public User createRandomUsersInDifferentDepartments() {
-        User user = new User.Builder()
-                .withEmail(UserPool.getEmail())
-                .withName(UserPool.getName())
-                .withLastName(UserPool.getLastName())
-                .inDepartment(DepartmentPool.getDepartmentName())
-                .build();
-        log.info("Creating user {}", user);
-        return createNewUser(user);
     }
 }

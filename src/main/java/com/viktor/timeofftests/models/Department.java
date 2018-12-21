@@ -20,6 +20,7 @@ public class Department {
 
     @Log4j2
     public static class Builder {
+        private CompanyService companyService;
         private int id;
         private String name = Constants.DEFAULT_DEPARTMENT_NAME;
         private int allowance = Constants.DEFAULT_DEPARTMENT_ALLOWANCE;
@@ -28,6 +29,11 @@ public class Department {
         private int companyId;
         private int bossId;
 
+        public Builder(){}
+
+        public Builder(CompanyService companyService){
+            this.companyService = companyService;
+        }
 
         public Builder withName(String name){
             this.name = name;
@@ -50,7 +56,7 @@ public class Department {
         }
 
         public Builder inCompany(String name){
-            this.companyId = CompanyService.getInstance().getOrCreateCompanyWithName(name).getId();
+            this.companyId = companyService.getOrCreateCompanyWithName(name).getId();
             return this;
         }
 

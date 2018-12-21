@@ -30,28 +30,28 @@ public class LeaveTypesSettings extends BasePage {
         this.driver = driver;
     }
 
-    public List<LeaveType> getDisplayedLeaveTypes(){
-        try {
-            List<WebElement> rows = findAllBy(By.xpath("//form[@id='leave_type_edit_form']/div[contains(.,'allowance')]"));
-            return LeaveTypeService.getInstance().deserializeLeaveTypes(rows);
-        } catch (TimeoutException e){
-            /*
-                If cannot find elements - return empty arrayList.
-                If elements aren't displayed due to a bug - it will fail on assertion in the test
-             */
-            return new ArrayList<>();
-        }
+//    public List<LeaveType> getDisplayedLeaveTypes(){
+//        try {
+//            List<WebElement> rows = findAllBy(By.xpath("//form[@id='leave_type_edit_form']/div[contains(.,'allowance')]"));
+//            return LeaveTypeService.getInstance().deserializeLeaveTypes(rows);
+//        } catch (TimeoutException e){
+//            /*
+//                If cannot find elements - return empty arrayList.
+//                If elements aren't displayed due to a bug - it will fail on assertion in the test
+//             */
+//            return new ArrayList<>();
+//        }
+//
+//    }
 
-    }
-
-    public List<String> getDisplayedLeaveTypesAsString(){
-        List<LeaveType> rows = getDisplayedLeaveTypes();
-        List<String> result = new ArrayList<>();
-        rows.forEach((item)->{
-            result.add(item.getName());
-        });
-        return result;
-    }
+//    public List<String> getDisplayedLeaveTypesAsString(){
+//        List<LeaveType> rows = getDisplayedLeaveTypes();
+//        List<String> result = new ArrayList<>();
+//        rows.forEach((item)->{
+//            result.add(item.getName());
+//        });
+//        return result;
+//    }
 
     public LeaveTypesSettings editLeaveTypeName(String oldName, String newName){
         By locator = By.xpath(String.format(leaveTypeNameQuery,oldName));
@@ -95,14 +95,14 @@ public class LeaveTypesSettings extends BasePage {
         return new GeneralSettingsPage(this.driver);
     }
 
-    public GeneralSettingsPage deleteAllLeaveTypesWithSave(){
-        List<LeaveType> rows = getDisplayedLeaveTypes();
-        for (LeaveType row : rows) {
-            deleteLeave(row.getName());
-        }
-        clickButton(saveChangesButton);
-        return new GeneralSettingsPage(this.driver);
-    }
+//    public GeneralSettingsPage deleteAllLeaveTypesWithSave(){
+//        List<LeaveType> rows = getDisplayedLeaveTypes();
+//        for (LeaveType row : rows) {
+//            deleteLeave(row.getName());
+//        }
+//        clickButton(saveChangesButton);
+//        return new GeneralSettingsPage(this.driver);
+//    }
 
     public AddNewLeaveTypeModal clickAddButton(){
         clickButton(addNewButton);

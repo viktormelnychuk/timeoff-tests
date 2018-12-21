@@ -25,20 +25,12 @@ import java.util.List;
 
 @Log4j2
 public class BankHolidaysService {
-    private static BankHolidaysService bankHolidaysService;
-    private CompanyService companyService = CompanyService.getInstance();
-    public static BankHolidaysService getInstance(){
-        if(bankHolidaysService == null){
-            return new BankHolidaysService();
-        } else {
-            return bankHolidaysService;
-        }
-    }
-    private BankHolidaysService(){}
 
-    void populateBankHolidaysForCompany(String companyName){
-        log.info("Inserting default holidays for company with name={}", companyName);
-        Company company = companyService.getCompanyWithName(companyName);
+    public BankHolidaysService(){
+    }
+
+    void populateBankHolidaysForCompany(Company company){
+        log.info("Inserting default holidays for company with id={}", company.getId());
         Connection connection = DbConnection.getConnection();
         BankHoliday[] bankHolidays = getHolidaysForCountry(company.getCountry());
         String sql = "INSERT INTO \"BankHolidays\" (name, date, \"createdAt\", \"updatedAt\", \"companyId\") VALUES(?, ?, ?, ?, ?)";

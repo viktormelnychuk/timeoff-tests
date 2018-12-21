@@ -20,13 +20,25 @@ public class SessionSteps {
     }
 
     public void sessionPresent (String email) throws Exception {
-        if(!world.defaultUser.getEmail().equals(email)){
-            log.error("User with email {} was not present in world", email);
-           throw new Exception("User with email was not present in world");
-        }
+        checkProvidedEmail(email);
         String sidFromCookies = DriverUtil.getSidFromCookies(world.driver);
         Session session = sessionService.getSessionWithSid(sidFromCookies);
         String data = session.getData();
         assertTrue("session does not contains user id",data.contains(String.valueOf(world.defaultUser.getId())));
+    }
+
+    public void sessionIsNotPresent(String email) throws Exception {
+        checkProvidedEmail(email);
+        String sidFromCoockie = DriverUtil.getSidFromCookies(world.driver);
+        Session session = sessionService.getSessionWithSid(sidFromCoockie);
+        String data = session.getData();
+        assertFalse("session contains user id", data.contains(String.valueOf(world.defaultUser.getId())));
+    }
+
+    private void checkProvidedEmail (String email) throws Exception {
+        if(!world.defaultUser.getEmail().equals(email)){
+            log.error("User with email {} was not present in world", email);
+            throw new Exception("User with email was not present in world");
+        }
     }
 }

@@ -27,6 +27,8 @@ public class User {
     private Timestamp endDate;
     private int companyID;
     private int departmentID;
+    private String departmentName;
+    private String companyName;
 
     public User(){}
 
@@ -53,6 +55,9 @@ public class User {
         public Builder withEmail (String email){
             this.email = email;
             return this;
+        }
+
+        public Builder(){
         }
 
         public Builder withPassword (String password){
@@ -82,30 +87,8 @@ public class User {
             return this;
         }
 
-        public Builder inCompany(String companyName){
-            if(companyName == null){
-                this.companyID = 0;
-                return this;
-            }
-            Company company = CompanyService.getInstance().getOrCreateCompanyWithName(companyName);
-            this.companyID = company.getId();
-            return this;
-        }
-
         public Builder inDepartment(Department department){
             this.departmentID = department.getId();
-            return this;
-        }
-
-        public Builder inDepartment (String departmentName){
-            if(this.companyID == 0){
-                this.companyID = CompanyService.getInstance().getOneExistingCompany().getId();
-            }
-            if(departmentName == null){
-                this.departmentID = 0;
-                return this;
-            }
-            this.departmentID = DepartmentService.getInstance().getOrCreateDepartmentWithName(departmentName,this.companyID).getId();
             return this;
         }
 
@@ -163,12 +146,6 @@ public class User {
         }
 
         public User build(){
-            if(this.companyID == 0){
-                this.companyID = CompanyService.getInstance().getOneExistingCompany().getId();
-            }
-            if(this.departmentID == 0){
-                this.departmentID = DepartmentService.getInstance().getOneExistingDepartment(this.companyID).getId();
-            }
             if(this.startDate == null){
                 this.startDate = new Timestamp(new Date().getTime());
             }
@@ -187,10 +164,6 @@ public class User {
             user.setDepartmentID(this.departmentID);
             return user;
         }
-    }
-
-    public Company getUserCompany(){
-        return CompanyService.getInstance().getCompanyWithId(this.companyID);
     }
 
 }

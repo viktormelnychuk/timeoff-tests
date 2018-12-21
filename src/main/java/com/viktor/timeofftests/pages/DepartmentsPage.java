@@ -15,7 +15,7 @@ import java.util.Map;
 
 public class DepartmentsPage extends BasePage {
     private WebDriver driver;
-    private DepartmentService departmentService = DepartmentService.getInstance();
+    //private DepartmentService departmentService = DepartmentService.getInstance();
     private By departmentsTable = By.xpath("//table[@class='table table-hover']//tbody/tr");
     private By addNewDepartmentButton = By.id("add_new_department_btn");
     public DepartmentsPage (WebDriver driver){
@@ -30,10 +30,10 @@ public class DepartmentsPage extends BasePage {
         else return null;
     }
 
-    public List<Department> getDisplayedDepartments(){
-        List<WebElement> table = findAllBy(departmentsTable);
-        return departmentService.deserializeDepartments(table);
-    }
+//    public List<Department> getDisplayedDepartments(){
+//        List<WebElement> table = findAllBy(departmentsTable);
+//        return departmentService.deserializeDepartments(table);
+//    }
     @Override
     public String getBaseUrl() {
         return "http://localhost:3000/settings/departments/";
@@ -49,17 +49,17 @@ public class DepartmentsPage extends BasePage {
         return findOne(locator).getText();
     }
 
-    public Map<String, Integer> getDisplayedEmployeesNumber() {
-        String numberOfUsersQuery = "//table//tbody//a[text()='%s']/../..//td[4]";
-        Map<String, Integer> result = new HashMap<>();
-        List<Department> displayedDepartments = getDisplayedDepartments();
-        for (Department department : displayedDepartments) {
-            By locator = By.xpath(String.format(numberOfUsersQuery, department.getName()));
-            Integer numberOfEmployeesDisplayed = Integer.parseInt(findOne(locator).getText());
-            result.put(department.getName(), numberOfEmployeesDisplayed);
-        }
-        return result;
-    }
+//    public Map<String, Integer> getDisplayedEmployeesNumber() {
+//        String numberOfUsersQuery = "//table//tbody//a[text()='%s']/../..//td[4]";
+//        Map<String, Integer> result = new HashMap<>();
+//        List<Department> displayedDepartments = getDisplayedDepartments();
+//        for (Department department : displayedDepartments) {
+//            By locator = By.xpath(String.format(numberOfUsersQuery, department.getName()));
+//            Integer numberOfEmployeesDisplayed = Integer.parseInt(findOne(locator).getText());
+//            result.put(department.getName(), numberOfEmployeesDisplayed);
+//        }
+//        return result;
+//    }
 
     public AddNewDepartmentModal clickAddNewDepartmentButton(){
         clickButton(addNewDepartmentButton);

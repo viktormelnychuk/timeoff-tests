@@ -6,4 +6,13 @@ public class TextConstants {
         public static final String PAGE_URL = "http://localhost:3000/calendar/";
         public static final String EMPLOYEE_GREETING_F = "%s %s's calendar for 2018";
     }
+
+    public class LoginPageConstants {
+        public static final String PAGE_URL = "http://localhost:3000/login";
+        public static final String ERROR_MESSAGE = "Incorrect credentials";
+    }
+
+    public class RegisterPageConstants {
+        public static final String PAGE_URL = "http://localhost:3000/register";
+    }
 }

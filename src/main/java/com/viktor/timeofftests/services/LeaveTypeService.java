@@ -20,26 +20,19 @@ import java.util.List;
 
 @Log4j2
 public class LeaveTypeService {
-    private static LeaveTypeService leaveTypeService;
-    public static LeaveTypeService getInstance(){
-        if(leaveTypeService == null){
-            return new LeaveTypeService();
-        } else {
-            return leaveTypeService;
-        }
-    }
-    private LeaveTypeService(){}
+    public LeaveTypeService(){
 
-    void insertLeaveTypes(LeaveType[] leaveTypes, String companyName){
+    }
+
+    void insertLeaveTypes(LeaveType[] leaveTypes, int companyId){
         log.info("Inserting leave types: {}", Arrays.toString(leaveTypes));
-        Company company = CompanyService.getInstance().getCompanyWithName(companyName);
         Connection connection = DbConnection.getConnection();
         try{
             String sql = "INSERT INTO \"LeaveTypes\" (name, color, use_allowance, \"limit\", sort_order, \"createdAt\", \"updatedAt\", \"companyId\")" +
                     "VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
             PreparedStatement insert = connection.prepareStatement(sql);
             for (LeaveType leaveType: leaveTypes) {
-                leaveType.setCompanyId(company.getId());
+                leaveType.setCompanyId(companyId);
                 insert.setString(1, leaveType.getName());
                 insert.setString(2, leaveType.getColorHex());
                 insert.setBoolean(3, leaveType.isUseAllowance());
@@ -47,7 +40,7 @@ public class LeaveTypeService {
                 insert.setInt(5, leaveType.getSortOrder());
                 insert.setTimestamp(6, new Timestamp(new Date().getTime()));
                 insert.setTimestamp(7, new Timestamp(new Date().getTime()));
-                insert.setInt(8, leaveType.getCompanyId());
+                insert.setInt(8, companyId);
                 insert.addBatch();
             }
             log.info("Executing {}", insert);

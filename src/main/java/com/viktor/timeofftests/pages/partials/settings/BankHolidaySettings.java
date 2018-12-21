@@ -34,15 +34,16 @@ public class BankHolidaySettings extends BasePage {
         this.driver = driver;
     }
 
-    public List<BankHoliday> getAllDisplayedHolidays(){
-        List<WebElement> rowsList = findAllBy(rows);
-        try {
-            return BankHolidaysService.getInstance().deserializeBankHolidays(rowsList);
-        } catch (ParseException e){
-            log.error("Errro when getting bank holidays", e);
-            return null;
-        }
-    }
+
+//    public List<BankHoliday> getAllDisplayedHolidays(){
+//        List<WebElement> rowsList = findAllBy(rows);
+//        try {
+//            return BankHolidaysService.getInstance().deserializeBankHolidays(rowsList);
+//        } catch (ParseException e){
+//            log.error("Errro when getting bank holidays", e);
+//            return null;
+//        }
+//    }
 
     public BankHolidaySettings editHolidayByIndex(int index, String newName){
         By locator = By.xpath(String.format(nameByIndexQuery, index));

@@ -14,27 +14,9 @@ import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 
-enum WeekDays {
-    MONDAY,
-    TUESDAY,
-    WEDNESDAY,
-    THURSDAY,
-    FRIDAY,
-    SATURDAY,
-    SUNDAY
-}
-
 @Log4j2
 public class ScheduleService {
-    private static ScheduleService scheduleService;
-    public static ScheduleService getInstance(){
-        if(scheduleService == null){
-            return new ScheduleService();
-        } else {
-            return scheduleService;
-        }
-    }
-    private ScheduleService (){}
+    public  ScheduleService (){}
 
     public void insertDefaultSchedule( int companyId ){
         log.info("Preparing to insert default schedule for company with id={}", companyId);

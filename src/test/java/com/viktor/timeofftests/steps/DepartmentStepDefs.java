@@ -9,14 +9,17 @@ import cucumber.api.java.en.Given;
 public class DepartmentStepDefs {
 
     World world;
-
-    public DepartmentStepDefs (World world){
+    CompanyService companyService;
+    DepartmentService departmentService;
+    public DepartmentStepDefs (World world, CompanyService companyService, DepartmentService departmentService){
         this.world = world;
+        this.companyService = companyService;
+        this.departmentService = departmentService;
     }
 
     @Given("default department {string} in {string} company is created")
     public void defaultDepartmentInCompanyIsCreated(String departmentName, String companyName) {
-        Company company = CompanyService.getInstance().getCompanyWithName(companyName);
-        DepartmentService.getInstance().getOrCreateDepartmentWithName(departmentName, company.getId());
+        Company company = companyService.getCompanyWithName(companyName);
+        world.currentUserDepartment = departmentService.getOrCreateDepartmentWithName(departmentName, company.getId());
     }
 }

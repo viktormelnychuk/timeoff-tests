@@ -7,10 +7,7 @@ import cucumber.api.TypeRegistryConfigurer;
 import io.cucumber.datatable.DataTableType;
 import io.cucumber.datatable.TableEntryTransformer;
 
-import java.util.Date;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 
 public class DataTableConfigurer implements TypeRegistryConfigurer {
     @Override
@@ -50,7 +47,16 @@ public class DataTableConfigurer implements TypeRegistryConfigurer {
             if (lastName == null) {
                 lastName = UserPool.getLastName();
             }
-            return new User.Builder()
+            if(!activated){
+                Calendar calendar = Calendar.getInstance();
+                calendar.roll(Calendar.DAY_OF_YEAR, -10);
+                // Roll 10 days back from today
+                startDate = calendar.getTime();
+                // Roll 9 days from startedOn
+                calendar.roll(Calendar.DAY_OF_YEAR, 9);
+                endDate = calendar.getTime();
+            }
+            User user = new User.Builder()
                     .withEmail(email)
                     .withName(firstName)
                     .withLastName(lastName)
@@ -60,9 +66,10 @@ public class DataTableConfigurer implements TypeRegistryConfigurer {
                     .autoApproved(autoApprove)
                     .startedOn(startDate)
                     .endedOn(endDate)
-                    .inCompany(companyName)
-                    .inDepartment(departmentName)
                     .build();
+            user.setDepartmentName(departmentName);
+            user.setCompanyName(companyName);
+            return user;
         } catch (Exception e){
             e.printStackTrace();
             return null;
