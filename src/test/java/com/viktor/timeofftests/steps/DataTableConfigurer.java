@@ -31,9 +31,9 @@ public class DataTableConfigurer implements TypeRegistryConfigurer {
             String password = entry.get("password");
             String firstName = entry.get("first_name");
             String lastName = entry.get("last_name");
-            boolean activated = transformToBoolean(entry.get("activated"));
-            boolean admin = transformToBoolean(entry.get("admin"));
-            boolean autoApprove = transformToBoolean(entry.get("auto_approve"));
+            boolean activated = transformToBoolean(entry.get("activated"), true);
+            boolean admin = transformToBoolean(entry.get("admin"), false);
+            boolean autoApprove = transformToBoolean(entry.get("auto_approve"), true);
             Date startDate = transformToDate(entry.get("started_on"));
             Date endDate = transformToDate(entry.get("ended_on"));
             String departmentName = entry.get("department");
@@ -56,6 +56,9 @@ public class DataTableConfigurer implements TypeRegistryConfigurer {
                 calendar.roll(Calendar.DAY_OF_YEAR, 9);
                 endDate = calendar.getTime();
             }
+            if(startDate == null){
+                startDate = new Date();
+            }
             User user = new User.Builder()
                     .withEmail(email)
                     .withName(firstName)
@@ -76,9 +79,9 @@ public class DataTableConfigurer implements TypeRegistryConfigurer {
         }
     }
 
-    private boolean transformToBoolean(String s){
+    private boolean transformToBoolean(String s, boolean defaultNull){
         if(s == null){
-            return false;
+            return defaultNull;
         }
         return Objects.equals(s, "true");
     }

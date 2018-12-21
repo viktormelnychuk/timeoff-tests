@@ -30,18 +30,4 @@ public class DatabaseVerificationStepDefs {
         }
 
     }
-
-    @Then("company with name {string} should be present in database")
-    public void companyWithNameShouldBePresentInDatabase(String arg0) {
-
-    }
-
-    @And("department with name {string} should be present in database")
-    public void departmentWithNameShouldBePresentInDatabase(String arg0) {
-    }
-
-    @And("admin user with email {string} should be present in database")
-    public void adminUserWithEmailShouldBePresentInDatabase(String arg0) {
-
-    }
 }

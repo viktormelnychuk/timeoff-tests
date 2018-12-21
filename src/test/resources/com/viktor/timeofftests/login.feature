@@ -31,10 +31,6 @@ Feature: Tests that user can login
 
     @positive @func
   Scenario: Not registered user cannot login
-    Given  following user is created:
-    | email               | password |
-    | tester12@viktor.com | 1234     |
-
     When I login as user "tester12@viktor.com" with password "1234"
     Then database should not have session associated with "tester12@viktor.com"
     And the "Login" page should be opened
