@@ -1,14 +1,9 @@
 package com.viktor.timeofftests.steps;
 
-import com.viktor.timeofftests.models.Company;
+import com.viktor.timeofftests.common.World;
 import com.viktor.timeofftests.models.User;
-import com.viktor.timeofftests.pages.LoginPage;
-import com.viktor.timeofftests.services.CompanyService;
 import com.viktor.timeofftests.services.UserService;
-import cucumber.api.java.en.And;
 import cucumber.api.java.en.Given;
-import cucumber.api.java.en.Then;
-import cucumber.api.java.en.When;
 import io.cucumber.datatable.DataTable;
 
 public class UserStepDefs {

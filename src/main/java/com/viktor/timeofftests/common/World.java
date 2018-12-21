@@ -1,4 +1,4 @@
-package com.viktor.timeofftests.steps;
+package com.viktor.timeofftests.common;
 
 import com.viktor.timeofftests.models.Company;
 import com.viktor.timeofftests.models.User;
@@ -6,7 +6,7 @@ import org.openqa.selenium.WebDriver;
 
 public class World {
 
-    WebDriver driver;
-    Company company;
-    User defaultUser;
+    public WebDriver driver;
+    public Company company;
+    public User defaultUser;
 }

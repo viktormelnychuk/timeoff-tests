@@ -1,4 +1,4 @@
-package com.viktor.timeofftests.common;
+package com.viktor.timeofftests.steps;
 
 import com.viktor.timeofftests.models.User;
 import com.viktor.timeofftests.pools.UserPool;
@@ -23,7 +23,6 @@ public class DataTableConfigurer implements TypeRegistryConfigurer {
         typeRegistry.defineDataTableType(new DataTableType(User.class, new TableEntryTransformer<User>() {
             @Override
             public User transform(Map<String, String> map) throws Throwable {
-                User u = transformUser(map);
                 return transformUser(map);
             }
         }));
@@ -51,7 +50,7 @@ public class DataTableConfigurer implements TypeRegistryConfigurer {
             if (lastName == null) {
                 lastName = UserPool.getLastName();
             }
-            User user = new User.Builder()
+            return new User.Builder()
                     .withEmail(email)
                     .withName(firstName)
                     .withLastName(lastName)
@@ -64,7 +63,6 @@ public class DataTableConfigurer implements TypeRegistryConfigurer {
                     .inCompany(companyName)
                     .inDepartment(departmentName)
                     .build();
-            return user;
         } catch (Exception e){
             e.printStackTrace();
             return null;

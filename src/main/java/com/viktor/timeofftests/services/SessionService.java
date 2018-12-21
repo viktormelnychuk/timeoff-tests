@@ -21,15 +21,6 @@ import java.util.Date;
 
 @Log4j2
 public class SessionService {
-    private static SessionService sessionService;
-    public static SessionService getInstance(){
-        if(sessionService == null){
-            return new SessionService();
-        } else {
-            return sessionService;
-        }
-    }
-    private SessionService(){}
 
     public Session getSessionWithSid(String sid){
         Connection connection = DbConnection.getConnection();

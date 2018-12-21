@@ -1,5 +1,6 @@
 package com.viktor.timeofftests.steps;
 
+import com.viktor.timeofftests.common.World;
 import com.viktor.timeofftests.services.CompanyService;
 import cucumber.api.java.en.Given;
 

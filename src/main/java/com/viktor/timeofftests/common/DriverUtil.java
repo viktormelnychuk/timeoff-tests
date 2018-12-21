@@ -17,8 +17,7 @@ import java.util.Objects;
 @Log4j2
 public class DriverUtil {
     private WebDriver driver;
-
-    private DriverUtil(){}
+    private static SessionService sessionService = new SessionService();
 
     public static WebDriver getDriver(DriverEnum driverType){
         log.info("Starting new {} browser", driverType.toString());
@@ -27,7 +26,7 @@ public class DriverUtil {
         } else if (driverType == DriverEnum.CHROME){
             ChromeOptions chromeOptions = new ChromeOptions();
             chromeOptions.addArguments("headless");
-            return new ChromeDriver(chromeOptions);
+            return new ChromeDriver();
         }
         return new FirefoxDriver();
     }
@@ -57,7 +56,7 @@ public class DriverUtil {
 
     public static void simulateLoginForUser(int userId, WebDriver driver){
         log.info("Inserting cookies for user with id={}", userId);
-        Session s = SessionService.getInstance().insertNewSessionForUserId(userId);
+        Session s = sessionService.insertNewSessionForUserId(userId);
         setSessionCookie(s, driver);
         log.info("Navigating to Calendar page");
         driver.get("http://localhost:3000/calendar/");

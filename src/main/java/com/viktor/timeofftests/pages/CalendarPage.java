@@ -13,19 +13,23 @@ public class CalendarPage extends BasePage {
         return "http://localhost:3000/calendar/";
     }
 
-    CalendarPage(WebDriver driver) {
+    public CalendarPage(WebDriver driver) {
         super(driver);
         this.driver = driver;
     }
-    String getAlertMessage(){
+    public String getAlertMessage(){
         return findOne(this.message).getText();
     }
-    String getEmployeeGreeting(){
+    public String getEmployeeGreeting(){
         return findOne(this.employeeName).getText();
     }
 
     @Override
     public WebDriver getDriver(){
         return this.driver;
+    }
+
+    public String getTitle() {
+        return findOne(By.cssSelector("h1")).getText();
     }
 }

@@ -1,6 +1,7 @@
 Feature: Tests that user can login
   Background:
     Given default company with name "Acme" is created
+    Given default department "Sales" in "Acme" company is created
 
   Scenario Outline: Test that different users can login
     Given following user is created:
@@ -15,7 +16,7 @@ Feature: Tests that user can login
     Examples:
       | email              | password | admin |
       | tester@viktor.com  | 1234     | true  |
-#      | tester1@viktor.com | 1234     | false |
+      | tester1@viktor.com | 1234     | false |
 
   Scenario: Deactivated user cannot login
     Given following user is created:
