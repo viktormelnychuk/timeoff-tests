@@ -8,7 +8,6 @@ import org.openqa.selenium.WebDriver;
 
 public class SignupPage extends BasePage{
     private WebDriver driver;
-    private UserService userService = UserService.getInstance();
     private By alert = By.xpath("//div[@role='alert' and @class='alert alert-danger']");
     private By companyName = By.id("company_name_inp");
     private By firstName= By.id("name_inp");
@@ -20,7 +19,7 @@ public class SignupPage extends BasePage{
     private By timezone = By.id("timezone_inp");
     private By createButton = By.id("submit_registration");
 
-    SignupPage(WebDriver driver) {
+    public SignupPage(WebDriver driver) {
         super(driver);
         this.driver = driver;
     }
@@ -33,81 +32,48 @@ public class SignupPage extends BasePage{
         super.open(url);
     }
 
-    SignupPage fillCompanyName(String value){
+    public void fillCompanyName(String value){
         fillInputField(this.companyName, value);
-        return this;
     }
 
-    SignupPage fillFirstName(String value){
+    public void fillFirstName(String value){
         fillInputField(this.firstName, value);
-        return this;
     }
 
-    SignupPage fillLastName(String value){
+    public void fillLastName(String value){
         fillInputField(this.lastName, value);
-        return this;
     }
 
-    SignupPage fillEmail(String value){
+    public void fillEmail(String value){
         fillInputField(this.email, value);
-        return this;
     }
 
-    SignupPage fillPassword(String value){
+    public void fillPassword(String value){
         fillInputField(this.password, value);
-        return this;
     }
 
-    SignupPage fillPasswordConfirmation(String value){
+    public void fillPasswordConfirmation(String value){
         fillInputField(this.confirmPassword, value);
-        return this;
     }
 
-    SignupPage selectCountry(String value) {
+    public void selectCountry(String value) {
         selectOption(this.country, value);
-        return this;
     }
 
-    SignupPage selectTimeZone(String value){
+    public void  selectTimeZone(String value){
         selectOption(this.timezone, value);
-        return this;
     }
 
-    CalendarPage clickCreateButtonExpectingSuccess(){
+    public void  clickCreateButtonExpectingSuccess(){
         clickButton(this.createButton);
-        return new CalendarPage(this.driver);
     }
 
-    SignupPage clickCreateButtonExpectingFailure(){
+    public void  clickCreateButtonExpectingFailure(){
         clickButton(this.createButton);
-        return this;
     }
-    String getAlertMessage(){
+    public String getAlertMessage(){
         return findOne(this.alert).getText();
     }
-
-    CalendarPage signupAsDefaultUser(){
-        fillCompanyName(Constants.DEFAULT_COMPANY_NAME);
-        fillEmail(Constants.DEFAULT_USER_EMAIL);
-        fillFirstName(Constants.DEFAULT_USER_NAME);
-        fillLastName(Constants.DEFAULT_USER_LAST_NAME);
-        fillPassword(Constants.DEFAULT_USER_PASSWORD);
-        fillPasswordConfirmation(Constants.DEFAULT_USER_PASSWORD);
-        selectCountry(Constants.DEFAULT_COMPANY_COUNTRY);
-        selectTimeZone(Constants.DEFAULT_COMPANY_TIMEZONE);
-        return clickCreateButtonExpectingSuccess();
-    }
-
-    SignupPage signupWithUserExpectingFailure(User user){
-        fillCompanyName(userService.getCompanyForUser(user).getName());
-        fillEmail(user.getEmail());
-        fillFirstName(user.getName());
-        fillLastName(user.getLastName());
-        fillPassword(user.getRawPassword());
-        fillPasswordConfirmation(user.getRawPassword());
-        return clickCreateButtonExpectingFailure();
-    }
-
 
     @Override
     public WebDriver getDriver() {

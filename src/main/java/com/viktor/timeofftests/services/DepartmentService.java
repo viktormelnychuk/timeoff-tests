@@ -14,15 +14,10 @@ import java.util.stream.Collectors;
 
 @Log4j2
 public class DepartmentService {
-    private static DepartmentService departmentService;
-    public static DepartmentService getInstance(){
-        if(departmentService == null){
-            return new DepartmentService();
-        } else {
-            return departmentService;
-        }
+    private CompanyService companyService;
+    public DepartmentService(CompanyService companyService){
+        this.companyService = companyService;
     }
-    private DepartmentService(){}
 
     public Department getOrCreateDepartmentWithName(String name, int companyId){
         Department department = getDepartmentWithNameAndCompanyId(name, companyId);
@@ -181,7 +176,7 @@ public class DepartmentService {
         return result;
     }
 
-    public List<User> getAllUsersExcludingAdmin(int departmetnId){
+    public List<Integer> getAllUsersExcludingAdmin(int departmetnId){
         log.info("Getting all users excluding admin for department id={}", departmetnId);
         Connection connection = DbConnection.getConnection();
         try{
@@ -190,11 +185,11 @@ public class DepartmentService {
             statement.setInt(1, departmetnId);
             log.info("Executing {}", statement);
             ResultSet set = statement.executeQuery();
-            List<User> users = new ArrayList<>();
+            List<Integer> users = new ArrayList<>();
             int departmentAdminId = getDepartmentWithId(departmetnId).getBossId();
             while (set.next()){
                 if(set.getInt("id")!=departmentAdminId){
-                    users.add(UserService.getInstance().getUserWithId(set.getInt("id")));
+                    users.add(set.getInt("id"));
                 }
 
             }
@@ -205,12 +200,7 @@ public class DepartmentService {
         }
     }
 
-    public List<Integer> getAllUsersIdsExcludingAdmin(int departmentId){
-        List<User> users = getAllUsersExcludingAdmin(departmentId);
-        return users.stream().map(User::getId).collect(Collectors.toList());
-    }
-
-    public List<User> getDepartmentSupervisors(int departmentId){
+    public List<Integer> getDepartmentSupervisors(int departmentId){
         log.info("Getting department supervisors");
         Connection connection = DbConnection.getConnection();
         try{
@@ -219,9 +209,9 @@ public class DepartmentService {
             statement.setInt(1, departmentId);
             log.info("Executing {}", statement);
             ResultSet set = statement.executeQuery();
-            List<User> users = new ArrayList<>();
+            List<Integer> users = new ArrayList<>();
             while (set.next()){
-                users.add(UserService.getInstance().getUserWithId(set.getInt("user_id")));
+                users.add(set.getInt("user_id"));
             }
             return users;
         } catch (Exception e){
@@ -230,9 +220,6 @@ public class DepartmentService {
         }
     }
 
-    public List<Integer> getDepartmentSupervisorsIds(int departmentId){
-        return getDepartmentSupervisors(departmentId).stream().map(User::getId).collect(Collectors.toList());
-    }
 
     public Department saveDepartment(Department department){
         Connection connection = DbConnection.getConnection();
@@ -292,10 +279,30 @@ public class DepartmentService {
     public void setBossesForAllDepartments(int companyID){
         List<Department> departments = getAllDepartmentsForCompany(companyID);
         for (Department department : departments) {
-            List<User> usersInDepartment = UserService.getInstance().getAllUsersInDepartment(department);
-            for (User user : usersInDepartment) {
-                UserService.getInstance().makeDepartmentAdmin(user);
+            List<Integer> allUsers = getAllUsersInDepartment(department.getId());
+            assignBossUserId(department, allUsers.get(allUsers.size()/2));
+        }
+    }
+
+    private List<Integer> getAllUsersInDepartment(int departmentId) {
+        Connection connection = DbConnection.getConnection();
+        log.info("Getting all users in department with id={}", departmentId);
+        try {
+            String sql = "SELECT \"Users\".id FROM \"Users\" WHERE  \"DepartmentId\"=?";
+            PreparedStatement statement = connection.prepareStatement(sql);
+            statement.setInt(1, departmentId);
+            log.info("Executin {}",statement);
+            ResultSet set = statement.executeQuery();
+            List<Integer> result = new ArrayList<>();
+            while (set.next()){
+                result.add(set.getInt("id"));
             }
+            return result;
+        } catch (Exception e){
+            log.error("Exception occurred", e);
+            return Collections.emptyList();
+        } finally {
+            DBUtil.closeConnection(connection);
         }
     }
 
@@ -347,7 +354,7 @@ public class DepartmentService {
 
             String accruedAllowance = row.findElement(By.xpath(".//td[6]")).getText();
             department.setAccuredAllowance(getBoolFromYesNo(accruedAllowance));
-            department.setCompanyId(CompanyService.getInstance().getCompanyForDepartmentWithId(department.getId()).getId());
+            department.setCompanyId(companyService.getCompanyForDepartmentWithId(department.getId()).getId());
             result.add(department);
         }
         return result;

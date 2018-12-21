@@ -29,11 +29,11 @@ public class CompanyScheduleSettings extends BasePage {
         return null;
     }
 
-    public Schedule getSchedule(){
-        WebElement form = findOne(companyWeekScheduleForm);
-        List<WebElement> elementList = form.findElements(By.xpath("//div[@class='btn-group' and @data-toggle='buttons']/label/input"));
-        return ScheduleService.getInstance().deserializeSchedule(elementList);
-    }
+//    public Schedule getSchedule(){
+//        WebElement form = findOne(companyWeekScheduleForm);
+//        List<WebElement> elementList = form.findElements(By.xpath("//div[@class='btn-group' and @data-toggle='buttons']/label/input"));
+//        return ScheduleService.getInstance().deserializeSchedule(elementList);
+//    }
     public CompanyScheduleSettings toggleDay (int index){
         String locator = String.format("//div[@class='btn-group' and @data-toggle='buttons']/label[%d]", index);
         findOne(By.xpath(locator)).click();

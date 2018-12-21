@@ -7,10 +7,7 @@ import cucumber.api.TypeRegistryConfigurer;
 import io.cucumber.datatable.DataTableType;
 import io.cucumber.datatable.TableEntryTransformer;
 
-import java.util.Date;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 
 public class DataTableConfigurer implements TypeRegistryConfigurer {
     @Override
@@ -34,9 +31,9 @@ public class DataTableConfigurer implements TypeRegistryConfigurer {
             String password = entry.get("password");
             String firstName = entry.get("first_name");
             String lastName = entry.get("last_name");
-            boolean activated = transformToBoolean(entry.get("activated"));
-            boolean admin = transformToBoolean(entry.get("admin"));
-            boolean autoApprove = transformToBoolean(entry.get("auto_approve"));
+            boolean activated = transformToBoolean(entry.get("activated"), true);
+            boolean admin = transformToBoolean(entry.get("admin"), false);
+            boolean autoApprove = transformToBoolean(entry.get("auto_approve"), true);
             Date startDate = transformToDate(entry.get("started_on"));
             Date endDate = transformToDate(entry.get("ended_on"));
             String departmentName = entry.get("department");
@@ -50,7 +47,19 @@ public class DataTableConfigurer implements TypeRegistryConfigurer {
             if (lastName == null) {
                 lastName = UserPool.getLastName();
             }
-            return new User.Builder()
+            if(!activated){
+                Calendar calendar = Calendar.getInstance();
+                calendar.roll(Calendar.DAY_OF_YEAR, -10);
+                // Roll 10 days back from today
+                startDate = calendar.getTime();
+                // Roll 9 days from startedOn
+                calendar.roll(Calendar.DAY_OF_YEAR, 9);
+                endDate = calendar.getTime();
+            }
+            if(startDate == null){
+                startDate = new Date();
+            }
+            User user = new User.Builder()
                     .withEmail(email)
                     .withName(firstName)
                     .withLastName(lastName)
@@ -60,18 +69,19 @@ public class DataTableConfigurer implements TypeRegistryConfigurer {
                     .autoApproved(autoApprove)
                     .startedOn(startDate)
                     .endedOn(endDate)
-                    .inCompany(companyName)
-                    .inDepartment(departmentName)
                     .build();
+            user.setDepartmentName(departmentName);
+            user.setCompanyName(companyName);
+            return user;
         } catch (Exception e){
             e.printStackTrace();
             return null;
         }
     }
 
-    private boolean transformToBoolean(String s){
+    private boolean transformToBoolean(String s, boolean defaultNull){
         if(s == null){
-            return false;
+            return defaultNull;
         }
         return Objects.equals(s, "true");
     }

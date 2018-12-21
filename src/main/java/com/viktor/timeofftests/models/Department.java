@@ -28,6 +28,7 @@ public class Department {
         private int companyId;
         private int bossId;
 
+        public Builder(){}
 
         public Builder withName(String name){
             this.name = name;
@@ -46,11 +47,6 @@ public class Department {
 
         public Builder isAccuredAllowance (boolean isAccuredAllowance){
             this.isAccuredAllowance = isAccuredAllowance;
-            return this;
-        }
-
-        public Builder inCompany(String name){
-            this.companyId = CompanyService.getInstance().getOrCreateCompanyWithName(name).getId();
             return this;
         }
 

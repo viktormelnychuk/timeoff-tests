@@ -4,21 +4,23 @@ import com.viktor.timeofftests.common.Constants;
 import com.viktor.timeofftests.common.db.DBUtil;
 import com.viktor.timeofftests.common.db.DbConnection;
 import com.viktor.timeofftests.models.Company;
+import com.viktor.timeofftests.models.LeaveType;
 import lombok.extern.log4j.Log4j2;
 
 import java.sql.*;
 
 @Log4j2
 public class CompanyService {
-    private static CompanyService companyService;
-    public static CompanyService getInstance(){
-        if(companyService == null){
-            return new CompanyService();
-        } else {
-            return companyService;
-        }
+    private LeaveTypeService leaveTypeService;
+    private BankHolidaysService bankHolidayService;
+    private ScheduleService scheduleService;
+
+    public CompanyService(LeaveTypeService leaveTypeService, BankHolidaysService bankHolidayService,
+                          ScheduleService scheduleService){
+        this.leaveTypeService = leaveTypeService;
+        this.bankHolidayService = bankHolidayService;
+        this.scheduleService = scheduleService;
     }
-    private CompanyService(){}
 
     public  Company getOrCreateCompanyWithName(String name){
         Company company = getCompanyWithName(name);
@@ -149,12 +151,12 @@ public class CompanyService {
             resultSet.next();
             company.setId(resultSet.getInt(1));
             if (company.getLeaveTypes() != null){
-                LeaveTypeService.getInstance().insertLeaveTypes(company.getLeaveTypes(), company.getName());
+                leaveTypeService.insertLeaveTypes(company.getLeaveTypes(), company.getId());
             } else {
-                LeaveTypeService.getInstance().insertLeaveTypes(Constants.DEFAULT_LEAVE_TYPES, company.getName());
+                leaveTypeService.insertLeaveTypes(Constants.DEFAULT_LEAVE_TYPES, company.getId());
             }
-            BankHolidaysService.getInstance().populateBankHolidaysForCompany(company.getName());
-            ScheduleService.getInstance().insertDefaultSchedule(company.getId());
+            bankHolidayService.populateBankHolidaysForCompany(company);
+            scheduleService.insertDefaultSchedule(company.getId());
             log.info("Company ID id '"+company.getId()+"'");
             return company;
         } catch (Exception e){

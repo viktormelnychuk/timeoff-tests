@@ -4,6 +4,7 @@ import com.viktor.timeofftests.common.World;
 import com.viktor.timeofftests.constants.Pages;
 import com.viktor.timeofftests.constants.TextConstants;
 import com.viktor.timeofftests.pages.CalendarPage;
+import com.viktor.timeofftests.pages.LoginPage;
 import cucumber.api.java.en.And;
 
 import java.util.Objects;
@@ -25,11 +26,19 @@ public class UIVerificationStepDefs {
             case Pages.CALENDAR:
                 verifyCalendarPageTexts();
                 break;
+            case Pages.LOGIN:
+                verifyLoginPage();
+                break;
             default:
                 throw new Exception("Page " + page + " is not present in app");
         }
     }
 
+    private void verifyLoginPage() {
+        LoginPage page = new LoginPage(world.driver);
+        assertTrue("Current url", page.getDriver().getCurrentUrl().contains(TextConstants.LoginPageConstants.PAGE_URL));
+        assertEquals("Error message", TextConstants.LoginPageConstants.ERROR_MESSAGE, page.getAlertMessage());
+    }
 
 
     private void verifyCalendarPageTexts(){
