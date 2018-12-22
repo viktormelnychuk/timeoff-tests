@@ -73,4 +73,11 @@ public class DatabaseVerificationStepDefs {
         User user = userService.getUserWithEmail(email);
         assertNull("user was found when shouldn't be ",user);
     }
+
+    @Then("database should contain edited company")
+    public void databaseShouldContainEditedCompany() {
+        Company expected = world.editedCompany;
+        Company actual = companyService.getCompanyWithId(world.editedCompany.getId());
+        assertEquals(expected, actual);
+    }
 }

@@ -15,4 +15,8 @@ public class TextConstants {
     public class RegisterPageConstants {
         public static final String PAGE_URL = "http://localhost:3000/register";
     }
+
+    public class GeneralSettingsConstants{
+        public static final String PAGE_URL = "http://localhost:3000/settings/general/";
+    }
 }

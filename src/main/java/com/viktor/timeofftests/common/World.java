@@ -9,6 +9,7 @@ public class World {
 
     public WebDriver driver;
     public Company currentCompany;
+    public Company editedCompany;
     public User currentUser;
     public Department currentUserDepartment;
 }

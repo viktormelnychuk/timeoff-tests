@@ -1,13 +1,13 @@
 package com.viktor.timeofftests.steps;
 
 import com.viktor.timeofftests.common.Constants;
+import com.viktor.timeofftests.forms.CompanySettingsForm;
 import com.viktor.timeofftests.forms.SignupForm;
 import com.viktor.timeofftests.models.User;
 import com.viktor.timeofftests.pools.UserPool;
 import cucumber.api.TypeRegistry;
 import cucumber.api.TypeRegistryConfigurer;
 import io.cucumber.datatable.DataTableType;
-import io.cucumber.datatable.TableEntryTransformer;
 
 import java.util.*;
 
@@ -21,6 +21,16 @@ public class DataTableConfigurer implements TypeRegistryConfigurer {
     public void configureTypeRegistry(TypeRegistry typeRegistry) {
         typeRegistry.defineDataTableType(new DataTableType(User.class, this::transformUser));
         typeRegistry.defineDataTableType(new DataTableType(SignupForm.class,this::transformToSignupForm));
+        typeRegistry.defineDataTableType(new DataTableType(CompanySettingsForm.class, this::transformToForm));
+    }
+
+    private CompanySettingsForm transformToForm(Map<String, String> entry){
+        CompanySettingsForm form = new CompanySettingsForm();
+        form.setCompanyName(entry.get("company_name"));
+        form.setCountry(entry.get("country"));
+        form.setDateFormat(entry.get("date_format"));
+        form.setTimezone(entry.get("time_zone"));
+        return form;
     }
 
     private SignupForm transformToSignupForm(Map<String, String> entry){
