@@ -81,7 +81,7 @@ public class DepartmentService {
         }
     }
     public Department getOneExistingDepartment(int companyID) {
-        log.info("Getting 1 department in currentCompany with id={}", companyID);
+        log.info("Getting 1 department in company with id={}", companyID);
         Connection connection = DbConnection.getConnection();
         try{
             String sql = "SELECT * FROM \"Departments\" WHERE \"companyId\"=?";
@@ -97,13 +97,13 @@ public class DepartmentService {
             set.first();
             return deserializeDepartment(set);
         } catch (Exception e){
-            log.error("Error getting department for currentCompany with id={}", companyID, e);
+            log.error("Error getting department for company with id={}", companyID, e);
             return null;
         }
     }
 
     public List<Department> getAllDepartmentsForCompany(int companyID) {
-        log.info("Getting all departments for currentCompany with id={}", companyID);
+        log.info("Getting all departments for company with id={}", companyID);
         Connection connection = DbConnection.getConnection();
         try{
             List<Department> result = new ArrayList<>();

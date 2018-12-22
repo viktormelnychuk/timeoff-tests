@@ -19,7 +19,7 @@ public class ScheduleService {
     public  ScheduleService (){}
 
     public void insertDefaultSchedule( int companyId ){
-        log.info("Preparing to insert default schedule for currentCompany with id={}", companyId);
+        log.info("Preparing to insert default schedule for company with id={}", companyId);
         Connection connection = DbConnection.getConnection();
         String sql = "INSERT INTO \"schedule\" (monday, tuesday, wednesday, thursday, friday, saturday, sunday, created_at, updated_at, company_id, user_id)" +
                 " VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) ";
@@ -47,7 +47,7 @@ public class ScheduleService {
     }
 
     public Schedule getScheduleForCompanyId(int companyId){
-        log.info("Getting schedule for currentCompany with id={}", companyId);
+        log.info("Getting schedule for company with id={}", companyId);
         Connection connection = DbConnection.getConnection();
         String sql = "SELECT * FROM schedule WHERE \"company_id\"=?";
         try {

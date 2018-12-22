@@ -9,7 +9,7 @@ public class LoginPage extends BasePage {
     private By emailInput = By.id("email_inp");
     private By passwordInput = By.id("pass_inp");
     private By loginButton = By.id("submit_login");
-    private By registerLink = By.linkText("Register new currentCompany");
+    private By registerLink = By.linkText("Register new company");
     private By alertMessage = By.xpath("//div[@class='alert alert-danger' and @role='alert']");
     public LoginPage(WebDriver driver){
         super(driver);

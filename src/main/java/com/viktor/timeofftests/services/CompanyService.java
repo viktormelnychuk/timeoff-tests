@@ -35,7 +35,7 @@ public class CompanyService {
     }
     public Company getOneExistingCompany() {
         Connection connection = DbConnection.getConnection();
-        log.info("Getting currentCompany");
+        log.info("Getting one existing company");
         try{
             String sql = "SELECT * FROM \"Companies\"";
             PreparedStatement statement = connection.prepareStatement(sql, ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_READ_ONLY);
@@ -43,7 +43,7 @@ public class CompanyService {
             ResultSet set = statement.executeQuery();
             set.last();
             if(set.getRow() > 1){
-                throw new Exception("More than one currentCompany was found. Please set companyId explicitly");
+                throw new Exception("More than one company was found. Please set companyId explicitly");
             }
             set.first();
             return deserializeCompany(set);
@@ -57,7 +57,7 @@ public class CompanyService {
 
     public Company getCompanyForDepartmentWithId(int departmentId){
         Connection connection = DbConnection.getConnection();
-        log.info("Getting currentCompany of department[id={}]", departmentId);
+        log.info("Getting company of department[id={}]", departmentId);
         try{
             String sql = "SELECT * FROM \"Companies\" WHERE id=(SELECT \"companyId\" FROM \"Departments\" WHERE id=?)";
             PreparedStatement statement = connection.prepareStatement(sql);
@@ -70,13 +70,13 @@ public class CompanyService {
                 return null;
             }
         } catch (Exception e){
-            log.error("Error getting currentCompany", e);
+            log.error("Error getting company", e);
             return null;
         }
     }
 
     public Company getCompanyWithName (String name){
-        log.info("Getting currentCompany with name={}", name);
+        log.info("Getting company with name={}", name);
         Connection connection = DbConnection.getConnection();
         String sql = "SELECT * FROM \"Companies\" WHERE name=? LIMIT 1;";
         try {
@@ -90,7 +90,7 @@ public class CompanyService {
                 return null;
             }
         } catch (Exception e){
-            log.error("Error retrieving currentCompany with name {}", name);
+            log.error("Error retrieving company with name {}", name);
             return null;
         } finally {
             DBUtil.closeConnection(connection);
@@ -98,7 +98,7 @@ public class CompanyService {
     }
 
     public Company getCompanyWithId (int id){
-        log.info("Getting currentCompany with id={}", id);
+        log.info("Getting company with id={}", id);
         Connection connection = DbConnection.getConnection();
         String sql = "SELECT * FROM \"Companies\" WHERE id=?;";
         try {
@@ -112,7 +112,7 @@ public class CompanyService {
                 return null;
             }
         } catch (Exception e){
-            log.error("Error getting currentCompany with", e);
+            log.error("Error getting company with", e);
             return null;
         } finally {
             DBUtil.closeConnection(connection);
@@ -120,7 +120,7 @@ public class CompanyService {
     }
 
     public Company saveCompany (Company company){
-        log.info("Prepare to save currentCompany with name=\""+company.getName()+ "\"");
+        log.info("Prepare to save company with name=\""+company.getName()+ "\"");
         Connection connection = DbConnection.getConnection();
         String sql = new StringBuilder().append("INSERT INTO \"Companies\" (name, country, start_of_new_year, share_all_absences, ldap_auth_enabled, ldap_auth_config, date_format, company_wide_message, mode, timezone,\"createdAt\",\"updatedAt\")")
                 .append(" VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);").toString();
@@ -140,8 +140,8 @@ public class CompanyService {
             createCompany.setTimestamp(12,new Timestamp(new java.util.Date().getTime()));
             log.info("Executing: "+createCompany.toString());
             createCompany.executeUpdate();
-            log.info("Saved currentCompany with name=\""+company.getName()+ "\"");
-            log.info("Getting id of currentCompany with name=\""+company.getName()+ "\"");
+            log.info("Saved company with name=\""+company.getName()+ "\"");
+            log.info("Getting id of company with name=\""+company.getName()+ "\"");
 
             String getCompanySql = "SELECT \"Companies\".id FROM \"Companies\" WHERE \"Companies\".name = ?;";
             PreparedStatement getCompany = connection.prepareStatement(getCompanySql);
@@ -160,7 +160,7 @@ public class CompanyService {
             log.info("Company ID id '"+company.getId()+"'");
             return company;
         } catch (Exception e){
-            log.error("Error when creating currentCompany",e);
+            log.error("Error when creating company",e);
             return null;
         } finally {
             DBUtil.closeConnection(connection);
@@ -185,7 +185,7 @@ public class CompanyService {
                     .build();
 
         } catch (Exception e){
-            log.error("Error deserializing currentCompany", e);
+            log.error("Error deserializing company", e);
             return null;
         }
     }

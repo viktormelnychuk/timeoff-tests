@@ -86,7 +86,7 @@ public class UserService {
         Connection connection = DbConnection.getConnection();
         String sql = "SELECT * FROM \"Companies\" WHERE id=?";
         try {
-            log.info("Getting currentCompany with id [{}]", user.getCompanyID());
+            log.info("Getting company with id [{}]", user.getCompanyID());
             PreparedStatement statement = connection.prepareStatement(sql);
             statement.setInt(1,user.getCompanyID());
             log.info("Executing {}", statement.toString());

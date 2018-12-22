@@ -30,7 +30,7 @@ public class BankHolidaysService {
     }
 
     void populateBankHolidaysForCompany(Company company){
-        log.info("Inserting default holidays for currentCompany with id={}", company.getId());
+        log.info("Inserting default holidays for company with id={}", company.getId());
         Connection connection = DbConnection.getConnection();
         BankHoliday[] bankHolidays = getHolidaysForCountry(company.getCountry());
         String sql = "INSERT INTO \"BankHolidays\" (name, date, \"createdAt\", \"updatedAt\", \"companyId\") VALUES(?, ?, ?, ?, ?)";
@@ -57,7 +57,7 @@ public class BankHolidaysService {
     }
 
     public List<BankHoliday> getAllBankHolidaysForCompany(int companyID){
-        log.info("Getting bank holidays fro currentCompany with id={}", companyID);
+        log.info("Getting bank holidays fro company with id={}", companyID);
         Connection connection = DbConnection.getConnection();
         try {
             String sql = "SELECT * FROM \"BankHolidays\" WHERE \"companyId\"=?";
@@ -71,7 +71,7 @@ public class BankHolidaysService {
                 return new ArrayList<>();
             }
         } catch (Exception e){
-            log.error("Error getting holidays for currentCompany with id={}", companyID, e);
+            log.error("Error getting holidays for company with id={}", companyID, e);
             return new ArrayList<>();
         } finally {
             DBUtil.closeConnection(connection);
