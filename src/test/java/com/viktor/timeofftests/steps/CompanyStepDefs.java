@@ -15,6 +15,6 @@ public class CompanyStepDefs {
 
     @Given("^default company with name \"([^\"]*)\" is created$")
     public void defaultCompanyWithNameIsCreated(String arg0) {
-        world.company = companyService.getOrCreateCompanyWithName(arg0);
+        world.currentCompany = companyService.getOrCreateCompanyWithName(arg0);
     }
 }

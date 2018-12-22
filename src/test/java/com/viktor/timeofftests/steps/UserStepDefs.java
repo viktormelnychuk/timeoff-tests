@@ -23,16 +23,16 @@ public class UserStepDefs {
     @Given("^following user is created:$")
     public void followingUserIsCreated(DataTable table) {
         User user = UserSteps.createUser(table);
-        if(world.company == null){
-            world.company = companyService.getOrCreateCompanyWithName(user.getCompanyName());
+        if(world.currentCompany == null){
+            world.currentCompany = companyService.getOrCreateCompanyWithName(user.getCompanyName());
         }
         if(world.currentUserDepartment == null){
             world.currentUserDepartment =
-                    departmentService.getOrCreateDepartmentWithName(user.getDepartmentName(), world.company.getId());
+                    departmentService.getOrCreateDepartmentWithName(user.getDepartmentName(), world.currentCompany.getId());
         }
-        user.setCompanyID(world.company.getId());
+        user.setCompanyID(world.currentCompany.getId());
         user.setDepartmentID(world.currentUserDepartment.getId());
-        world.defaultUser = userService.createNewUser(user);
+        world.currentUser = userService.createNewUser(user);
     }
 
 

@@ -8,7 +8,7 @@ import org.openqa.selenium.WebDriver;
 public class World {
 
     public WebDriver driver;
-    public Company company;
-    public User defaultUser;
+    public Company currentCompany;
+    public User currentUser;
     public Department currentUserDepartment;
 }

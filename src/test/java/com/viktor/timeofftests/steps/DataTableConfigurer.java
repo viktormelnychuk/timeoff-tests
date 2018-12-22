@@ -1,5 +1,7 @@
 package com.viktor.timeofftests.steps;
 
+import com.viktor.timeofftests.common.Constants;
+import com.viktor.timeofftests.forms.SignupForm;
 import com.viktor.timeofftests.models.User;
 import com.viktor.timeofftests.pools.UserPool;
 import cucumber.api.TypeRegistry;
@@ -17,12 +19,54 @@ public class DataTableConfigurer implements TypeRegistryConfigurer {
 
     @Override
     public void configureTypeRegistry(TypeRegistry typeRegistry) {
-        typeRegistry.defineDataTableType(new DataTableType(User.class, new TableEntryTransformer<User>() {
-            @Override
-            public User transform(Map<String, String> map) throws Throwable {
-                return transformUser(map);
-            }
-        }));
+        typeRegistry.defineDataTableType(new DataTableType(User.class, this::transformUser));
+        typeRegistry.defineDataTableType(new DataTableType(SignupForm.class,this::transformToSignupForm));
+    }
+
+    private SignupForm transformToSignupForm(Map<String, String> entry){
+        SignupForm form = new SignupForm();
+        String companyName = entry.get("currentCompany");
+        String firstName = entry.get("first_name");
+        String lastName = entry.get("last_name");
+        String email = entry.get("email");
+        String password = entry.get("password");
+        String passwordConfirmation = entry.get("password_confirmation");
+        String country = entry.get("country");
+        String timezone = entry.get("timezone");
+        if(companyName == null){
+            companyName = Constants.DEFAULT_COMPANY_NAME;
+        }
+        if (firstName == null){
+            firstName = Constants.DEFAULT_USER_NAME;
+        }
+        if(lastName == null){
+            lastName = Constants.DEFAULT_USER_LAST_NAME;
+        }
+        if(email == null){
+            email = Constants.DEFAULT_USER_EMAIL;
+        }
+        if(password == null){
+            password = Constants.DEFAULT_USER_PASSWORD;
+        }
+        if(passwordConfirmation == null){
+            passwordConfirmation = Constants.DEFAULT_USER_PASSWORD;
+        }
+
+        if(country == null){
+            country = Constants.DEFAULT_COMPANY_COUNTRY;
+        }
+        if(timezone == null){
+            timezone = Constants.DEFAULT_COMPANY_TIMEZONE;
+        }
+        form.setCompanyName(companyName);
+        form.setFirstName(firstName);
+        form.setLastName(lastName);
+        form.setEmail(email);
+        form.setPassword(password);
+        form.setPasswordConfirmation(passwordConfirmation);
+        form.setCountry(country);
+        form.setTimezone(timezone);
+        return form;
     }
 
     private User transformUser (Map<String, String> entry){
@@ -37,7 +81,7 @@ public class DataTableConfigurer implements TypeRegistryConfigurer {
             Date startDate = transformToDate(entry.get("started_on"));
             Date endDate = transformToDate(entry.get("ended_on"));
             String departmentName = entry.get("department");
-            String companyName = entry.get("company");
+            String companyName = entry.get("currentCompany");
             if (email == null) {
                 email = UserPool.getEmail();
             }

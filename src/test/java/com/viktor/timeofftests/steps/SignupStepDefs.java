@@ -1,30 +1,36 @@
 package com.viktor.timeofftests.steps;
 
 import com.viktor.timeofftests.common.World;
+import com.viktor.timeofftests.constants.TextConstants;
+import com.viktor.timeofftests.forms.SignupForm;
 import com.viktor.timeofftests.pages.SignupPage;
+import com.viktor.timeofftests.services.UserService;
 import cucumber.api.java.en.When;
 import io.cucumber.datatable.DataTable;
-
-import java.util.List;
 
 public class SignupStepDefs {
 
     private World world;
+    private UserService userService;
 
-    public SignupStepDefs(World world) {
+    public SignupStepDefs(World world, UserService userService) {
         this.world = world;
+        this.userService = userService;
     }
 
-    @When("I signup as:")
+    @When("^I signup as:$")
     public void iSignupAs(DataTable table) {
+        SignupForm form = table.convert(SignupForm.class, false);
         SignupPage signupPage = new SignupPage(world.driver);
-        List<String> row = table.row(1);
-        signupPage.fillCompanyName(row.get(0));
-        signupPage.fillEmail(row.get(1));
-        signupPage.fillFirstName(row.get(2));
-        signupPage.fillLastName(row.get(3));
-        signupPage.fillPassword(row.get(4));
-        signupPage.fillPasswordConfirmation(row.get(4));
+        signupPage.fillCompanyName(form.getCompanyName());
+        signupPage.fillEmail(form.getEmail());
+        signupPage.fillFirstName(form.getFirstName());
+        signupPage.fillLastName(form.getLastName());
+        signupPage.fillPassword(form.getPassword());
+        signupPage.fillPasswordConfirmation(form.getPasswordConfirmation());
         signupPage.clickCreateButtonExpectingSuccess();
+        if(!world.driver.getCurrentUrl().contains(TextConstants.RegisterPageConstants.PAGE_URL)){
+            world.currentUser = userService.getUserWithEmail(form.getEmail());
+        }
     }
 }

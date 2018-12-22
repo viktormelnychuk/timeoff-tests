@@ -48,17 +48,17 @@
 //
 //    @Test
 //    void checkCompanySettingsUI(){
-//        Company company = companyService.getCompanyWithId(user.getCompanyID());
+//        Company currentCompany = companyService.getCompanyWithId(user.getCompanyID());
 //        CompanySettings settings = generalSettingsPage.companySettings;
 //        assertAll(
 //                ()-> assertThat(settings.getCompanyLabel(), is("Company name")),
 //                ()-> assertThat(settings.getCountryLabel(), is("Country")),
 //                ()-> assertThat(settings.getDateFormatLabel(), is("Date format")),
 //                ()-> assertThat(settings.getTimeZoneLabel(), is("Time zone")),
-//                ()-> assertThat(settings.getCompanyName(), is(company.getName())),
-//                ()-> assertThat(settings.getCountry(), is(company.getCountry())),
-//                ()-> assertThat(settings.getDateFormat(), is(company.getDateFormat())),
-//                ()-> assertThat(settings.getTimeZone(), is(company.getTimezone()))
+//                ()-> assertThat(settings.getCompanyName(), is(currentCompany.getName())),
+//                ()-> assertThat(settings.getCountry(), is(currentCompany.getCountry())),
+//                ()-> assertThat(settings.getDateFormat(), is(currentCompany.getDateFormat())),
+//                ()-> assertThat(settings.getTimeZone(), is(currentCompany.getTimezone()))
 //        );
 //    }
 //
@@ -119,13 +119,13 @@
 //                .saveCompanySettings();
 //
 //        String expectedAlert = "Company was successfully updated";
-//        Company company = companyService.getCompanyWithId(user.getCompanyID());
+//        Company currentCompany = companyService.getCompanyWithId(user.getCompanyID());
 //        assertAll(
 //                ()-> assertThat(generalSettingsPage.getAlertText(), is(expectedAlert)),
-//                ()-> assertThat("New Company Name", is(company.getName())),
-//                ()-> assertThat("GB", is(company.getCountry())),
-//                ()-> assertThat("DD/MM/YY", is(company.getDateFormat())),
-//                ()-> assertThat("Europe/London", is(company.getTimezone()))
+//                ()-> assertThat("New Company Name", is(currentCompany.getName())),
+//                ()-> assertThat("GB", is(currentCompany.getCountry())),
+//                ()-> assertThat("DD/MM/YY", is(currentCompany.getDateFormat())),
+//                ()-> assertThat("Europe/London", is(currentCompany.getTimezone()))
 //        );
 //    }
 //
@@ -134,7 +134,7 @@
 //    void checkScheduleUI(){
 //        String[] expectedButtonTitles = new String[]{"Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"};
 //        String expectedTitle = "Company week schedule";
-//        String expectedDescription = "Define company wide weekly schedule. Press correspondent button to toggle working/non-working day.";
+//        String expectedDescription = "Define currentCompany wide weekly schedule. Press correspondent button to toggle working/non-working day.";
 //        String expectedSaveButtonTitle = "Save schedule";
 //        String[] actualTitles = generalSettingsPage.companyScheduleSettings.getScheduleDayTitles();
 //        assertAll(
@@ -160,7 +160,7 @@
 //        Schedule inDbSchedule = ScheduleService.getInstance().getScheduleForCompanyId(user.getCompanyID());
 //        assertAll(
 //                ()->assertThat(visibleSchedule, samePropertyValuesAs(inDbSchedule,"companyId","id","userID")),
-//                ()-> assertThat(generalSettingsPage.getAlertText(), is("Schedule for company was saved"))
+//                ()-> assertThat(generalSettingsPage.getAlertText(), is("Schedule for currentCompany was saved"))
 //        );
 //
 //    }
@@ -308,7 +308,7 @@
 //        generalSettingsPage = removeCompanyModal
 //                .fillCompanyName(currentCompany.getName()+"Random addition")
 //                .clickDeleteButtonExpectingFailure();
-//        String expectedMessage = "Failed to remove company. Reason: Provided name confirmation does not match company one";
+//        String expectedMessage = "Failed to remove currentCompany. Reason: Provided name confirmation does not match currentCompany one";
 //        assertAll(
 //                ()->assertThat(generalSettingsPage.getAlertText(), is(expectedMessage)),
 //                ()->assertThat(companyService.getCompanyWithId(currentCompany.getId()), is(notNullValue()))

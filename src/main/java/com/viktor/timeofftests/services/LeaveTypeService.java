@@ -69,7 +69,7 @@ public class LeaveTypeService {
                 return 0;
             }
         } catch (Exception e){
-            log.error("Error getting company ID for leave type",e);
+            log.error("Error getting currentCompany ID for leave type",e);
             return 0;
         } finally {
             DBUtil.closeConnection(connection);
@@ -77,7 +77,7 @@ public class LeaveTypeService {
     }
 
     public List<LeaveType> getLeaveTypesForCompanyWithId(int companyId){
-        log.info("Getting leave types for company with id={}", companyId);
+        log.info("Getting leave types for currentCompany with id={}", companyId);
         Connection connection = DbConnection.getConnection();
         try{
             String sql = "SELECT * FROM \"LeaveTypes\" WHERE \"companyId\"=?";
