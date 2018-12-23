@@ -3,11 +3,12 @@ package com.viktor.timeofftests.steps;
 import com.viktor.timeofftests.common.World;
 import com.viktor.timeofftests.models.Company;
 import com.viktor.timeofftests.models.Department;
+import com.viktor.timeofftests.models.Schedule;
 import com.viktor.timeofftests.models.User;
 import com.viktor.timeofftests.services.CompanyService;
 import com.viktor.timeofftests.services.DepartmentService;
+import com.viktor.timeofftests.services.ScheduleService;
 import com.viktor.timeofftests.services.UserService;
-import cucumber.api.java.en.And;
 import cucumber.api.java.en.Then;
 
 import static org.junit.Assert.*;
@@ -18,12 +19,14 @@ public class DatabaseVerificationStepDefs {
     private CompanyService companyService;
     private DepartmentService departmentService;
     private UserService userService;
-    public DatabaseVerificationStepDefs(World world, SessionSteps sessionSteps, CompanyService companyService, DepartmentService departmentService, UserService userService){
+    private ScheduleService scheduleService;
+    public DatabaseVerificationStepDefs(World world, SessionSteps sessionSteps, CompanyService companyService, DepartmentService departmentService, UserService userService, ScheduleService scheduleService){
         this.world = world;
         this.sessionSteps = sessionSteps;
         this.companyService = companyService;
         this.departmentService = departmentService;
         this.userService = userService;
+        this.scheduleService = scheduleService;
     }
 
     @Then("^database should (have|not have) session associated with \"([^\"]*)\"$")
@@ -79,5 +82,11 @@ public class DatabaseVerificationStepDefs {
         Company expected = world.editedCompany;
         Company actual = companyService.getCompanyWithId(world.editedCompany.getId());
         assertEquals(expected, actual);
+    }
+
+    @Then("database should have correct weekly schedule associated with company {string}")
+    public void databaseShouldHaveCorrectWeeklyScheduleAssociatedWithCompany(String arg0) {
+        Company company = companyService.getCompanyWithName(arg0);
+        Schedule inDbScheule = scheduleService.getScheduleForCompanyId(company.getId());
     }
 }

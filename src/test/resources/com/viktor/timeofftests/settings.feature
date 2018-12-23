@@ -20,3 +20,19 @@ Feature: Edit company wide settings
       |                |           |               | Europe/Kiev   |
       | Acme1          |           |               |               |
       |                |           |               |               |
+
+  Scenario Outline: Edit weekly schedule
+    Given I am on "Settings" page
+
+    When I edit weekly schedule to:
+    | monday   | tuesday   |  wednesday  |  thursday  |  friday  |  saturday  |  sunday  |
+    | <monday> | <tuesday> | <wednesday> | <thursday> | <friday> | <saturday> | <sunday> |
+
+    Then "weekly schedule settings" page should reflect correct information
+
+    Examples:
+      |  monday  |  tuesday  |  wednesday  |  thursday  |  friday  |  saturday  |  sunday  |
+      | true     | true      | true        | true       | true     | true       | true     |
+      | false    | false     | false       | false      | false    | false      | false    |
+      | true     | true      | true        | true       | true     | false      | false    |
+      | true     | true      | false       | true       | true     | false      | false    |

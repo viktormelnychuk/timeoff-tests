@@ -3,6 +3,7 @@ package com.viktor.timeofftests.steps;
 import com.viktor.timeofftests.common.Constants;
 import com.viktor.timeofftests.forms.CompanySettingsForm;
 import com.viktor.timeofftests.forms.SignupForm;
+import com.viktor.timeofftests.forms.WeeklyScheduleForm;
 import com.viktor.timeofftests.models.User;
 import com.viktor.timeofftests.pools.UserPool;
 import cucumber.api.TypeRegistry;
@@ -22,6 +23,7 @@ public class DataTableConfigurer implements TypeRegistryConfigurer {
         typeRegistry.defineDataTableType(new DataTableType(User.class, this::transformUser));
         typeRegistry.defineDataTableType(new DataTableType(SignupForm.class,this::transformToSignupForm));
         typeRegistry.defineDataTableType(new DataTableType(CompanySettingsForm.class, this::transformToForm));
+        typeRegistry.defineDataTableType(new DataTableType(WeeklyScheduleForm.class, this::transformToScheduleForm));
     }
 
     private CompanySettingsForm transformToForm(Map<String, String> entry){
@@ -30,6 +32,18 @@ public class DataTableConfigurer implements TypeRegistryConfigurer {
         form.setCountry(entry.get("country"));
         form.setDateFormat(entry.get("date_format"));
         form.setTimezone(entry.get("time_zone"));
+        return form;
+    }
+
+    private WeeklyScheduleForm transformToScheduleForm(Map<String, String> entry){
+        WeeklyScheduleForm form = new WeeklyScheduleForm();
+        form.setMonday(transformScheduleType(entry.get("mon")));
+        form.setTuesday(transformScheduleType(entry.get("tue")));
+        form.setWednesday(transformScheduleType(entry.get("wed")));
+        form.setThursday(transformScheduleType(entry.get("thu")));
+        form.setFriday(transformScheduleType(entry.get("fri")));
+        form.setSaturday(transformScheduleType(entry.get("sat")));
+        form.setSunday(transformScheduleType(entry.get("sun")));
         return form;
     }
 
@@ -148,5 +162,13 @@ public class DataTableConfigurer implements TypeRegistryConfigurer {
             return new Date();
         }
 
+    }
+
+    private int transformScheduleType(String v){
+        if(v.equals("true")){
+            return 1;
+        } else {
+            return 2;
+        }
     }
 }

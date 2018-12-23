@@ -73,8 +73,8 @@ public class ScheduleService {
             Schedule schedule = new Schedule();
             schedule.setId(set.getInt("id"));
             schedule.setMonday(set.getInt("monday"));
-            schedule.setTuesday(set.getInt("monday"));
-            schedule.setWednesday(set.getInt("monday"));
+            schedule.setTuesday(set.getInt("tuesday"));
+            schedule.setWednesday(set.getInt("wednesday"));
             schedule.setThursday(set.getInt("thursday"));
             schedule.setFriday(set.getInt("friday"));
             schedule.setSaturday(set.getInt("saturday"));
