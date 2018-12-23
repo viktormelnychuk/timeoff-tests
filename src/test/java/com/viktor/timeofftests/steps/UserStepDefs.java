@@ -1,6 +1,9 @@
 package com.viktor.timeofftests.steps;
 
+<<<<<<< HEAD
 import com.sun.xml.internal.bind.v2.runtime.reflect.opt.Const;
+=======
+>>>>>>> 550d9d688775a7f21b7c2e0bbcc11f16cb9451d6
 import com.viktor.timeofftests.common.Constants;
 import com.viktor.timeofftests.common.World;
 import com.viktor.timeofftests.models.Company;

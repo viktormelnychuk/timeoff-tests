@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 //package com.viktor.timeofftests.pages;
 //
 //import com.viktor.timeofftests.common.DriverUtil;
@@ -74,6 +75,8 @@
 //        );
 //
 //    }
+=======
+>>>>>>> 550d9d688775a7f21b7c2e0bbcc11f16cb9451d6
 //
 //    @Test
 //    void checkLeaveTypesUI(){

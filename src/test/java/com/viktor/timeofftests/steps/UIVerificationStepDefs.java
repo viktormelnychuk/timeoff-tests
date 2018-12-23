@@ -75,6 +75,12 @@ public class UIVerificationStepDefs {
             case "company settings":
                 settingsSteps.validateDisplayedCompany(world.editedCompany);
                 break;
+<<<<<<< HEAD
+=======
+            case "weekly schedule settings":
+                settingsSteps.validateWeeklyScheduleForCompany(world.currentCompany.getId());
+                break;
+>>>>>>> 550d9d688775a7f21b7c2e0bbcc11f16cb9451d6
             default:
                 throw new Exception("Page is not known");
         }

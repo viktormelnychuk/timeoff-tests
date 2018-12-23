@@ -22,6 +22,18 @@ public class DataTableConfigurer implements TypeRegistryConfigurer {
         typeRegistry.defineDataTableType(new DataTableType(User.class, this::transformUser));
         typeRegistry.defineDataTableType(new DataTableType(SignupForm.class,this::transformToSignupForm));
         typeRegistry.defineDataTableType(new DataTableType(CompanySettingsForm.class, this::transformToForm));
+<<<<<<< HEAD
+    }
+
+    private CompanySettingsForm transformToForm(Map<String, String> entry){
+        CompanySettingsForm form = new CompanySettingsForm();
+        form.setCompanyName(entry.get("company_name"));
+        form.setCountry(entry.get("country"));
+        form.setDateFormat(entry.get("date_format"));
+        form.setTimezone(entry.get("time_zone"));
+        return form;
+=======
+>>>>>>> 550d9d688775a7f21b7c2e0bbcc11f16cb9451d6
     }
 
     private CompanySettingsForm transformToForm(Map<String, String> entry){
@@ -32,7 +44,6 @@ public class DataTableConfigurer implements TypeRegistryConfigurer {
         form.setTimezone(entry.get("time_zone"));
         return form;
     }
-
     private SignupForm transformToSignupForm(Map<String, String> entry){
         SignupForm form = new SignupForm();
         String companyName = entry.get("currentCompany");
