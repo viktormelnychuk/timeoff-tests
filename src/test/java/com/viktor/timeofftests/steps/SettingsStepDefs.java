@@ -2,12 +2,10 @@ package com.viktor.timeofftests.steps;
 
 import com.viktor.timeofftests.common.World;
 import com.viktor.timeofftests.forms.CompanySettingsForm;
-import com.viktor.timeofftests.forms.WeeklyScheduleForm;
 import com.viktor.timeofftests.pages.partials.settings.CompanyScheduleSettings;
 import com.viktor.timeofftests.pages.partials.settings.CompanySettings;
 import com.viktor.timeofftests.services.ScheduleService;
 import cucumber.api.java.en.When;
-import cucumber.api.java.it.Ma;
 import io.cucumber.datatable.DataTable;
 import org.apache.commons.lang3.StringUtils;
 

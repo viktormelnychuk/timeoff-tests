@@ -1,17 +1,3 @@
-
-//    @Test
-//    void adminEditsWeekSchedule(){
-//        generalSettingsPage = generalSettingsPage.companyScheduleSettings
-//                .toggleDays(1,2,3,4)
-//                .saveSchedule();
-//        Schedule visibleSchedule = generalSettingsPage.companyScheduleSettings.getSchedule();
-//        Schedule inDbSchedule = ScheduleService.getInstance().getScheduleForCompanyId(user.getCompanyID());
-//        assertAll(
-//                ()->assertThat(visibleSchedule, samePropertyValuesAs(inDbSchedule,"companyId","id","userID")),
-//                ()-> assertThat(generalSettingsPage.getAlertText(), is("Schedule for currentCompany was saved"))
-//        );
-//
-//    }
 //
 //    @Test
 //    void checkLeaveTypesUI(){
