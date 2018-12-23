@@ -16,9 +16,10 @@ import static org.junit.Assert.assertTrue;
 public class UIVerificationStepDefs {
 
     private World world;
-
-    public UIVerificationStepDefs(World world){
+    private SettingsSteps settingsSteps;
+    public UIVerificationStepDefs(World world, SettingsSteps settingsSteps){
         this.world = world;
+        this.settingsSteps = settingsSteps;
     }
 
     @And("^the \"([^\"]*)\" page should be opened$")
@@ -67,4 +68,19 @@ public class UIVerificationStepDefs {
         assertEquals(TextConstants.CalendarPageConstants.PAGE_TITLE, page.getTitle());
     }
 
+    @Then("^\"([^\"]*)\" page should reflect correct information$")
+    public void companySettingsPageShouldReflectCorrectInformation(String page) throws Exception {
+        page = page.toLowerCase();
+        switch (page){
+            case "company settings":
+                settingsSteps.validateDisplayedCompany(world.editedCompany);
+                break;
+            case "weekly schedule settings":
+                settingsSteps.validateWeeklyScheduleForCompany(world.currentCompany.getId());
+                break;
+            default:
+                throw new Exception("Page is not known");
+        }
+
+    }
 }

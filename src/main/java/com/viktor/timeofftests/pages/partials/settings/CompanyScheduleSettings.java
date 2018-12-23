@@ -19,6 +19,7 @@ public class CompanyScheduleSettings extends BasePage {
     private By title = By.xpath("//form[@id='company_schedule_form']//div[@class='form-group']/label[@class='col-md-6 control-label']");
     private By description = By.xpath("//form[@id='company_schedule_form']//div[@class='form-group']/div[@class='col-md-offset-2']/em");
     private By scheduleButtons = By.xpath("//form[@id='company_schedule_form']//div[@class='btn-group' and @data-toggle='buttons']/label");
+    private String scheduleButtonsQuery = "//form[@id='company_schedule_form']//input[@type='checkbox'][@name='%s']";
     public CompanyScheduleSettings (WebDriver driver){
         super(driver);
         this.driver = driver;
@@ -28,12 +29,6 @@ public class CompanyScheduleSettings extends BasePage {
     public String getBaseUrl() {
         return null;
     }
-
-//    public Schedule getSchedule(){
-//        WebElement form = findOne(companyWeekScheduleForm);
-//        List<WebElement> elementList = form.findElements(By.xpath("//div[@class='btn-group' and @data-toggle='buttons']/label/input"));
-//        return ScheduleService.getInstance().deserializeSchedule(elementList);
-//    }
     public CompanyScheduleSettings toggleDay (int index){
         String locator = String.format("//div[@class='btn-group' and @data-toggle='buttons']/label[%d]", index);
         findOne(By.xpath(locator)).click();
@@ -50,6 +45,14 @@ public class CompanyScheduleSettings extends BasePage {
     public String getTitle(){
         return findOne(title)
                 .getText();
+    }
+
+    public void setDay (String day, boolean v){
+        By locator = By.xpath(String.format(scheduleButtonsQuery, day));
+        WebElement element = driver.findElement(locator);
+        if(element.isSelected() != v){
+            element.findElement(By.xpath("./..")).click();
+        }
     }
 
     public String getDescription(){
@@ -74,4 +77,13 @@ public class CompanyScheduleSettings extends BasePage {
         return new GeneralSettingsPage(this.driver);
     }
 
+    public Schedule getVisibleSchedule() {
+        List<WebElement> all = findAllBy(scheduleButtons);
+        Schedule schedule = new Schedule();
+        for (WebElement element : all) {
+            WebElement input = element.findElement(By.xpath("./input"));
+            schedule.set(input.getAttribute("name"), input.isSelected());
+        }
+        return schedule;
+    }
 }

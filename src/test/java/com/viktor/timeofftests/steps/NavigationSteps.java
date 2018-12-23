@@ -3,8 +3,13 @@ package com.viktor.timeofftests.steps;
 import com.viktor.timeofftests.common.World;
 import com.viktor.timeofftests.constants.Pages;
 import com.viktor.timeofftests.constants.TextConstants;
+import com.viktor.timeofftests.pages.CalendarPage;
+import com.viktor.timeofftests.pages.LoginPage;
 import cucumber.api.java.en.And;
 import cucumber.api.java.en.Given;
+
+import javax.xml.soap.Text;
+import java.util.Objects;
 
 import static org.junit.Assert.*;
 
@@ -28,8 +33,23 @@ public class NavigationSteps {
             case Pages.REGISTER:
                 world.driver.get(TextConstants.RegisterPageConstants.PAGE_URL);
                 break;
+            case Pages.SETTINGS:
+                navigateToGeneralSettings();
+                break;
             default:
                 throw new Exception("Page was not found");
+        }
+    }
+
+    private void navigateToGeneralSettings() {
+        String currentUrl = world.driver.getCurrentUrl();
+        if(!Objects.equals(currentUrl, TextConstants.GeneralSettingsConstants.PAGE_URL)){
+            world.driver.get(TextConstants.GeneralSettingsConstants.PAGE_URL);
+            LoginPage loginPage = new LoginPage(world.driver);
+            loginPage.fillEmail(world.currentUser.getEmail());
+            loginPage.fillPassword(world.currentUser.getRawPassword());
+            CalendarPage calendarPage = loginPage.clickLoginButtonExpectingSuccess();
+            calendarPage.menuBar.navigateToGeneralSettings();
         }
     }
 

@@ -13,7 +13,7 @@ public abstract class BasePage extends ConciseAPI {
     By pageTitle = By.xpath("//h1");
 
     private WebDriver driver;
-    MenuBar menuBar;
+    public MenuBar menuBar;
 
     public abstract String getBaseUrl();
 
