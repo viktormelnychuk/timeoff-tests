@@ -24,7 +24,7 @@ public class LeaveTypeService {
 
     }
 
-    void insertLeaveTypes(LeaveType[] leaveTypes, int companyId){
+    public void insertLeaveTypes(int companyId, LeaveType... leaveTypes){
         log.info("Inserting leave types: {}", Arrays.toString(leaveTypes));
         Connection connection = DbConnection.getConnection();
         try{
@@ -119,5 +119,4 @@ public class LeaveTypeService {
             return new ArrayList<LeaveType>();
         }
     }
-
 }

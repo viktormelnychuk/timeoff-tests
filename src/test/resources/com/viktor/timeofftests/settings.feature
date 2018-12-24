@@ -37,15 +37,26 @@ Feature: Edit company wide settings
       | true     | true      | true        | true       | true     | false      | false    |
       | true     | true      | false       | true       | true     | false      | false    |
 
-  Scenario: Admin user edits leave type
-    Given I am on "Settings" page
+  Scenario Outline: Admin user edits leave type
+    Given following leave type is created:
+      |  name           |  color  |  use_allowance  | limit   |
+      | <original_name> | color 1 | true            | 10      |
 
-    When I edit leave type to:
+    And I am on "Settings" page
+
+    When I edit "<original_name>" leave type to:
     |  name  |  color  |  use_allowance  | limit   |
     | <name> | <color> | <use_allowance> | <limit> |
 
     Then "leave types" page should reflect correct information
 
+    Examples:
+      |original_name |  name     |  color  |  use_allowance  | limit   |
+      | Holiday      | Something | color 2 | false           | 20      |
+      | Leave        |           | color 2 | false           | 20      |
+      | Sick leave   |           |         | false           | 20      |
+      | Holiday      |           |         | true            | 20      |
+      | Holiday      |           |         |                 | 20      |
 
   Scenario: Admin user can add new leave type
     Given  I am on "Settings" page

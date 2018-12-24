@@ -24,6 +24,7 @@ public class LeaveTypesSettings extends BasePage {
     private String leaveTypeUseAllowanceQuery = "//form[@id='leave_type_edit_form']//input[@value='%s']/../../../div/input[@type='checkbox']";
     private String leaveTypeLimitQuery = "//form[@id='leave_type_edit_form']//input[@value='%s']/../../../div/input[contains(@name,'limit')]";
     private String leaveTypeDeleteQuery = "//form[@id='leave_type_edit_form']//input[@value='%s']/../../../div/button[contains(@data-tom-leave-type-order,'remove')]";
+    private String leaveTypeColorQuery = "//form[@id='leave_type_edit_form']//input[@value='%s']/../../..//button[contains(@class,'leave_type_color')]";
     private By saveChangesButton = By.xpath("//form[@id='leave_type_edit_form']//button[@type='submit']");
     private By addNewButton = By.id("add_new_leave_type_btn");
     public LeaveTypesSettings (WebDriver driver){
@@ -44,15 +45,6 @@ public class LeaveTypesSettings extends BasePage {
         }
 
     }
-
-//    public List<String> getDisplayedLeaveTypesAsString(){
-//        List<LeaveType> rows = getDisplayedLeaveTypes();
-//        List<String> result = new ArrayList<>();
-//        rows.forEach((item)->{
-//            result.add(item.getName());
-//        });
-//        return result;
-//    }
 
     public LeaveTypesSettings editLeaveTypeName(String oldName, String newName){
         By locator = By.xpath(String.format(leaveTypeNameQuery,oldName));
@@ -90,20 +82,18 @@ public class LeaveTypesSettings extends BasePage {
         return this;
     }
 
+
+    public void setColor(String toEdit, String color) {
+        By locator = By.xpath(String.format(leaveTypeColorQuery, toEdit));
+        clickButton(locator);
+        findOne(By.linkText(color)).click();
+    }
+
     public GeneralSettingsPage deleteLeave (String name){
         By locator = By.xpath(String.format(leaveTypeDeleteQuery,name));
         clickButton(locator);
         return new GeneralSettingsPage(this.driver);
     }
-
-//    public GeneralSettingsPage deleteAllLeaveTypesWithSave(){
-//        List<LeaveType> rows = getDisplayedLeaveTypes();
-//        for (LeaveType row : rows) {
-//            deleteLeave(row.getName());
-//        }
-//        clickButton(saveChangesButton);
-//        return new GeneralSettingsPage(this.driver);
-//    }
 
     public AddNewLeaveTypeModal clickAddButton(){
         clickButton(addNewButton);

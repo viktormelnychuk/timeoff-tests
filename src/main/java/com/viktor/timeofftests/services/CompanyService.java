@@ -151,9 +151,9 @@ public class CompanyService {
             resultSet.next();
             company.setId(resultSet.getInt(1));
             if (company.getLeaveTypes() != null){
-                leaveTypeService.insertLeaveTypes(company.getLeaveTypes(), company.getId());
+                leaveTypeService.insertLeaveTypes(company.getId(),company.getLeaveTypes());
             } else {
-                leaveTypeService.insertLeaveTypes(Constants.DEFAULT_LEAVE_TYPES, company.getId());
+                leaveTypeService.insertLeaveTypes(company.getId(),Constants.DEFAULT_LEAVE_TYPES);
             }
             bankHolidayService.populateBankHolidaysForCompany(company);
             scheduleService.insertDefaultSchedule(company.getId());
