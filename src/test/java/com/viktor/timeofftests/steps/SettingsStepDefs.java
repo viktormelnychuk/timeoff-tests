@@ -74,6 +74,7 @@ public class SettingsStepDefs {
         modal.setName(map.get("name"));
         modal.setAllowance(Objects.equals(map.get("use_allowance"), "true"));
         modal.setLimit(map.get("limit"));
+        modal.setColor(StringUtils.capitalize(map.get("color")));
         modal.clickCreateButton();
     }
 

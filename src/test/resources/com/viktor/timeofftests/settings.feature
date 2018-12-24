@@ -47,12 +47,12 @@ Feature: Edit company wide settings
     Then "leave types" page should reflect correct information
 
 
-  Scenario: Admin user  can add new leave type
+  Scenario: Admin user can add new leave type
     Given  I am on "Settings" page
 
     When I add new leave type:
       |  name  |  color  |  use_allowance  | limit   |
-      | 123    | red     | true            | 20      |
+      | 123    | color 2 | true            | 20      |
 
     Then "leave types" page should reflect correct information
     
