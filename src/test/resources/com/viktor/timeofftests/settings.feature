@@ -55,6 +55,7 @@ Feature: Edit company wide settings
       | 123    | color 2 | true            | 20      |
 
     Then "leave types" page should reflect correct information
+    And "123" leave type should be present on new absence popup
     
     
   Scenario: Admin user cannot delete all leave types

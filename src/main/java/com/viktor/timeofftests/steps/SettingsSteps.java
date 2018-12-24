@@ -49,6 +49,7 @@ public class SettingsSteps {
     public void validateLeaveTypes(int id) {
         List<LeaveType> inDb = leaveTypeService.getLeaveTypesForCompanyWithId(id);
         LeaveTypesSettings page = new LeaveTypesSettings(world.driver);
+        world.inDbLeaveTypes = inDb;
         assertThat(page.getDisplayedLeaveTypes(world.currentCompany.getId()), containsInAnyOrder(inDb.toArray()));
     }
 }

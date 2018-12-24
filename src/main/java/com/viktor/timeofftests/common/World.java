@@ -1,11 +1,9 @@
 package com.viktor.timeofftests.common;
 
-import com.viktor.timeofftests.models.Company;
-import com.viktor.timeofftests.models.Department;
-import com.viktor.timeofftests.models.Schedule;
-import com.viktor.timeofftests.models.User;
+import com.viktor.timeofftests.models.*;
 import org.openqa.selenium.WebDriver;
 
+import java.util.List;
 import java.util.Map;
 
 public class World {
@@ -16,4 +14,5 @@ public class World {
     public User currentUser;
     public Department currentUserDepartment;
     public Schedule currentCompanySchedule;
+    public List<LeaveType> inDbLeaveTypes;
 }
