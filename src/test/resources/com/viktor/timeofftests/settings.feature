@@ -36,3 +36,30 @@ Feature: Edit company wide settings
       | false    | false     | false       | false      | false    | false      | false    |
       | true     | true      | true        | true       | true     | false      | false    |
       | true     | true      | false       | true       | true     | false      | false    |
+
+  Scenario: Admin user edits leave type
+    Given I am on "Settings" page
+
+    When I edit leave type to:
+    |  name  |  color  |  use_public  | limit   |
+    | <name> | <color> | <use_public> | <limit> |
+
+    Then "leave types" page should reflect correct information
+
+
+  Scenario: Admin user  can add new leave type
+    Given  I am on "Settings" page
+
+    When I add new leave type:
+      |  name  |  color  |  use_public  | limit   |
+      | 123    | red     | true         | 20      |
+
+    Then "leave types" page should reflect correct information
+    
+    
+  Scenario: Admin user cannot delete all leave types
+    Given I am on "Settings" page
+    
+    When I delete all leave types
+    
+    Then I should see alert "Cannot delete all leave types" on the page
