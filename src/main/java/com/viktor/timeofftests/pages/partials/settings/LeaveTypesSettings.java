@@ -1,5 +1,6 @@
 package com.viktor.timeofftests.pages.partials.settings;
 
+import com.viktor.timeofftests.common.World;
 import com.viktor.timeofftests.models.LeaveType;
 import com.viktor.timeofftests.pages.BasePage;
 import com.viktor.timeofftests.pages.GeneralSettingsPage;
@@ -23,6 +24,7 @@ public class LeaveTypesSettings extends BasePage {
     private String leaveTypeUseAllowanceQuery = "//form[@id='leave_type_edit_form']//input[@value='%s']/../../../div/input[@type='checkbox']";
     private String leaveTypeLimitQuery = "//form[@id='leave_type_edit_form']//input[@value='%s']/../../../div/input[contains(@name,'limit')]";
     private String leaveTypeDeleteQuery = "//form[@id='leave_type_edit_form']//input[@value='%s']/../../../div/button[contains(@data-tom-leave-type-order,'remove')]";
+    private String leaveTypeColorQuery = "//form[@id='leave_type_edit_form']//input[@value='%s']/../../..//button[contains(@class,'leave_type_color')]";
     private By saveChangesButton = By.xpath("//form[@id='leave_type_edit_form']//button[@type='submit']");
     private By addNewButton = By.id("add_new_leave_type_btn");
     public LeaveTypesSettings (WebDriver driver){
@@ -30,28 +32,19 @@ public class LeaveTypesSettings extends BasePage {
         this.driver = driver;
     }
 
-//    public List<LeaveType> getDisplayedLeaveTypes(){
-//        try {
-//            List<WebElement> rows = findAllBy(By.xpath("//form[@id='leave_type_edit_form']/div[contains(.,'allowance')]"));
-//            return LeaveTypeService.getInstance().deserializeLeaveTypes(rows);
-//        } catch (TimeoutException e){
-//            /*
-//                If cannot find elements - return empty arrayList.
-//                If elements aren't displayed due to a bug - it will fail on assertion in the test
-//             */
-//            return new ArrayList<>();
-//        }
-//
-//    }
+    public List<LeaveType> getDisplayedLeaveTypes(int companyId){
+        try {
+            List<WebElement> rows = findAllBy(By.xpath("//form[@id='leave_type_edit_form']/div[contains(.,'allowance')]"));
+            return deserializeLeaveTypes(rows, companyId);
+        } catch (TimeoutException e){
+            /*
+                If cannot find elements - return empty arrayList.
+                If elements aren't displayed due to a bug - it will fail on assertion in the test
+             */
+            return new ArrayList<>();
+        }
 
-//    public List<String> getDisplayedLeaveTypesAsString(){
-//        List<LeaveType> rows = getDisplayedLeaveTypes();
-//        List<String> result = new ArrayList<>();
-//        rows.forEach((item)->{
-//            result.add(item.getName());
-//        });
-//        return result;
-//    }
+    }
 
     public LeaveTypesSettings editLeaveTypeName(String oldName, String newName){
         By locator = By.xpath(String.format(leaveTypeNameQuery,oldName));
@@ -89,23 +82,52 @@ public class LeaveTypesSettings extends BasePage {
         return this;
     }
 
+
+    public void setColor(String toEdit, String color) {
+        By locator = By.xpath(String.format(leaveTypeColorQuery, toEdit));
+        clickButton(locator);
+        findOne(By.linkText(color)).click();
+    }
+
     public GeneralSettingsPage deleteLeave (String name){
         By locator = By.xpath(String.format(leaveTypeDeleteQuery,name));
         clickButton(locator);
         return new GeneralSettingsPage(this.driver);
     }
 
-//    public GeneralSettingsPage deleteAllLeaveTypesWithSave(){
-//        List<LeaveType> rows = getDisplayedLeaveTypes();
-//        for (LeaveType row : rows) {
-//            deleteLeave(row.getName());
-//        }
-//        clickButton(saveChangesButton);
-//        return new GeneralSettingsPage(this.driver);
-//    }
-
     public AddNewLeaveTypeModal clickAddButton(){
         clickButton(addNewButton);
         return new AddNewLeaveTypeModal(this.driver);
+    }
+    public List<LeaveType> deserializeLeaveTypes(List<WebElement> rows, int companyId){
+        List<LeaveType> leaveTypes = new ArrayList<>();
+        for (WebElement row : rows) {
+            LeaveType leaveType = new LeaveType();
+            String name = row.findElement(By.xpath(".//input[contains(@data-tom-leave-type-order,'name')]")).getAttribute("value");
+            String color = row.findElement(By.xpath(".//div[contains(@data-tom-leave-type-order,'colour_')]/input[@type='hidden']")).getAttribute("value");
+            boolean useAllowance = row.findElement(By.xpath(".//input[contains(@data-tom-leave-type-order,'allowance_')]")).isSelected();
+            String limit = row.findElement(By.xpath(".//input[contains(@data-tom-leave-type-order,'limit_')]")).getAttribute("value");
+            String nameWithId = row.findElement(By.xpath(".//input[contains(@data-tom-leave-type-order,'name')]")).getAttribute("name");
+            String id = nameWithId.split("__")[1];
+            String xpathForChecked = String.format(".//input[@value='%s']", id);
+            int sortOrder = getSortOrder(row.findElement(By.xpath(xpathForChecked)));
+            leaveType.setColorHex(color);
+            leaveType.setName(name);
+            leaveType.setUseAllowance(useAllowance);
+            leaveType.setLimit(Integer.parseInt(limit));
+            leaveType.setId(Integer.parseInt(id));
+            leaveType.setSortOrder(sortOrder);
+            leaveType.setCompanyId(companyId);
+            leaveTypes.add(leaveType);
+        }
+        return leaveTypes;
+    }
+
+    private int getSortOrder(WebElement element){
+        if(element.isSelected()){
+            return 1;
+        } else {
+            return 0;
+        }
     }
 }

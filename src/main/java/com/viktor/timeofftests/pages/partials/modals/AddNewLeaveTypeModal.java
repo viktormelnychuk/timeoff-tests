@@ -14,7 +14,7 @@ public class AddNewLeaveTypeModal extends BasePage {
     private By userAllowanceCheckbox = By.id("leave_type_use_allovance_new");
     private By limitInput = By.id("leave_type_limit_new");
     private By createButton = By.xpath("//form[@id='leave_type_new_form']//button[@type='submit']");
-
+    private By colorPicker = By.xpath("//form[@id='leave_type_new_form']//button[contains(@class,'leave_type_color')]");
     public AddNewLeaveTypeModal (WebDriver driver){
         super(driver);
         this.driver = driver;
@@ -37,6 +37,15 @@ public class AddNewLeaveTypeModal extends BasePage {
         return this;
     }
 
+    public void setColor (String color){
+        clickButton(colorPicker);
+        findOne(By.linkText(color)).click();
+    }
+
+    public void setLimit(String limit) {
+        setLimit(Integer.parseInt(limit));
+    }
+
     public GeneralSettingsPage clickCreateButton(){
         clickButton(createButton);
         return new GeneralSettingsPage(this.driver);
@@ -46,4 +55,5 @@ public class AddNewLeaveTypeModal extends BasePage {
     public String getBaseUrl() {
         return null;
     }
+
 }

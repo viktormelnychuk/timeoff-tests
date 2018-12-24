@@ -3,16 +3,22 @@ package com.viktor.timeofftests.steps;
 import com.viktor.timeofftests.common.World;
 import com.viktor.timeofftests.constants.Pages;
 import com.viktor.timeofftests.constants.TextConstants;
+import com.viktor.timeofftests.models.LeaveType;
 import com.viktor.timeofftests.pages.CalendarPage;
+import com.viktor.timeofftests.pages.GeneralSettingsPage;
 import com.viktor.timeofftests.pages.LoginPage;
 import com.viktor.timeofftests.pages.SignupPage;
+import com.viktor.timeofftests.pages.partials.modals.NewAbsenceModal;
 import cucumber.api.java.en.And;
 import cucumber.api.java.en.Then;
 import org.openqa.selenium.By;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import java.util.Comparator;
+import java.util.List;
+import java.util.stream.Collectors;
 
+import static org.junit.Assert.*;
+import static org.hamcrest.Matchers.*;
 public class UIVerificationStepDefs {
 
     private World world;
@@ -78,8 +84,24 @@ public class UIVerificationStepDefs {
             case "weekly schedule settings":
                 settingsSteps.validateWeeklyScheduleForCompany(world.currentCompany.getId());
                 break;
+            case "leave types":
+                settingsSteps.validateLeaveTypes(world.currentCompany.getId());
+                break;
             default:
                 throw new Exception("Page is not known");
+        }
+
+    }
+
+    @Then("^\"([^\"]*)\" leave type (should|should not) be present on new absence popup$")
+    public void leaveTypeShouldBePresentOnNewAbsencePopup(String leaveTypeName, String should) {
+        NewAbsenceModal modal = new GeneralSettingsPage(world.driver).menuBar.openNewAbsenceModal();
+        switch (should){
+            case "should":
+                assertThat(modal.getDisplayedLeaveTypesAsString().toArray(), hasItemInArray(leaveTypeName));
+                break;
+            case "should not":
+                assertThat(modal.getDisplayedLeaveTypesAsString().toArray(), not(hasItemInArray(leaveTypeName)));
         }
 
     }

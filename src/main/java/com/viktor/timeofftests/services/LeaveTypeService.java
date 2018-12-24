@@ -24,7 +24,7 @@ public class LeaveTypeService {
 
     }
 
-    void insertLeaveTypes(LeaveType[] leaveTypes, int companyId){
+    public void insertLeaveTypes(int companyId, LeaveType... leaveTypes){
         log.info("Inserting leave types: {}", Arrays.toString(leaveTypes));
         Connection connection = DbConnection.getConnection();
         try{
@@ -117,38 +117,6 @@ public class LeaveTypeService {
         } catch (Exception e){
             log.error("Error deserializing leave types from Database", e);
             return new ArrayList<LeaveType>();
-        }
-    }
-
-    public List<LeaveType> deserializeLeaveTypes(List<WebElement> rows){
-        List<LeaveType> leaveTypes = new ArrayList<>();
-        for (WebElement row : rows) {
-            LeaveType leaveType = new LeaveType();
-            String name = row.findElement(By.xpath(".//input[contains(@data-tom-leave-type-order,'name')]")).getAttribute("value");
-            String color = row.findElement(By.xpath(".//div[contains(@data-tom-leave-type-order,'colour_')]/input[@type='hidden']")).getAttribute("value");
-            boolean useAllowance = row.findElement(By.xpath(".//input[contains(@data-tom-leave-type-order,'allowance_')]")).isSelected();
-            String limit = row.findElement(By.xpath(".//input[contains(@data-tom-leave-type-order,'limit_')]")).getAttribute("value");
-            String nameWithId = row.findElement(By.xpath(".//input[contains(@data-tom-leave-type-order,'name')]")).getAttribute("name");
-            String id = nameWithId.split("__")[1];
-            String xpathForChecked = String.format(".//input[@value='%s']", id);
-            int sortOrder = getSortOrder(row.findElement(By.xpath(xpathForChecked)));
-            leaveType.setColorHex(color);
-            leaveType.setName(name);
-            leaveType.setUseAllowance(useAllowance);
-            leaveType.setLimit(Integer.parseInt(limit));
-            leaveType.setId(Integer.parseInt(id));
-            leaveType.setSortOrder(sortOrder);
-            leaveType.setCompanyId(getCompanyIdForLeave(leaveType));
-            leaveTypes.add(leaveType);
-        }
-        return leaveTypes;
-    };
-
-    private int getSortOrder(WebElement element){
-        if(element.isSelected()){
-            return 1;
-        } else {
-            return 0;
         }
     }
 }
