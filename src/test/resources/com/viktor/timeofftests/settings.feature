@@ -41,8 +41,8 @@ Feature: Edit company wide settings
     Given I am on "Settings" page
 
     When I edit leave type to:
-    |  name  |  color  |  use_public  | limit   |
-    | <name> | <color> | <use_public> | <limit> |
+    |  name  |  color  |  use_allowance  | limit   |
+    | <name> | <color> | <use_allowance> | <limit> |
 
     Then "leave types" page should reflect correct information
 
@@ -51,8 +51,8 @@ Feature: Edit company wide settings
     Given  I am on "Settings" page
 
     When I add new leave type:
-      |  name  |  color  |  use_public  | limit   |
-      | 123    | red     | true         | 20      |
+      |  name  |  color  |  use_allowance  | limit   |
+      | 123    | red     | true            | 20      |
 
     Then "leave types" page should reflect correct information
     

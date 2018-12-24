@@ -37,6 +37,10 @@ public class AddNewLeaveTypeModal extends BasePage {
         return this;
     }
 
+    public void setLimit(String limit) {
+        setLimit(Integer.parseInt(limit));
+    }
+
     public GeneralSettingsPage clickCreateButton(){
         clickButton(createButton);
         return new GeneralSettingsPage(this.driver);
@@ -46,4 +50,5 @@ public class AddNewLeaveTypeModal extends BasePage {
     public String getBaseUrl() {
         return null;
     }
+
 }

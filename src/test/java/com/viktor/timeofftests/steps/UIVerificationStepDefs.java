@@ -78,6 +78,8 @@ public class UIVerificationStepDefs {
             case "weekly schedule settings":
                 settingsSteps.validateWeeklyScheduleForCompany(world.currentCompany.getId());
                 break;
+            case "leave types":
+
             default:
                 throw new Exception("Page is not known");
         }

@@ -2,6 +2,8 @@ package com.viktor.timeofftests.steps;
 
 import com.viktor.timeofftests.common.World;
 import com.viktor.timeofftests.forms.CompanySettingsForm;
+import com.viktor.timeofftests.pages.GeneralSettingsPage;
+import com.viktor.timeofftests.pages.partials.modals.AddNewLeaveTypeModal;
 import com.viktor.timeofftests.pages.partials.settings.CompanyScheduleSettings;
 import com.viktor.timeofftests.pages.partials.settings.CompanySettings;
 import com.viktor.timeofftests.services.ScheduleService;
@@ -58,5 +60,24 @@ public class SettingsStepDefs {
 
     private boolean transofrmTrueAndFalseToBool(String s){
         return Objects.equals(s, "true");
+    }
+
+    @When("I edit leave type to:")
+    public void iEditLeaveTypeTo() {
+
+    }
+
+    @When("I add new leave type:")
+    public void iAddNewLeaveType(DataTable table) {
+        Map<String, String> map = table.transpose().asMap(String.class, String.class);
+        AddNewLeaveTypeModal modal = new GeneralSettingsPage(world.driver).leaveTypesSettings.clickAddButton();
+        modal.setName(map.get("name"));
+        modal.setAllowance(Objects.equals(map.get("use_allowance"), "true"));
+        modal.setLimit(map.get("limit"));
+        modal.clickCreateButton();
+    }
+
+    @When("I delete all leave types")
+    public void iDeleteAllLeaveTypes() {
     }
 }
