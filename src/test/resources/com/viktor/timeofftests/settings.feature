@@ -56,11 +56,11 @@ Feature: Edit company wide settings
 
     Then "leave types" page should reflect correct information
     And "123" leave type should be present on new absence popup
-    
-    
-  Scenario: Admin user cannot delete all leave types
+
+  Scenario: Admin can delete leave type
     Given I am on "Settings" page
-    
-    When I delete all leave types
-    
-    Then I should see alert "Cannot delete all leave types" on the page
+
+    When I delete "Holiday" leave type
+
+    Then "leave types" page should reflect correct information
+    And "Holiday" leave type should not be present on new absence popup

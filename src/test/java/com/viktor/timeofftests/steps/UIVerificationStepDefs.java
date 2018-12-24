@@ -93,12 +93,16 @@ public class UIVerificationStepDefs {
 
     }
 
-    @Then("{string} leave type should be present on new absence popup")
-    public void leaveTypeShouldBePresentOnNewAbsencePopup(String arg0) {
+    @Then("^\"([^\"]*)\" leave type (should|should not) be present on new absence popup$")
+    public void leaveTypeShouldBePresentOnNewAbsencePopup(String leaveTypeName, String should) {
         NewAbsenceModal modal = new GeneralSettingsPage(world.driver).menuBar.openNewAbsenceModal();
-        List<String> leaveTypesOnModal = modal.getDisplayedLeaveTypesAsString();
-        List<String> allLeaveTypes = world.inDbLeaveTypes.stream()
-                .map(LeaveType::getName).collect(Collectors.toList());
-        assertThat(leaveTypesOnModal, containsInAnyOrder(allLeaveTypes.toArray()));
+        switch (should){
+            case "should":
+                assertThat(modal.getDisplayedLeaveTypesAsString().toArray(), hasItemInArray(leaveTypeName));
+                break;
+            case "should not":
+                assertThat(modal.getDisplayedLeaveTypesAsString().toArray(), not(hasItemInArray(leaveTypeName)));
+        }
+
     }
 }

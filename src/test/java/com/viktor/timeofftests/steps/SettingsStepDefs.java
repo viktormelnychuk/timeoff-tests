@@ -6,6 +6,7 @@ import com.viktor.timeofftests.pages.GeneralSettingsPage;
 import com.viktor.timeofftests.pages.partials.modals.AddNewLeaveTypeModal;
 import com.viktor.timeofftests.pages.partials.settings.CompanyScheduleSettings;
 import com.viktor.timeofftests.pages.partials.settings.CompanySettings;
+import com.viktor.timeofftests.pages.partials.settings.LeaveTypesSettings;
 import com.viktor.timeofftests.services.ScheduleService;
 import cucumber.api.java.en.When;
 import io.cucumber.datatable.DataTable;
@@ -80,5 +81,11 @@ public class SettingsStepDefs {
 
     @When("I delete all leave types")
     public void iDeleteAllLeaveTypes() {
+    }
+
+    @When("I delete {string} leave type")
+    public void iDeleteLeaveType(String leaveTypeName) {
+        LeaveTypesSettings page = new LeaveTypesSettings(world.driver);
+        page.deleteLeave(leaveTypeName);
     }
 }
