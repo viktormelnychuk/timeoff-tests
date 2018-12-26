@@ -1,4 +1,12 @@
 //    @Test
+//    void allHolidaysDisplayed(){
+//        List<BankHoliday> displayed = generalSettingsPage.bankHolidaySettings.getAllDisplayedHolidays();
+//        List<BankHoliday> inDb = BankHolidaysService.getInstance().getAllBankHolidaysForCompany(user.getCompanyID());
+//        inDb.sort(Comparator.comparing(BankHoliday::getDate));
+//        assertThat(displayed, hasAllItemsExcludingProperties(inDb,"id","companyId"));
+//    }
+//
+//    @Test
 //    void editBankHolidayName(){
 //        BankHolidaySettings bankHolidaySettings = generalSettingsPage.bankHolidaySettings;
 //        List<BankHoliday> displayed = bankHolidaySettings.getAllDisplayedHolidays();

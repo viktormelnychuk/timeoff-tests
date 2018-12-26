@@ -79,7 +79,7 @@ Feature: Edit company wide settings
   Scenario: All bank holidays are displayed
     When I am on "Settings" page
 
-    Then all bank holidays are displayed on the page
+    Then displayed bank holidays match holidays in db
 
   Scenario: Edit bank holiday name
     Given I am on "Settings" page
@@ -98,7 +98,7 @@ Feature: Edit company wide settings
   Scenario: Import default holidays
     Given I am on "Settings" page
 
-    When I delete multiple holidays
+    When I delete multiple bank holiday
 
     And import default holidays
 

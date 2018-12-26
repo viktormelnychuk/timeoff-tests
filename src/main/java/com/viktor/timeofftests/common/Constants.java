@@ -8,8 +8,8 @@ public class Constants {
     public static final String DEFAULT_USER_NAME = "John";
     public static final String DEFAULT_USER_LAST_NAME = "Doe";
     public static final String DEFAULT_COMPANY_NAME = "Acme";
-    public static final String DEFAULT_COMPANY_COUNTRY = "UA";
-    public static final String DEFAULT_COMPANY_TIMEZONE = "Europe/Kiev";
+    public static final String DEFAULT_COMPANY_COUNTRY = "US";
+    public static final String DEFAULT_COMPANY_TIMEZONE = "US/Central";
     public static final String PASSWORD_HASH_SECRET = "!2~`HswpPPLa22+=±§sdq qwe,appp qwwokDF_";
     public static final String DEFAULT_DEPARTMENT_NAME = "SALES";
     public static final int DEFAULT_DEPARTMENT_ALLOWANCE = 20;

@@ -5,28 +5,38 @@ import com.viktor.timeofftests.forms.CompanySettingsForm;
 import com.viktor.timeofftests.models.LeaveType;
 import com.viktor.timeofftests.pages.GeneralSettingsPage;
 import com.viktor.timeofftests.pages.partials.modals.AddNewLeaveTypeModal;
+import com.viktor.timeofftests.pages.partials.settings.BankHolidaySettings;
 import com.viktor.timeofftests.pages.partials.settings.CompanyScheduleSettings;
 import com.viktor.timeofftests.pages.partials.settings.CompanySettings;
 import com.viktor.timeofftests.pages.partials.settings.LeaveTypesSettings;
 import com.viktor.timeofftests.services.LeaveTypeService;
 import com.viktor.timeofftests.services.ScheduleService;
+import cucumber.api.java.en.And;
 import cucumber.api.java.en.Given;
+import cucumber.api.java.en.Then;
 import cucumber.api.java.en.When;
 import io.cucumber.datatable.DataTable;
 import org.apache.commons.lang3.StringUtils;
 
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
+
+import static com.viktor.timeofftests.matcher.StringMatchers.stringContainsAllSubstringsInAnyOrder;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.*;
 
 public class SettingsStepDefs {
 
     private World world;
     private ScheduleService scheduleService;
     private LeaveTypeService leaveTypeService;
-    public SettingsStepDefs(World world, ScheduleService scheduleService, LeaveTypeService leaveTypeService){
+    private SettingsSteps settingsSteps;
+    private List<String> deletedHolidays = new ArrayList<>();
+
+    public SettingsStepDefs(World world, ScheduleService scheduleService, LeaveTypeService leaveTypeService, SettingsSteps settingsSteps){
         this.world = world;
         this.scheduleService = scheduleService;
         this.leaveTypeService = leaveTypeService;
+        this.settingsSteps = settingsSteps;
     }
 
 
@@ -124,5 +134,35 @@ public class SettingsStepDefs {
         Map<String, String> data = table.transpose().asMap(String.class, String.class);
         LeaveType leaveType = new LeaveType(data);
         leaveTypeService.insertLeaveTypes(world.currentCompany.getId(), leaveType);
+    }
+
+    @When("I edit bank holiday name")
+    public void iEditBankHolidayName() throws Exception {
+        BankHolidaySettings page = new BankHolidaySettings(world.driver);
+        Map<Integer, String> editedResult = page.editMultipleHolidayNamesWithRandomString(1,2,3,4);
+        page.clickSubmitButton();
+        settingsSteps.validateEditedBankHolidays(editedResult);
+    }
+
+    @When("^I delete (one|multiple) bank holiday$")
+    public void iDeleteOneBankHoliday(String one) throws Exception {
+        BankHolidaySettings page = new BankHolidaySettings(world.driver);
+        List<String> deleted = Collections.emptyList();
+        if(Objects.equals(one, "one")) {
+            deleted = page.deleteMultipleHolidays(2);
+        } else if(Objects.equals(one, "multiple")) {
+            deleted = page.deleteMultipleHolidays(1,2,3,4);
+            this.deletedHolidays = deleted;
+        }
+        page.clickSubmitButton();
+        settingsSteps.validateDeletedHolidays(deleted);
+    }
+
+    @When("import default holidays")
+    public void importDefaultHolidays() {
+        BankHolidaySettings page = new BankHolidaySettings(world.driver);
+        String alertOnPage = page.clickImportDefaultButton().getAlertText();
+        assertThat(alertOnPage, stringContainsAllSubstringsInAnyOrder(this.deletedHolidays));
+        settingsSteps.validateImportedHolidays(this.deletedHolidays);
     }
 }

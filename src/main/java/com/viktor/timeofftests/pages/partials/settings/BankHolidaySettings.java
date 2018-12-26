@@ -1,5 +1,6 @@
 package com.viktor.timeofftests.pages.partials.settings;
 
+import com.github.javafaker.Faker;
 import com.viktor.timeofftests.models.BankHoliday;
 import com.viktor.timeofftests.pages.BasePage;
 import com.viktor.timeofftests.pages.GeneralSettingsPage;
@@ -12,10 +13,8 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 
 import java.text.ParseException;
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.UUID;
+import java.text.SimpleDateFormat;
+import java.util.*;
 
 @Log4j2
 public class BankHolidaySettings extends BasePage {
@@ -27,50 +26,51 @@ public class BankHolidaySettings extends BasePage {
     private By submitButton = By.xpath("//form[@id='update_bankholiday_form']//button[@type='submit']");
     private By addNewButton = By.id("add_new_bank_holiday_btn");
     private By importDefaultButton = By.id("bankholiday-import-btn");
-    @Getter
-    private List<String> deletedHolidays = new LinkedList<>();
     public BankHolidaySettings(WebDriver driver){
         super(driver);
         this.driver = driver;
     }
 
 
-//    public List<BankHoliday> getAllDisplayedHolidays(){
-//        List<WebElement> rowsList = findAllBy(rows);
-//        try {
-//            return BankHolidaysService.getInstance().deserializeBankHolidays(rowsList);
-//        } catch (ParseException e){
-//            log.error("Errro when getting bank holidays", e);
-//            return null;
-//        }
-//    }
-
-    public BankHolidaySettings editHolidayByIndex(int index, String newName){
-        By locator = By.xpath(String.format(nameByIndexQuery, index));
-        fillInputField(locator, newName);
-        return this;
+    public List<BankHoliday> getAllDisplayedHolidays(){
+        List<WebElement> rowsList = findAllBy(rows);
+        try {
+            return deserializeBankHolidays(rowsList);
+        } catch (ParseException e){
+            log.error("Errro when getting bank holidays", e);
+            return null;
+        }
     }
 
-    public BankHolidaySettings editHolidayNameWithRandomStringByIndex(int index){
-        String rnd = UUID.randomUUID().toString();
+    public String editHolidayByIndex(int index, String newName){
+        By locator = By.xpath(String.format(nameByIndexQuery, index));
+        fillInputField(locator, newName);
+        return newName;
+    }
+
+    public String editHolidayNameWithRandomStringByIndex(int index){
+        String rnd = new Faker().name().name();
         return editHolidayByIndex(index, rnd);
     }
 
-    public BankHolidaySettings editMultipleHolidayNamesWithRandomString(int[] indexes){
+    public Map<Integer, String> editMultipleHolidayNamesWithRandomString(int... indexes){
+        Map<Integer, String> results = new HashMap<>();
         for(int i = 0; i < indexes.length; i++){
-            editHolidayNameWithRandomStringByIndex(indexes[i]);
+            String newName = editHolidayNameWithRandomStringByIndex(indexes[i]);
+            results.put(indexes[i], newName);
         }
-        return this;
+        return results;
     }
 
-    public BankHolidaySettings deleteMultipleHolidays(int... indexes){
-        for(int i = 0; i < indexes.length; i++){
-            By locator = By.xpath(String.format(deleteByttonByIndexQuery,indexes[i]));
-            By nameLocator = By.xpath(String.format(nameByIndexQuery,indexes[i]));
-            deletedHolidays.add(findOne(nameLocator).getAttribute("value"));
+    public List<String> deleteMultipleHolidays(int... indexes){
+        List<String> result = new ArrayList<>();
+        for (int index : indexes) {
+            By locator = By.xpath(String.format(deleteByttonByIndexQuery, index));
+            By nameLocator = By.xpath(String.format(nameByIndexQuery, index));
+            result.add(findOne(nameLocator).getAttribute("value"));
             clickButton(locator);
         }
-        return this;
+        return result;
     }
 
     public GeneralSettingsPage clickSubmitButton(){
@@ -93,5 +93,21 @@ public class BankHolidaySettings extends BasePage {
         return null;
     }
 
+    public List<BankHoliday> deserializeBankHolidays(List<WebElement> rows) throws ParseException {
+        List<BankHoliday> result = new ArrayList<>();
+        for (WebElement row : rows) {
+            BankHoliday bankHoliday = new BankHoliday();
+            WebElement inputDate = row.findElement(By.xpath(".//div[@class='input-append date']/input"));
+            String dateFormat = inputDate.getAttribute("data-date-format");
+            // Replace mm to MM to correctly parse date
+            dateFormat = dateFormat.replaceAll("mm","MM");
+            SimpleDateFormat format = new SimpleDateFormat(dateFormat);
+            Date date = format.parse(inputDate.getAttribute("value"));
+            bankHoliday.setDate(date);
+            bankHoliday.setName(row.findElement(By.xpath(".//div/input[contains(@name,'name')]")).getAttribute("value"));
+            result.add(bankHoliday);
+        }
+        return result;
+    }
 
 }

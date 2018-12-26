@@ -97,23 +97,6 @@ public class BankHolidaysService {
         }
     }
 
-    public List<BankHoliday> deserializeBankHolidays(List<WebElement> rows) throws ParseException {
-        List<BankHoliday> result = new ArrayList<>();
-        for (WebElement row : rows) {
-            BankHoliday bankHoliday = new BankHoliday();
-            WebElement inputDate = row.findElement(By.xpath(".//div[@class='input-append date']/input"));
-            String dateFormat = inputDate.getAttribute("data-date-format");
-            // Replace mm to MM to correctly parse date
-            dateFormat = dateFormat.replaceAll("mm","MM");
-            SimpleDateFormat format = new SimpleDateFormat(dateFormat);
-            Date date = format.parse(inputDate.getAttribute("value"));
-            bankHoliday.setDate(date);
-            bankHoliday.setName(row.findElement(By.xpath(".//div/input[contains(@name,'name')]")).getAttribute("value"));
-            result.add(bankHoliday);
-        }
-        return result;
-    }
-
     private BankHoliday[] getHolidaysForCountry(String countryCode){
         try {
             log.info("Reading bank holidays from [localisation.json] for country={}",countryCode);
