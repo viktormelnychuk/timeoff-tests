@@ -4,6 +4,7 @@ import com.viktor.timeofftests.common.World;
 import com.viktor.timeofftests.forms.CompanySettingsForm;
 import com.viktor.timeofftests.models.LeaveType;
 import com.viktor.timeofftests.pages.GeneralSettingsPage;
+import com.viktor.timeofftests.pages.partials.modals.AddNewBankHolidayModal;
 import com.viktor.timeofftests.pages.partials.modals.AddNewLeaveTypeModal;
 import com.viktor.timeofftests.pages.partials.settings.BankHolidaySettings;
 import com.viktor.timeofftests.pages.partials.settings.CompanyScheduleSettings;
@@ -18,6 +19,8 @@ import cucumber.api.java.en.When;
 import io.cucumber.datatable.DataTable;
 import org.apache.commons.lang3.StringUtils;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 import static com.viktor.timeofftests.matcher.StringMatchers.stringContainsAllSubstringsInAnyOrder;
@@ -164,5 +167,21 @@ public class SettingsStepDefs {
         String alertOnPage = page.clickImportDefaultButton().getAlertText();
         assertThat(alertOnPage, stringContainsAllSubstringsInAnyOrder(this.deletedHolidays));
         settingsSteps.validateImportedHolidays(this.deletedHolidays);
+    }
+
+    @When("I add new bank holiday:")
+    public void iAddNewBankHoliday(DataTable table) throws ParseException {
+        Map<String, String> data = table.transpose().asMap(String.class, String.class);
+        AddNewBankHolidayModal modal = new BankHolidaySettings(world.driver).clickAddNewButton();
+        if(StringUtils.isNotEmpty(data.get("name"))){
+            modal.fillName(data.get("name"));
+        }
+        if(StringUtils.isNotEmpty(data.get("date"))){
+            SimpleDateFormat dateFormat = new SimpleDateFormat("mm-DD-YYYY");
+            Date date = dateFormat.parse(data.get("date"));
+            modal.fillDate(date);
+        }
+        modal.clickCreateButton();
+        settingsSteps.validateBankHolidayCreated(data.get("name"));
     }
 }

@@ -138,4 +138,9 @@ public class SettingsSteps {
                 .collect(Collectors.toList());
         assertThat(allHolidayNames, containsInAnyOrder(deletedHolidays.toArray()));
     }
+
+    public void validateBankHolidayCreated(String name) {
+        BankHoliday bh = bankHolidaysService.getWithNameForCompany(name, world.currentCompany.getId());
+        assertThat(bh, is(notNullValue()));
+    }
 }

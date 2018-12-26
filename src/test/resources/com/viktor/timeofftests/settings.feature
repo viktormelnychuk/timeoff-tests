@@ -81,6 +81,15 @@ Feature: Edit company wide settings
 
     Then displayed bank holidays match holidays in db
 
+  Scenario: Add new bank holiday
+     Given I am on "Settings" page
+
+     When I add new bank holiday:
+     | name        | date       |
+     | new holiday | 10-10-2018 |
+
+     Then displayed bank holidays match holidays in db
+
   Scenario: Edit bank holiday name
     Given I am on "Settings" page
 
