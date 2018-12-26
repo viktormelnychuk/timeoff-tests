@@ -78,17 +78,34 @@ public class BankHolidaysService {
         }
     }
 
+    public BankHoliday getWithNameForCompany(String name, int id) {
+        log.info("Getting bank holiday wit name={}", name);
+        Connection connection = DbConnection.getConnection();
+        try{
+            String sql = "SELECT * FROM \"BankHolidays\" WHERE name=? AND \"companyId\"=?";
+            PreparedStatement statement = connection.prepareStatement(sql);
+            statement.setString(1, name);
+            statement.setInt(2, id);
+            log.info("Executing {}", statement);
+            ResultSet set = statement.executeQuery();
+            if(set.next()){
+                return deserializeBankHoliday(set);
+            } else {
+                return null;
+            }
+        } catch (Exception e){
+            log.error("Error occurred", e);
+            return null;
+        } finally {
+            DBUtil.closeConnection(connection);
+        }
+    }
+
     public List<BankHoliday> deserializeBankHolidays (ResultSet set){
         try {
             List<BankHoliday> result = new ArrayList<>();
             do {
-                BankHoliday bankHoliday = new BankHoliday();
-                bankHoliday.setName(set.getString("name"));
-                Date resultDate = new Date(set.getDate("date").getTime());
-                bankHoliday.setDate(resultDate);
-                bankHoliday.setId(set.getInt("id"));
-                bankHoliday.setCompanyId(set.getInt("companyId"));
-                result.add(bankHoliday);
+                result.add(deserializeBankHoliday(set));
             } while ((set.next()));
             return result;
         } catch (Exception e){
@@ -96,22 +113,19 @@ public class BankHolidaysService {
             return new ArrayList<>();
         }
     }
-
-    public List<BankHoliday> deserializeBankHolidays(List<WebElement> rows) throws ParseException {
-        List<BankHoliday> result = new ArrayList<>();
-        for (WebElement row : rows) {
+    public BankHoliday deserializeBankHoliday(ResultSet set){
+        try {
             BankHoliday bankHoliday = new BankHoliday();
-            WebElement inputDate = row.findElement(By.xpath(".//div[@class='input-append date']/input"));
-            String dateFormat = inputDate.getAttribute("data-date-format");
-            // Replace mm to MM to correctly parse date
-            dateFormat = dateFormat.replaceAll("mm","MM");
-            SimpleDateFormat format = new SimpleDateFormat(dateFormat);
-            Date date = format.parse(inputDate.getAttribute("value"));
-            bankHoliday.setDate(date);
-            bankHoliday.setName(row.findElement(By.xpath(".//div/input[contains(@name,'name')]")).getAttribute("value"));
-            result.add(bankHoliday);
+            bankHoliday.setName(set.getString("name"));
+            Date resultDate = new Date(set.getDate("date").getTime());
+            bankHoliday.setDate(resultDate);
+            bankHoliday.setId(set.getInt("id"));
+            bankHoliday.setCompanyId(set.getInt("companyId"));
+            return bankHoliday;
+        } catch (Exception e){
+            log.error("Error deserializing bank holiday", e);
+            return null;
         }
-        return result;
     }
 
     private BankHoliday[] getHolidaysForCountry(String countryCode){
