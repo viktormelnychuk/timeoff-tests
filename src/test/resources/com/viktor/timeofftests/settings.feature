@@ -112,3 +112,17 @@ Feature: Edit company wide settings
     And import default holidays
 
     Then displayed bank holidays match holidays in db
+
+  Scenario: Delete company
+    Given I am on "Settings" page
+
+    When I delete company with name "Acme"
+
+    Then company with name "Acme" is deleted
+    And the "Login" page should be opened
+
+  Scenario: Cannot delete company with invalid name
+    Given I am on "Settings" page
+    When I delete company with name "Does not exist"
+
+    Then company with name "Acme" is not deleted

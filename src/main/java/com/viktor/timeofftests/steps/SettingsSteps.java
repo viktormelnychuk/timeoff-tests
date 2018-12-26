@@ -23,6 +23,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
+import static com.viktor.timeofftests.matcher.CollectionMatchers.containsSubList;
 import static com.viktor.timeofftests.matcher.CollectionMatchers.hasAllItemsExcludingProperties;
 import static org.junit.Assert.*;
 import static org.hamcrest.Matchers.*;
@@ -78,7 +79,6 @@ public class SettingsSteps {
     public void verifyLoginPage() {
         LoginPage page = new LoginPage(world.driver);
         assertTrue(page.getDriver().getCurrentUrl().contains(TextConstants.LoginPageConstants.PAGE_URL));
-        assertEquals( TextConstants.LoginPageConstants.ERROR_MESSAGE, page.getAlertMessage());
     }
 
 
@@ -136,7 +136,7 @@ public class SettingsSteps {
                 .stream()
                 .map(BankHoliday::getName)
                 .collect(Collectors.toList());
-        assertThat(allHolidayNames, containsInAnyOrder(deletedHolidays.toArray()));
+        assertThat(allHolidayNames, containsSubList(deletedHolidays));
     }
 
     public void validateBankHolidayCreated(String name) {

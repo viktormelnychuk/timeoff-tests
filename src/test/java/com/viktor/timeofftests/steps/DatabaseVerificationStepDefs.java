@@ -11,6 +11,7 @@ import com.viktor.timeofftests.services.ScheduleService;
 import com.viktor.timeofftests.services.UserService;
 import cucumber.api.java.en.Then;
 
+import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.*;
 
 public class DatabaseVerificationStepDefs {
@@ -88,5 +89,17 @@ public class DatabaseVerificationStepDefs {
     public void databaseShouldHaveCorrectWeeklyScheduleAssociatedWithCompany(String arg0) {
         Company company = companyService.getCompanyWithName(arg0);
         Schedule inDbScheule = scheduleService.getScheduleForCompanyId(company.getId());
+    }
+
+    @Then("^company with name \"([^\"]*)\" is deleted$")
+    public void companyWithNameIsDeleted(String arg0) {
+        Company company = companyService.getCompanyWithName(arg0);
+        assertThat(company, is(nullValue()));
+    }
+
+    @Then("company with name {string} is not deleted")
+    public void companyWithNameIsNotDeleted(String arg0) {
+        Company company = companyService.getCompanyWithName(arg0);
+        assertThat(company, is(notNullValue()));
     }
 }

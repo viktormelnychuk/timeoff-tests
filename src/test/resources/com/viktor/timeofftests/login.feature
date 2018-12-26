@@ -27,10 +27,10 @@ Feature: Tests that user can login
 
     When I login as user "tester@viktor.com" with password "1234"
     Then database should not have session associated with "tester@viktor.com"
-    And the "Login" page should be opened
+    And I should see alert "Incorrect credentials" on the page
 
     @positive @func
   Scenario: Not registered user cannot login
     When I login as user "tester12@viktor.com" with password "1234"
     Then database should not have session associated with "tester12@viktor.com"
-    And the "Login" page should be opened
+    And I should see alert "Incorrect credentials" on the page
