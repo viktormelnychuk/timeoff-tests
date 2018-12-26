@@ -75,3 +75,31 @@ Feature: Edit company wide settings
 
     Then "leave types" page should reflect correct information
     And "Holiday" leave type should not be present on new absence popup
+
+  Scenario: All bank holidays are displayed
+    When I am on "Settings" page
+
+    Then all bank holidays are displayed on the page
+
+  Scenario: Edit bank holiday name
+    Given I am on "Settings" page
+
+    When I edit bank holiday name
+
+    Then displayed bank holidays match holidays in db
+
+  Scenario: Delete one bank holiday
+    Given I am on "Settings" page
+
+    When I delete one bank holiday
+
+    Then displayed bank holidays match holidays in db
+
+  Scenario: Import default holidays
+    Given I am on "Settings" page
+
+    When I delete multiple holidays
+
+    And import default holidays
+
+    Then displayed bank holidays match holidays in db
