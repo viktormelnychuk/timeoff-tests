@@ -6,6 +6,7 @@ import com.viktor.timeofftests.models.LeaveType;
 import com.viktor.timeofftests.pages.GeneralSettingsPage;
 import com.viktor.timeofftests.pages.partials.modals.AddNewBankHolidayModal;
 import com.viktor.timeofftests.pages.partials.modals.AddNewLeaveTypeModal;
+import com.viktor.timeofftests.pages.partials.modals.RemoveCompanyModal;
 import com.viktor.timeofftests.pages.partials.settings.BankHolidaySettings;
 import com.viktor.timeofftests.pages.partials.settings.CompanyScheduleSettings;
 import com.viktor.timeofftests.pages.partials.settings.CompanySettings;
@@ -183,5 +184,12 @@ public class SettingsStepDefs {
         }
         modal.clickCreateButton();
         settingsSteps.validateBankHolidayCreated(data.get("name"));
+    }
+
+    @When("^I delete company with name \"([^\"]*)\"$")
+    public void iDeleteCompanyWithName(String arg0) {
+        RemoveCompanyModal modal = new GeneralSettingsPage(world.driver).clickDeleteCompanyButton();
+        modal.fillCompanyName(arg0);
+        modal.clickDeleteButtonExpectingSuccess();
     }
 }
