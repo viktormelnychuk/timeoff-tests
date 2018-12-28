@@ -17,4 +17,5 @@ public class World {
     public Schedule currentCompanySchedule;
     public List<LeaveType> inDbLeaveTypes;
     public List<Department> allDepartments = new ArrayList<>();
+    public List<User> allUsers = new ArrayList<>();
 }

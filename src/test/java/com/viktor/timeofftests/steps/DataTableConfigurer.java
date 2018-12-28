@@ -112,6 +112,9 @@ public class DataTableConfigurer implements TypeRegistryConfigurer {
             if (email == null) {
                 email = UserPool.getEmail();
             }
+            if(password == null){
+                password = "1234";
+            }
             if (firstName == null) {
                 firstName = UserPool.getName();
             }

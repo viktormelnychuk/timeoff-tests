@@ -62,6 +62,7 @@ public class UIVerificationStepDefs {
                 break;
             case "departments":
                 departmentsSteps.validateDisplayedDepartments(world.currentCompany.getId());
+                break;
             default:
                 throw new Exception("Page is not known");
         }

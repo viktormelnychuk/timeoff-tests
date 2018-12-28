@@ -12,6 +12,7 @@ import cucumber.api.java.en.And;
 import cucumber.api.java.en.Given;
 import io.cucumber.datatable.DataTable;
 
+import java.util.List;
 import java.util.Objects;
 
 public class UserStepDefs {
@@ -60,5 +61,14 @@ public class UserStepDefs {
         world.currentUser = userService.createNewUser(user);
         world.currentCompany = company;
         world.currentUserDepartment = department;
+        world.allDepartments.add(department);
+        world.allUsers.add(world.currentUser);
+    }
+
+    @Given("following users are created:")
+    public void followingUsersAreCreated(DataTable table) {
+        List<User> users = table.asList(User.class);
+        world.allUsers.addAll(userService.createUsersInDepartmentAndCompany(users, world.currentUserDepartment.getId(), world.currentCompany.getId()));
+        System.out.println(users);
     }
 }

@@ -320,45 +320,4 @@ public class DepartmentService {
             return null;
         }
     }
-
-    public List<Department> deserializeDepartments(List<WebElement> table) {
-        List<Department> result = new ArrayList<>();
-        for (WebElement row:table) {
-            Department department = new Department();
-            String depLink = row.findElement(By.xpath(".//td[1]/a")).getAttribute("href");
-            String depId = depLink.split("/departments/edit/")[1].split("/")[0];
-            department.setId(Integer.parseInt(depId));
-
-            String bossLink = row.findElement(By.xpath(".//td[2]/a")).getAttribute("href");
-            try {
-                String bossId = bossLink.split("/users/edit/")[1].split("/")[0];
-                department.setBossId(Integer.parseInt(bossId));
-            } catch (IndexOutOfBoundsException e){
-                department.setBossId(0);
-            }
-
-            department.setName(row.findElement(By.xpath(".//td[1]")).getText());
-            String allowanceString = row.findElement(By.xpath(".//td[3]")).getText();
-            int allowance;
-            if(allowanceString.equals("None")){
-                allowance = 0;
-            } else {
-                allowance = Integer.parseInt(allowanceString);
-            }
-            department.setAllowance(allowance);
-
-            String publicHolidays = row.findElement(By.xpath(".//td[5]")).getText();
-            department.setIncludePublicHolidays(getBoolFromYesNo(publicHolidays));
-
-            String accruedAllowance = row.findElement(By.xpath(".//td[6]")).getText();
-            department.setAccuredAllowance(getBoolFromYesNo(accruedAllowance));
-            department.setCompanyId(companyService.getCompanyForDepartmentWithId(department.getId()).getId());
-            result.add(department);
-        }
-        return result;
-    }
-
-    private boolean getBoolFromYesNo(String word){
-        return Objects.equals(word, "Yes");
-    }
 }

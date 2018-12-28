@@ -224,4 +224,14 @@ public class UserService {
         }
         return result;
     }
+
+    public List<User> createUsersInDepartmentAndCompany(List<User> users, int departmentId, int companyId) {
+        List<User> result = new ArrayList<>();
+        for (User user : users) {
+            user.setCompanyID(companyId);
+            user.setDepartmentID(departmentId);
+            result.add(createNewUser(user));
+        }
+        return result;
+    }
 }

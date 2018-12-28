@@ -4,6 +4,9 @@ import com.viktor.timeofftests.common.World;
 import com.viktor.timeofftests.forms.NewDepartmentForm;
 import com.viktor.timeofftests.models.Company;
 import com.viktor.timeofftests.models.Department;
+import com.viktor.timeofftests.models.User;
+import com.viktor.timeofftests.pages.DepartmentsPage;
+import com.viktor.timeofftests.pages.partials.modals.AddNewDepartmentModal;
 import com.viktor.timeofftests.services.CompanyService;
 import com.viktor.timeofftests.services.DepartmentService;
 import com.viktor.timeofftests.services.UserService;
@@ -14,6 +17,9 @@ import io.cucumber.datatable.DataTable;
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.stream.Collectors;
 
 public class DepartmentStepDefs {
 
@@ -60,14 +66,37 @@ public class DepartmentStepDefs {
         departmentsSteps.validateDepartmentsPresent(world.allDepartments, companyId);
     }
 
-    @Then("departments page reflects correct information")
-    public void departmentsPageReflectsCorrectInformation() {
-        //TODO: implement step
-        System.out.println("asd");
+    @When("I create following department:")
+    public void iCreateFollowingDepartment(DataTable table) {
+        Map<String, String> data = table.transpose().asMap(String.class, String.class);
+        AddNewDepartmentModal modal = new DepartmentsPage(world.driver).clickAddNewDepartmentButton();
+        modal.fillName(data.get("name"));
+        modal.selectAllowance(data.get("allowance"));
+        if(Objects.equals(data.get("include_pub_holidays"),"true")){
+            modal.setIncludePublicHolidays(true);
+        } else {
+            modal.setIncludePublicHolidays(false);
+        }
+        if(Objects.equals(data.get("accrued_allowance"),"true")){
+            modal.setAccruedAllowance(true);
+        } else {
+            modal.setAccruedAllowance(false);
+        }
+        if(StringUtils.isNotEmpty(data.get("boss"))){
+            modal.setBoss(getUserIdForEmail(data.get("boss")));
+        }
+        modal.clickCreateButtonExpectingSuccess();
+        departmentsSteps.validateDepartmentWasCreated(data.get("name"),
+                data.get("allowance"),
+                data.get("include_pub_holidays"),
+                data.get("accrued_allowance"));
     }
 
-    @When("I create following department:")
-    public void iCreateFollowingDepartment() {
-        //TODO: implement step
+
+    private int getUserIdForEmail(String email){
+        User  user = world.allUsers.stream()
+                .filter((u)->u.getEmail().equals(email))
+                .collect(Collectors.toList()).get(0);
+        return user.getId();
     }
 }
