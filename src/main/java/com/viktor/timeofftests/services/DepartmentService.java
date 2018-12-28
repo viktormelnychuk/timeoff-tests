@@ -3,14 +3,12 @@ package com.viktor.timeofftests.services;
 import com.viktor.timeofftests.common.db.DBUtil;
 import com.viktor.timeofftests.common.db.DbConnection;
 import com.viktor.timeofftests.models.Department;
-import com.viktor.timeofftests.models.User;
 import lombok.extern.log4j.Log4j2;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 
 import java.sql.*;
 import java.util.*;
-import java.util.stream.Collectors;
 
 @Log4j2
 public class DepartmentService {
@@ -26,7 +24,7 @@ public class DepartmentService {
                     .withName(name)
                     .inCompany(companyId)
                     .build();
-            return saveDepartment(newDepartment);
+            return createDepartment(newDepartment);
         } else {
             return department;
         }
@@ -142,7 +140,7 @@ public class DepartmentService {
     public List<Department> insertDepartmentsForCompany(List<Department> departments){
         List<Department> result = new ArrayList<>();
         for (Department department : departments) {
-            result.add(saveDepartment(department));
+            result.add(createDepartment(department));
         }
         return result;
     }
@@ -221,7 +219,7 @@ public class DepartmentService {
     }
 
 
-    public Department saveDepartment(Department department){
+    public Department createDepartment(Department department){
         Connection connection = DbConnection.getConnection();
         String sql = "INSERT INTO \"Departments\" (name, allowance, include_public_holidays, is_accrued_allowance, \"createdAt\", \"updatedAt\", \"companyId\", \"bossId\") VALUES(?, ?, ?, ?, ?, ?, ?, ?);";
         try{

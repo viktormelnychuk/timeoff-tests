@@ -5,6 +5,7 @@ Feature: Tests for departments
     And default department "Sales" in "Acme" company is created
 
   Scenario: Departments page reflects correct information
+
     Given following departments are created:
     | name         | allowance | include_pub_holidays | accrued_allowance | num_of_users |
     | Department 1 | 10        | true                 | true              | 5            |
@@ -13,12 +14,12 @@ Feature: Tests for departments
 
     When I am on "Departments" page
 
-    Then departments page reflects correct infromation
+    Then departments page reflects correct information
 
   Scenario Outline:
     Given I am on "Departments" page
 
-    When I create department:
+    When I create following department:
      | name   | allowance   | include_pub_holidays   | accrued_allowance   |
      | <name> | <allowance> | <include_pub_holidays> | <accrued_allowance> |
 

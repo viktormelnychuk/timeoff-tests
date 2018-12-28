@@ -36,6 +36,9 @@ public class NavigationSteps {
             case Pages.SETTINGS:
                 navigateToGeneralSettings();
                 break;
+            case Pages.DEPARTMENTS:
+                navigateToDepartmentsPage();
+                break;
             default:
                 throw new Exception("Page was not found");
         }
@@ -50,6 +53,17 @@ public class NavigationSteps {
             loginPage.fillPassword(world.currentUser.getRawPassword());
             CalendarPage calendarPage = loginPage.clickLoginButtonExpectingSuccess();
             calendarPage.menuBar.navigateToGeneralSettings();
+        }
+    }
+    private void navigateToDepartmentsPage(){
+        String currentUrl = world.driver.getCurrentUrl();
+        if(!Objects.equals(currentUrl, TextConstants.DepartmentsConstants.PAGE_URL)){
+            world.driver.get(TextConstants.LoginPageConstants.PAGE_URL);
+            LoginPage loginPage = new LoginPage(world.driver);
+            loginPage.fillEmail(world.currentUser.getEmail());
+            loginPage.fillPassword(world.currentUser.getRawPassword());
+            CalendarPage calendarPage = loginPage.clickLoginButtonExpectingSuccess();
+            calendarPage.menuBar.navigateToDepartments();
         }
     }
 

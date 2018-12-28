@@ -5,4 +5,5 @@ public class Pages {
     public final static String LOGIN = "login";
     public final static String REGISTER = "register";
     public final static String SETTINGS = "settings";
+    public final static String DEPARTMENTS = "departments";
 }

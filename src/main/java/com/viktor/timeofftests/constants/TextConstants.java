@@ -19,4 +19,8 @@ public class TextConstants {
     public class GeneralSettingsConstants{
         public static final String PAGE_URL = "http://localhost:3000/settings/general/";
     }
+
+    public class DepartmentsConstants {
+        public static final String PAGE_URL = "http://localhost:3000/settings/departments/";
+    }
 }

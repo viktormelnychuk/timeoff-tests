@@ -132,7 +132,7 @@
 //                .includePublicHolidays(true)
 //                .isAccuredAllowance(false)
 //                .build();
-//        departmentService.saveDepartment(department);
+//        departmentService.createDepartment(department);
 //        User secondUser = userService.createRandomUserInDepartment(department.getId());
 //        userService.makeDepartmentAdmin(secondUser);
 //        departmentsPage.navigate();

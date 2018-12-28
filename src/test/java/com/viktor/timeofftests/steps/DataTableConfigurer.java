@@ -2,12 +2,14 @@ package com.viktor.timeofftests.steps;
 
 import com.viktor.timeofftests.common.Constants;
 import com.viktor.timeofftests.forms.CompanySettingsForm;
+import com.viktor.timeofftests.forms.NewDepartmentForm;
 import com.viktor.timeofftests.forms.SignupForm;
 import com.viktor.timeofftests.models.User;
 import com.viktor.timeofftests.pools.UserPool;
 import cucumber.api.TypeRegistry;
 import cucumber.api.TypeRegistryConfigurer;
 import io.cucumber.datatable.DataTableType;
+import org.apache.commons.lang3.StringUtils;
 
 import java.util.*;
 
@@ -22,6 +24,17 @@ public class DataTableConfigurer implements TypeRegistryConfigurer {
         typeRegistry.defineDataTableType(new DataTableType(User.class, this::transformUser));
         typeRegistry.defineDataTableType(new DataTableType(SignupForm.class,this::transformToSignupForm));
         typeRegistry.defineDataTableType(new DataTableType(CompanySettingsForm.class, this::transformToForm));
+        typeRegistry.defineDataTableType(new DataTableType(NewDepartmentForm.class, this::transformToNewDepartmentForm));
+    }
+
+    private NewDepartmentForm transformToNewDepartmentForm(Map<String, String> entry) {
+        NewDepartmentForm form = new NewDepartmentForm();
+        form.setName(entry.get("name"));
+        form.setAllowance(Integer.parseInt(entry.get("allowance")));
+        form.setPublicHolidays(transformToBoolean(entry.get("include_pub_holidays"), true));
+        form.setAccruedAllowance(transformToBoolean(entry.get("accrued_allowance"), false));
+        form.setNumberOfUsers(Integer.parseInt(entry.get("num_of_users")));
+        return form;
     }
 
     private CompanySettingsForm transformToForm(Map<String, String> entry){
@@ -30,6 +43,11 @@ public class DataTableConfigurer implements TypeRegistryConfigurer {
         form.setCountry(entry.get("country"));
         form.setDateFormat(entry.get("date_format"));
         form.setTimezone(entry.get("time_zone"));
+        if(StringUtils.isNotEmpty(entry.get("company"))){
+            form.setCompanyName(entry.get("company"));
+        } else {
+            form.setCompanyName(StringUtils.EMPTY);
+        }
         return form;
     }
     private SignupForm transformToSignupForm(Map<String, String> entry){
