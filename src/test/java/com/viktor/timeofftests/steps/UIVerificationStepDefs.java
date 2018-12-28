@@ -7,10 +7,12 @@ import com.viktor.timeofftests.pages.partials.modals.NewAbsenceModal;
 import com.viktor.timeofftests.services.BankHolidaysService;
 import cucumber.api.java.en.And;
 import cucumber.api.java.en.Then;
+import lombok.extern.log4j.Log4j2;
 import org.openqa.selenium.By;
 
 import static org.junit.Assert.*;
 import static org.hamcrest.Matchers.*;
+@Log4j2
 public class UIVerificationStepDefs {
 
     private World world;
@@ -25,6 +27,7 @@ public class UIVerificationStepDefs {
 
     @And("^the \"([^\"]*)\" page should be opened$")
     public void pageShouldBeOpened(String page) throws Exception {
+        log.info("Verifying page [{}] is opened", page);
         switch (page.toLowerCase()){
             case Pages.CALENDAR:
                 settingsSteps.verifyCalendarPageTexts();
@@ -42,6 +45,7 @@ public class UIVerificationStepDefs {
 
     @Then("^I should see alert \"([^\"]*)\" on the page$")
     public void iShouldSeeAlertAlertOnThePage(String alert) {
+        log.info("Verifying [{}] alert is displayed", alert);
         String actual = world.driver.findElement(By.xpath("//div[@role='alert' and @class='alert alert-danger']")).getText();
         assertEquals(alert, actual);
     }
@@ -50,6 +54,7 @@ public class UIVerificationStepDefs {
     @Then("^\"([^\"]*)\" page should reflect correct information$")
     public void companySettingsPageShouldReflectCorrectInformation(String page) throws Exception {
         page = page.toLowerCase();
+        log.info("Validating [{}] page to reflect correct information", page);
         switch (page){
             case "company settings":
                 settingsSteps.validateDisplayedCompany(world.editedCompany);
@@ -74,9 +79,11 @@ public class UIVerificationStepDefs {
         NewAbsenceModal modal = new GeneralSettingsPage(world.driver).menuBar.openNewAbsenceModal();
         switch (should){
             case "should":
+                log.info("Checking that leave type [{}] is present on the new absence popuo", leaveTypeName);
                 assertThat(modal.getDisplayedLeaveTypesAsString().toArray(), hasItemInArray(leaveTypeName));
                 break;
             case "should not":
+                log.info("Checking that leave type [{}] is not present on the new absence popuo", leaveTypeName);
                 assertThat(modal.getDisplayedLeaveTypesAsString().toArray(), not(hasItemInArray(leaveTypeName)));
         }
 
@@ -84,6 +91,7 @@ public class UIVerificationStepDefs {
 
     @Then("displayed bank holidays match holidays in db")
     public void allBankHolidaysAreDisplayedOnThePage() {
+        log.info("Validating displayed bank holidays");
         settingsSteps.validateDisplayedBankHolidays();
 
     }

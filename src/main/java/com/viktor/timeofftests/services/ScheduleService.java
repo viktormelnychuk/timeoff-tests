@@ -19,7 +19,7 @@ public class ScheduleService {
     public  ScheduleService (){}
 
     public void insertDefaultSchedule( int companyId ){
-        log.info("Preparing to insert default schedule for company with id={}", companyId);
+        log.debug("Preparing to insert default schedule for company with id={}", companyId);
         Connection connection = DbConnection.getConnection();
         String sql = "INSERT INTO \"schedule\" (monday, tuesday, wednesday, thursday, friday, saturday, sunday, created_at, updated_at, company_id, user_id)" +
                 " VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) ";
@@ -37,7 +37,7 @@ public class ScheduleService {
             insert.setTimestamp(9, new Timestamp(new Date().getTime()));
             insert.setObject(10, schedule.getCompanyId());
             insert.setObject(11, schedule.getUserID());
-            log.info("Executing {}", insert);
+            log.debug("Executing {}", insert);
             insert.executeUpdate();
         } catch (Exception e){
             log.error("Error inserting schedule", e);
@@ -47,12 +47,13 @@ public class ScheduleService {
     }
 
     public Schedule getScheduleForCompanyId(int companyId){
-        log.info("Getting schedule for company with id={}", companyId);
+        log.debug("Getting schedule for company with id={}", companyId);
         Connection connection = DbConnection.getConnection();
         String sql = "SELECT * FROM schedule WHERE \"company_id\"=?";
         try {
             PreparedStatement statement = connection.prepareStatement(sql);
             statement.setInt(1, companyId);
+            log.debug("Executing {}", statement);
             ResultSet set = statement.executeQuery();
             if(set.next()){
                 return deserializeSchedule(set);

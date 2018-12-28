@@ -11,10 +11,11 @@ import com.viktor.timeofftests.services.UserService;
 import cucumber.api.java.en.And;
 import cucumber.api.java.en.Given;
 import io.cucumber.datatable.DataTable;
+import lombok.extern.log4j.Log4j2;
 
 import java.util.List;
 import java.util.Objects;
-
+@Log4j2
 public class UserStepDefs {
     private World world;
     private UserService userService;
@@ -29,6 +30,7 @@ public class UserStepDefs {
 
     @Given("^following user is created:$")
     public void followingUserIsCreated(DataTable table) {
+        log.info("Creating user {}", table);
         User user = UserSteps.createUser(table);
         if(world.currentCompany == null){
             world.currentCompany = companyService.getOrCreateCompanyWithName(user.getCompanyName());
@@ -45,6 +47,7 @@ public class UserStepDefs {
 
     @Given("^default \"([^\"]*)\" user is created$")
     public void defaultUserIsCreated(String admin) {
+        log.info("Starting to create default {} user", admin);
         Company company = companyService.getOrCreateCompanyWithName(Constants.DEFAULT_COMPANY_NAME);
         Department department = departmentService.getOrCreateDepartmentWithName(Constants.DEFAULT_DEPARTMENT_NAME, company.getId());
         User user = new User.Builder()
@@ -63,12 +66,14 @@ public class UserStepDefs {
         world.currentUserDepartment = department;
         world.allDepartments.add(department);
         world.allUsers.add(world.currentUser);
+        log.info("Done creating default {} user", admin);
     }
 
     @Given("following users are created:")
     public void followingUsersAreCreated(DataTable table) {
+        log.info("Starting to create multiple users");
         List<User> users = table.asList(User.class);
         world.allUsers.addAll(userService.createUsersInDepartmentAndCompany(users, world.currentUserDepartment.getId(), world.currentCompany.getId()));
-        System.out.println(users);
+        log.info("Done creating multiple users");
     }
 }

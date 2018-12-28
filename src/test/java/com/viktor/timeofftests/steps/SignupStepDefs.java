@@ -7,7 +7,9 @@ import com.viktor.timeofftests.pages.SignupPage;
 import com.viktor.timeofftests.services.UserService;
 import cucumber.api.java.en.When;
 import io.cucumber.datatable.DataTable;
+import lombok.extern.log4j.Log4j2;
 
+@Log4j2
 public class SignupStepDefs {
 
     private World world;
@@ -20,6 +22,7 @@ public class SignupStepDefs {
 
     @When("^I signup as:$")
     public void iSignupAs(DataTable table) {
+        log.info("Starting to signup as {}", table);
         SignupForm form = table.convert(SignupForm.class, false);
         SignupPage signupPage = new SignupPage(world.driver);
         signupPage.fillCompanyName(form.getCompanyName());

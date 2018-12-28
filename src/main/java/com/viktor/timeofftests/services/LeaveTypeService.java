@@ -25,7 +25,7 @@ public class LeaveTypeService {
     }
 
     public void insertLeaveTypes(int companyId, LeaveType... leaveTypes){
-        log.info("Inserting leave types: {}", Arrays.toString(leaveTypes));
+        log.debug("Inserting leave types: {}", Arrays.toString(leaveTypes));
         Connection connection = DbConnection.getConnection();
         try{
             String sql = "INSERT INTO \"LeaveTypes\" (name, color, use_allowance, \"limit\", sort_order, \"createdAt\", \"updatedAt\", \"companyId\")" +
@@ -43,7 +43,7 @@ public class LeaveTypeService {
                 insert.setInt(8, companyId);
                 insert.addBatch();
             }
-            log.info("Executing {}", insert);
+            log.debug("Executing {}", insert);
             insert.executeBatch();
         } catch (Exception e){
             log.error("Error inserting Leave types", e);
@@ -53,7 +53,7 @@ public class LeaveTypeService {
     }
 
     public int getCompanyIdForLeave(LeaveType leaveType){
-        log.info("Getting [companyId] for leave type with name={}", leaveType.getName());
+        log.debug("Getting [companyId] for leave type with name={}", leaveType.getName());
         Connection connection = DbConnection.getConnection();
         try {
             String sql = "SELECT \"companyId\" FROM \"LeaveTypes\" WHERE name=? AND color=? AND \"limit\"=?";
@@ -61,7 +61,7 @@ public class LeaveTypeService {
             statement.setString(1, leaveType.getName());
             statement.setString(2, leaveType.getColorHex());
             statement.setInt(3, leaveType.getLimit());
-            log.info("Executing {}", statement);
+            log.debug("Executing {}", statement);
             ResultSet set = statement.executeQuery();
             if (set.next()){
                 return set.getInt("companyId");
@@ -77,13 +77,13 @@ public class LeaveTypeService {
     }
 
     public List<LeaveType> getLeaveTypesForCompanyWithId(int companyId){
-        log.info("Getting leave types for company with id={}", companyId);
+        log.debug("Getting leave types for company with id={}", companyId);
         Connection connection = DbConnection.getConnection();
         try{
             String sql = "SELECT * FROM \"LeaveTypes\" WHERE \"companyId\"=?";
             PreparedStatement statement = connection.prepareStatement(sql);
             statement.setInt(1, companyId);
-            log.info("Executing {}", statement);
+            log.debug("Executing {}", statement);
             ResultSet set = statement.executeQuery();
             if(set.next()){
                 return deserializeLeaveTypes(set);

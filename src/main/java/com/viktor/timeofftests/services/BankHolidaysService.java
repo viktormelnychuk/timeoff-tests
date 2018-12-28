@@ -30,7 +30,7 @@ public class BankHolidaysService {
     }
 
     void populateBankHolidaysForCompany(Company company){
-        log.info("Inserting default holidays for company with id={}", company.getId());
+        log.debug("Inserting default holidays for company with id={}", company.getId());
         Connection connection = DbConnection.getConnection();
         BankHoliday[] bankHolidays = getHolidaysForCountry(company.getCountry());
         String sql = "INSERT INTO \"BankHolidays\" (name, date, \"createdAt\", \"updatedAt\", \"companyId\") VALUES(?, ?, ?, ?, ?)";
@@ -44,7 +44,7 @@ public class BankHolidaysService {
                 statement.setInt(5, company.getId());
                 statement.addBatch();
             }
-            log.info("Executing {}", statement.toString());
+            log.debug("Executing {}", statement.toString());
             int[] rowsAffected = statement.executeBatch();
             if (rowsAffected.length != bankHolidays.length){
                 throw new Exception("Not all bank holidays were inserted");
@@ -57,13 +57,13 @@ public class BankHolidaysService {
     }
 
     public List<BankHoliday> getAllBankHolidaysForCompany(int companyID){
-        log.info("Getting bank holidays fro company with id={}", companyID);
+        log.debug("Getting bank holidays fro company with id={}", companyID);
         Connection connection = DbConnection.getConnection();
         try {
             String sql = "SELECT * FROM \"BankHolidays\" WHERE \"companyId\"=?";
             PreparedStatement statement = connection.prepareStatement(sql);
             statement.setInt(1, companyID);
-            log.info("Executing ", statement);
+            log.debug("Executing ", statement);
             ResultSet set = statement.executeQuery();
             if(set.next()){
                 return deserializeBankHolidays(set);
@@ -79,14 +79,14 @@ public class BankHolidaysService {
     }
 
     public BankHoliday getWithNameForCompany(String name, int id) {
-        log.info("Getting bank holiday wit name={}", name);
+        log.debug("Getting bank holiday wit name={}", name);
         Connection connection = DbConnection.getConnection();
         try{
             String sql = "SELECT * FROM \"BankHolidays\" WHERE name=? AND \"companyId\"=?";
             PreparedStatement statement = connection.prepareStatement(sql);
             statement.setString(1, name);
             statement.setInt(2, id);
-            log.info("Executing {}", statement);
+            log.debug("Executing {}", statement);
             ResultSet set = statement.executeQuery();
             if(set.next()){
                 return deserializeBankHoliday(set);
@@ -130,7 +130,7 @@ public class BankHolidaysService {
 
     private BankHoliday[] getHolidaysForCountry(String countryCode){
         try {
-            log.info("Reading bank holidays from [localisation.json] for country={}",countryCode);
+            log.debug("Reading bank holidays from [localisation.json] for country={}",countryCode);
             File jsonFile = new File(getClass().getClassLoader().getResource("localisation.json").getFile());
             ObjectMapper mapper = new ObjectMapper();
             JsonNode root = mapper.readTree(jsonFile);
