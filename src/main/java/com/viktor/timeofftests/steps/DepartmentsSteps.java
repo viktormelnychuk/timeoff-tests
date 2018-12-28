@@ -4,6 +4,7 @@ import com.viktor.timeofftests.common.World;
 import com.viktor.timeofftests.models.Department;
 import com.viktor.timeofftests.pages.DepartmentsPage;
 import com.viktor.timeofftests.services.DepartmentService;
+import lombok.extern.log4j.Log4j2;
 
 import java.util.Comparator;
 import java.util.List;
@@ -14,7 +15,7 @@ import static com.viktor.timeofftests.matcher.CollectionMatchers.hasAllItemsExcl
 import static com.viktor.timeofftests.matcher.MapMatchers.mapContainsAllElements;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
-
+@Log4j2
 public class DepartmentsSteps {
     private DepartmentService departmentService;
     private World world;
@@ -25,6 +26,7 @@ public class DepartmentsSteps {
     }
 
     public void validateDepartmentsPresent(List<Department> allDepartments, int companyId) throws Exception {
+        log.info("Verifying departments are present on the page");
         boolean fail = false;
         StringBuilder result = new StringBuilder();
         List<Department> departmentsInDb = departmentService.getAllDepartmentsForCompany(companyId);
@@ -40,17 +42,19 @@ public class DepartmentsSteps {
     }
 
     public void validateDepartmentsPage() {
+        log.info("Verifying departments page");
+        log.info("Verifying displayed departments properties match database");
         DepartmentsPage page = new DepartmentsPage(world.driver);
         List<Department> displayed = page.deserializeDepartments(world.currentCompany.getId());
         List<Department> inDb = departmentService.getAllDepartmentsForCompany(world.currentCompany.getId());
         inDb.sort(Comparator.comparing(Department::getName));
         assertThat(displayed, hasAllItemsExcludingProperties(inDb));
-
+        log.info("Verifying number of employees match expected");
         // validate number of employees
         Map<String, Integer> employeesInDb = departmentService.getAmountOfUsersInDepartments(inDb);
         Map<String, Integer> displayedNumOfEmployees = page.getDisplayedEmployeesNumber();
         assertThat(displayedNumOfEmployees, mapContainsAllElements(employeesInDb));
-
+        log.info("Verifying manager names");
         // validate manager name
         Map<String, String> displayedManagers = page.getDisplayedManagers();
         Map<String, String> inDbManagers = departmentService.getManagersForDepartments(inDb);
@@ -58,6 +62,7 @@ public class DepartmentsSteps {
     }
 
     public void validateDepartmentWasCreated(String name, String allowance, String include_pub_holidays, String accrued_allowance){
+        log.info("Verifying department with name [{}] was created", name);
         Department department = departmentService.getDepartmentWithNameAndCompanyId(name, world.currentCompany.getId());
         assertThat(department.getAllowance(), is(Integer.parseInt(allowance)));
         assertThat(department.isAccuredAllowance(), is(Objects.equals(accrued_allowance,"true")));

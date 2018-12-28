@@ -26,10 +26,10 @@ public class SessionService {
         Connection connection = DbConnection.getConnection();
         String sql = "SELECT * FROM \"Sessions\"  WHERE sid=?";
         try {
-            log.info("Getting session with sid=[{}]", sid);
+            log.debug("Getting session with sid=[{}]", sid);
             PreparedStatement preparedStatement = connection.prepareStatement(sql);
             preparedStatement.setString(1, sid);
-            log.info("Executing {}", preparedStatement.toString());
+            log.debug("Executing {}", preparedStatement.toString());
             ResultSet resultSet = preparedStatement.executeQuery();
             resultSet.next();
             return deserializeSession(resultSet);
@@ -44,7 +44,7 @@ public class SessionService {
     public Session insertSession (String sid, String data){
         Connection connection = DbConnection.getConnection();
         try {
-            log.info("Inserting session with sid=[{}]", sid);
+            log.debug("Inserting session with sid=[{}]", sid);
             String sql = "INSERT INTO \"Sessions\" (sid, expires, data, \"createdAt\", \"updatedAt\") VALUES (?,?,?,?,?)";
             PreparedStatement insertSession = connection.prepareStatement(sql);
             insertSession.setString(1, sid);
@@ -55,7 +55,7 @@ public class SessionService {
             insertSession.setString(3, data);
             insertSession.setTimestamp(4, new Timestamp(new Date().getTime()));
             insertSession.setTimestamp(5, new Timestamp(new Date().getTime()));
-            log.info("Executing {}", insertSession);
+            log.debug("Executing {}", insertSession);
             insertSession.executeUpdate();
             return getSessionWithSid(sid);
         } catch (Exception e){

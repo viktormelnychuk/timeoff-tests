@@ -18,6 +18,7 @@ import cucumber.api.java.en.Given;
 import cucumber.api.java.en.Then;
 import cucumber.api.java.en.When;
 import io.cucumber.datatable.DataTable;
+import lombok.extern.log4j.Log4j2;
 import org.apache.commons.lang3.StringUtils;
 
 import java.text.ParseException;
@@ -27,7 +28,7 @@ import java.util.*;
 import static com.viktor.timeofftests.matcher.StringMatchers.stringContainsAllSubstringsInAnyOrder;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
-
+@Log4j2
 public class SettingsStepDefs {
 
     private World world;
@@ -46,6 +47,7 @@ public class SettingsStepDefs {
 
     @When("I edit company settings with following:")
     public void iEditCompanySettingsWithFollowing(DataTable dataTable) {
+        log.info("Starting to edit company settings");
         world.editedCompany = world.currentCompany;
         CompanySettings companySettings = new CompanySettings(world.driver);
         CompanySettingsForm form = dataTable.convert(CompanySettingsForm.class, false);
@@ -65,17 +67,20 @@ public class SettingsStepDefs {
             companySettings.setCompanyTimeZone(form.getTimezone());
             world.editedCompany.setTimezone(form.getTimezone());
         }
+        log.info("Done editing company settings");
         companySettings.saveCompanySettings();
     }
 
     @When("I edit weekly schedule to:")
     public void iEditWeeklyScheduleTo(DataTable table) {
+        log.info("Starting to edit weekly schedule");
         Map<String, String> map = table.transpose().asMap(String.class, String.class);
         CompanyScheduleSettings page = new CompanyScheduleSettings(world.driver);
         for (String s : map.keySet()) {
             page.setDay(s, transofrmTrueAndFalseToBool(map.get(s)));
         }
         page.saveSchedule();
+        log.info("Done to edit weekly schedule");
     }
 
     private boolean transofrmTrueAndFalseToBool(String s){
@@ -84,6 +89,7 @@ public class SettingsStepDefs {
 
     @When("I edit {string} leave type to:")
     public void iEditLeaveTypeTo(String toEdit, DataTable table) {
+        log.info("Starting to edit leave type with name [{}]", toEdit);
         Map<String, String> data = table.transpose().asMap(String.class, String.class);
         LeaveTypesSettings page = new LeaveTypesSettings(world.driver);
         if(StringUtils.isNotEmpty(data.get("name"))){
@@ -110,10 +116,12 @@ public class SettingsStepDefs {
             page.setLimit(toEdit, Integer.parseInt(data.get("limit")));
         }
         page.clickSaveButton();
+        log.info("Done to edit leave type with name [{}]", toEdit);
     }
 
     @When("I add new leave type:")
     public void iAddNewLeaveType(DataTable table) {
+        log.info("Start adding new leave type");
         Map<String, String> map = table.transpose().asMap(String.class, String.class);
         AddNewLeaveTypeModal modal = new GeneralSettingsPage(world.driver).leaveTypesSettings.clickAddButton();
         modal.setName(map.get("name"));
@@ -121,30 +129,33 @@ public class SettingsStepDefs {
         modal.setLimit(map.get("limit"));
         modal.setColor(StringUtils.capitalize(map.get("color")));
         modal.clickCreateButton();
-    }
-
-    @When("I delete all leave types")
-    public void iDeleteAllLeaveTypes() {
+        log.info("Done adding new leave type");
     }
 
     @When("I delete {string} leave type")
     public void iDeleteLeaveType(String leaveTypeName) {
+        log.info("Start deleting leave type");
         LeaveTypesSettings page = new LeaveTypesSettings(world.driver);
         page.deleteLeave(leaveTypeName);
+        log.info("Done deleting leave type");
     }
 
     @Given("following leave type is created:")
     public void followingLeaveTypeIsCreated(DataTable table) {
+        log.info("Start inserting leave types");
         Map<String, String> data = table.transpose().asMap(String.class, String.class);
         LeaveType leaveType = new LeaveType(data);
         leaveTypeService.insertLeaveTypes(world.currentCompany.getId(), leaveType);
+        log.info("Done inserting leave types");
     }
 
     @When("I edit bank holiday name")
     public void iEditBankHolidayName() throws Exception {
+        log.info("Start to edit bank holiday names");
         BankHolidaySettings page = new BankHolidaySettings(world.driver);
         Map<Integer, String> editedResult = page.editMultipleHolidayNamesWithRandomString(1,2,3,4);
         page.clickSubmitButton();
+        log.info("Done editing bank holiday names");
         settingsSteps.validateEditedBankHolidays(editedResult);
     }
 
@@ -153,17 +164,21 @@ public class SettingsStepDefs {
         BankHolidaySettings page = new BankHolidaySettings(world.driver);
         List<String> deleted = Collections.emptyList();
         if(Objects.equals(one, "one")) {
+            log.info("Deleting one bank holiday");
             deleted = page.deleteMultipleHolidays(2);
         } else if(Objects.equals(one, "multiple")) {
+            log.info("Deleting multiple bank holidays");
             deleted = page.deleteMultipleHolidays(1,2,3,4);
             this.deletedHolidays = deleted;
         }
         page.clickSubmitButton();
+        log.info("Done deleting bank holiday(s)");
         settingsSteps.validateDeletedHolidays(deleted);
     }
 
     @When("import default holidays")
     public void importDefaultHolidays() {
+        log.info("Importing default holidays");
         BankHolidaySettings page = new BankHolidaySettings(world.driver);
         String alertOnPage = page.clickImportDefaultButton().getAlertText();
         assertThat(alertOnPage, stringContainsAllSubstringsInAnyOrder(this.deletedHolidays));
@@ -172,6 +187,7 @@ public class SettingsStepDefs {
 
     @When("I add new bank holiday:")
     public void iAddNewBankHoliday(DataTable table) throws ParseException {
+        log.info("Starting to add new bank holiday via UI");
         Map<String, String> data = table.transpose().asMap(String.class, String.class);
         AddNewBankHolidayModal modal = new BankHolidaySettings(world.driver).clickAddNewButton();
         if(StringUtils.isNotEmpty(data.get("name"))){
@@ -183,13 +199,16 @@ public class SettingsStepDefs {
             modal.fillDate(date);
         }
         modal.clickCreateButton();
+        log.info("Done to add new bank holiday via UI");
         settingsSteps.validateBankHolidayCreated(data.get("name"));
     }
 
     @When("^I delete company with name \"([^\"]*)\"$")
     public void iDeleteCompanyWithName(String arg0) {
+        log.info("Starting to delete company with name [{}]", arg0);
         RemoveCompanyModal modal = new GeneralSettingsPage(world.driver).clickDeleteCompanyButton();
         modal.fillCompanyName(arg0);
         modal.clickDeleteButtonExpectingSuccess();
+        log.info("Done deleting company with name [{}]", arg0);
     }
 }

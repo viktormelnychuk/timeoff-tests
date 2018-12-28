@@ -29,13 +29,15 @@ public class UserService {
         Connection connection = DbConnection.getConnection();
         String sql = "UPDATE \"Departments\" SET \"bossId\"=?, \"updatedAt\"=? WHERE id=(SELECT \"DepartmentId\" FROM \"Users\" WHERE id=?);";
         try {
-            log.info("Preparing to set user with id {} a department admin", user.getId());
+            log.debug("Preparing to set user with id {} a department admin", user.getId());
             PreparedStatement updateDepartment = connection.prepareStatement(sql);
             updateDepartment.setInt(1, user.getId());
             updateDepartment.setTimestamp(2, new Timestamp(new Date().getTime()));
             updateDepartment.setInt(3, user.getId());
-            log.info("Executing {}", updateDepartment.toString());
-            updateDepartment.executeUpdate();
+            log.debug("Executing {}", updateDepartment.toString());
+            if(updateDepartment.executeUpdate() < 1){
+                throw new Exception("Failed to set department admin");
+            }
         } catch (Exception e){
             log.error("Error setting department admin", e);
         }
@@ -48,7 +50,7 @@ public class UserService {
                 " end_date, \"createdAt\", \"updatedAt\", \"companyId\", \"DepartmentId\")" +
                 "VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?)";
         try {
-            log.info("Preparing to insert new user");
+            log.debug("Preparing to insert new user");
             PreparedStatement insertUser = connection.prepareStatement(sql);
             insertUser.setString(1, user.getEmail());
             insertUser.setString(2, user.getPassword());
@@ -63,7 +65,7 @@ public class UserService {
             insertUser.setTimestamp(11, new Timestamp(new Date().getTime()));
             insertUser.setInt(12, user.getCompanyID());
             insertUser.setInt(13, user.getDepartmentID());
-            log.info("Executing {}",insertUser.toString());
+            log.debug("Executing {}",insertUser.toString());
             insertUser.executeUpdate();
             String getUserSql = "SELECT id FROM \"Users\" WHERE email=? LIMIT 1";
             PreparedStatement getUser = connection.prepareStatement(getUserSql);
@@ -84,10 +86,10 @@ public class UserService {
         Connection connection = DbConnection.getConnection();
         String sql = "SELECT * FROM \"Companies\" WHERE id=?";
         try {
-            log.info("Getting company with id [{}]", user.getCompanyID());
+            log.debug("Getting company with id [{}]", user.getCompanyID());
             PreparedStatement statement = connection.prepareStatement(sql);
             statement.setInt(1,user.getCompanyID());
-            log.info("Executing {}", statement.toString());
+            log.debug("Executing {}", statement.toString());
             ResultSet resultSet = statement.executeQuery();
             if(resultSet.next()){
                 return companyService.deserializeCompany(resultSet);
@@ -102,14 +104,14 @@ public class UserService {
         }
     }
     public List<User> getAllUsersInDepartment(Department department) {
-        log.info("Getting all users in department id={}", department.getId());
+        log.debug("Getting all users in department id={}", department.getId());
         Connection connection = DbConnection.getConnection();
         List<User> users = new ArrayList<>();
         try{
             String sql = "SELECT * FROM \"Users\" WHERE \"DepartmentId\"=?";
             PreparedStatement statement = connection.prepareStatement(sql);
             statement.setInt(1, department.getId());
-            log.info("Executin {}", statement);
+            log.debug("Executin {}", statement);
             ResultSet set = statement.executeQuery();
             while (set.next()){
                 users.add(deserializeUser(set));
@@ -123,13 +125,13 @@ public class UserService {
         }
     }
     public User getUserWithEmail(String email){
-        log.info("Getting user with email={}", email);
+        log.debug("Getting user with email={}", email);
         Connection connection = DbConnection.getConnection();
         try{
             String sql = "SELECT * FROM \"Users\" WHERE email=? LIMIT 1";
             PreparedStatement statement = connection.prepareStatement(sql);
             statement.setString(1, email);
-            log.info("Executing {}", statement);
+            log.debug("Executing {}", statement);
             ResultSet set = statement.executeQuery();
             if(set.next()){
                 return deserializeUser(set);
@@ -145,13 +147,13 @@ public class UserService {
     }
 
     public User getUserWithId(int userId){
-        log.info("Getting user with id={}", userId);
+        log.debug("Getting user with id={}", userId);
         Connection connection = DbConnection.getConnection();
         try{
             String sql = "SELECT * FROM \"Users\" WHERE id=?";
             PreparedStatement statement = connection.prepareStatement(sql);
             statement.setInt(1, userId);
-            log.info("Executing {}",statement);
+            log.debug("Executing {}",statement);
             ResultSet set = statement.executeQuery();
             if(set.next()){
                 return deserializeUser(set);
@@ -198,7 +200,7 @@ public class UserService {
                 .inCompany(companyId)
                 .withLastName(UserPool.getLastName())
                 .build();
-        log.info("Creating user {}", user);
+        log.debug("Creating user {}", user);
         return createNewUser(user);
     }
 
@@ -210,7 +212,7 @@ public class UserService {
                 .inDepartment(departmentId)
                 .withLastName(UserPool.getLastName())
                 .build();
-        log.info("Creating user {}", user);
+        log.debug("Creating user {}", user);
         return createNewUser(user);
     }
 

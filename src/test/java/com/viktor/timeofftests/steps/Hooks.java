@@ -19,7 +19,6 @@ public class Hooks {
     public void beforeHook(){
         DBUtil.cleanDB();
         world.driver = DriverUtil.getDriver(DriverEnum.CHROME);
-
     }
 
     @After

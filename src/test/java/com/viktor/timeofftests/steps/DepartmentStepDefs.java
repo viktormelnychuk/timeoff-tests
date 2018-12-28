@@ -14,13 +14,14 @@ import cucumber.api.java.en.Given;
 import cucumber.api.java.en.Then;
 import cucumber.api.java.en.When;
 import io.cucumber.datatable.DataTable;
+import lombok.extern.log4j.Log4j2;
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
-
+@Log4j2
 public class DepartmentStepDefs {
 
     private World world;
@@ -39,11 +40,13 @@ public class DepartmentStepDefs {
 
     @Given("default department {string} in {string} company is created")
     public void defaultDepartmentInCompanyIsCreated(String departmentName, String companyName) {
+        log.info("Creating default department [{}] in company [{}]", departmentName, companyName);
         Company company = companyService.getCompanyWithName(companyName);
         world.currentUserDepartment = departmentService.getOrCreateDepartmentWithName(departmentName, company.getId());
     }
     @Given("following departments are created:")
     public void followingDepartmentsAreCreated(DataTable dataTable) throws Exception {
+        log.info("Inserting multiple departments into database");
         int companyId = 0;
         List<NewDepartmentForm> form = dataTable.asList(NewDepartmentForm.class);
         for (NewDepartmentForm item : form) {
@@ -65,10 +68,12 @@ public class DepartmentStepDefs {
         }
         departmentService.setBossesForAllDepartments(companyId);
         departmentsSteps.validateDepartmentsPresent(world.allDepartments, companyId);
+        log.info("Done inserting multiple departments into database for company [{}]",companyId);
     }
 
     @When("I create following department:")
     public void iCreateFollowingDepartment(DataTable table) {
+        log.info("Creating department via UI");
         Map<String, String> data = table.transpose().asMap(String.class, String.class);
         AddNewDepartmentModal modal = new DepartmentsPage(world.driver).clickAddNewDepartmentButton();
         modal.fillName(data.get("name"));
