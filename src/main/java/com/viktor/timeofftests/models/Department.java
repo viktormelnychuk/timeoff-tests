@@ -5,6 +5,8 @@ import com.viktor.timeofftests.services.CompanyService;
 import lombok.Data;
 import lombok.extern.log4j.Log4j2;
 
+import java.util.Objects;
+
 @Data
 @Log4j2
 public class Department {
@@ -71,5 +73,48 @@ public class Department {
             return  department;
         }
 
+    }
+
+    @Override
+    public boolean equals (Object o){
+        boolean result = true;
+        Department toCompare = (Department) o;
+        if(!Objects.equals(toCompare.getName(), this.getName())){
+            result = false;
+        }
+        if(toCompare.getAllowance() != this.getAllowance()){
+            result = false;
+        }
+        if(toCompare.isIncludePublicHolidays() != this.isIncludePublicHolidays()){
+            result = false;
+        }
+        if(toCompare.isAccuredAllowance() != this.isAccuredAllowance()){
+            result = false;
+        }
+        if(toCompare.getId() != this.getId()){
+            result = false;
+        }
+        return result;
+    }
+
+    @Override
+    public int hashCode(){
+        int result = 10000000;
+        result += this.getName().hashCode();
+        result += this.getAllowance();
+        if(this.isAccuredAllowance()){
+            result += 1;
+        } else {
+            result += 0;
+        }
+        if(this.isIncludePublicHolidays()){
+            result += 1;
+        } else {
+            result += 0;
+        }
+        result += this.getId();
+        result += this.getCompanyId();
+        result += this.getBossId();
+        return result;
     }
 }

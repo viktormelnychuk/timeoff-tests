@@ -1,8 +1,6 @@
 Feature: Tests for departments
   Background:
-    Given default "tester@viktor.com" user is created
-    And default company with name "Acme" is created
-    And default department "Sales" in "Acme" company is created
+    Given default "admin" user is created
 
   Scenario: Departments page reflects correct information
 
