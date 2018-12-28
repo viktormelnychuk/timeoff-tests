@@ -12,7 +12,7 @@ Feature: Tests for departments
 
     When I am on "Departments" page
 
-    Then departments page reflects correct information
+    Then "departments" page should reflect correct information
 
   Scenario Outline:
     Given I am on "Departments" page
@@ -21,7 +21,7 @@ Feature: Tests for departments
      | name   | allowance   | include_pub_holidays   | accrued_allowance   |
      | <name> | <allowance> | <include_pub_holidays> | <accrued_allowance> |
 
-    Then departments page reflects correct information
+    Then "departments" page should reflect correct information
 
     Examples:
       | name         | allowance | include_pub_holidays | accrued_allowance |

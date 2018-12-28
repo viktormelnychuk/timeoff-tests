@@ -2,23 +2,12 @@ package com.viktor.timeofftests.steps;
 
 import com.viktor.timeofftests.common.World;
 import com.viktor.timeofftests.constants.Pages;
-import com.viktor.timeofftests.constants.TextConstants;
-import com.viktor.timeofftests.models.BankHoliday;
-import com.viktor.timeofftests.models.LeaveType;
-import com.viktor.timeofftests.pages.CalendarPage;
 import com.viktor.timeofftests.pages.GeneralSettingsPage;
-import com.viktor.timeofftests.pages.LoginPage;
-import com.viktor.timeofftests.pages.SignupPage;
 import com.viktor.timeofftests.pages.partials.modals.NewAbsenceModal;
-import com.viktor.timeofftests.pages.partials.settings.BankHolidaySettings;
 import com.viktor.timeofftests.services.BankHolidaysService;
 import cucumber.api.java.en.And;
 import cucumber.api.java.en.Then;
 import org.openqa.selenium.By;
-
-import java.util.Comparator;
-import java.util.List;
-import java.util.stream.Collectors;
 
 import static org.junit.Assert.*;
 import static org.hamcrest.Matchers.*;
@@ -27,9 +16,11 @@ public class UIVerificationStepDefs {
     private World world;
     private SettingsSteps settingsSteps;
     private BankHolidaysService bankHolidaysService;
-    public UIVerificationStepDefs(World world, SettingsSteps settingsSteps){
+    private DepartmentsSteps departmentsSteps;
+    public UIVerificationStepDefs(World world, SettingsSteps settingsSteps, DepartmentsSteps departmentsSteps){
         this.world = world;
         this.settingsSteps = settingsSteps;
+        this.departmentsSteps = departmentsSteps;
     }
 
     @And("^the \"([^\"]*)\" page should be opened$")
@@ -69,6 +60,8 @@ public class UIVerificationStepDefs {
             case "leave types":
                 settingsSteps.validateLeaveTypes(world.currentCompany.getId());
                 break;
+            case "departments":
+                departmentsSteps.validateDisplayedDepartments(world.currentCompany.getId());
             default:
                 throw new Exception("Page is not known");
         }

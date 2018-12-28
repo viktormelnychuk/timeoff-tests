@@ -26,4 +26,8 @@ public class DepartmentsSteps {
             throw new Exception(result.toString());
         }
     }
+
+    public void validateDisplayedDepartments(int id) {
+
+    }
 }
