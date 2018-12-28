@@ -4,19 +4,13 @@ import com.viktor.timeofftests.common.db.DBUtil;
 import com.viktor.timeofftests.common.db.DbConnection;
 import com.viktor.timeofftests.models.Department;
 import lombok.extern.log4j.Log4j2;
-import org.openqa.selenium.By;
-import org.openqa.selenium.WebElement;
+import org.apache.commons.lang3.StringUtils;
 
 import java.sql.*;
 import java.util.*;
 
 @Log4j2
 public class DepartmentService {
-    private CompanyService companyService;
-    public DepartmentService(CompanyService companyService){
-        this.companyService = companyService;
-    }
-
     public Department getOrCreateDepartmentWithName(String name, int companyId){
         Department department = getDepartmentWithNameAndCompanyId(name, companyId);
         if (department == null) {
@@ -299,6 +293,35 @@ public class DepartmentService {
         } catch (Exception e){
             log.error("Exception occurred", e);
             return Collections.emptyList();
+        } finally {
+            DBUtil.closeConnection(connection);
+        }
+    }
+
+    public Map<String, String> getManagersForDepartments (List<Department> departments){
+        Map<String, String> result = new HashMap<>();
+        for (Department department : departments) {
+            result.put(department.getName(), getBossName(department.getId()));
+        }
+        return result;
+    }
+    public String getBossName(int departmentId){
+        log.info("Getting department manager for department with id={}", departmentId);
+        Connection connection = DbConnection.getConnection();
+        try{
+            String sql = "SELECT name, lastname from \"Users\" WHERE id= " +
+                    "(SELECT \"bossId\" FROM \"Departments\" WHERE id=?);";
+            PreparedStatement statement = connection.prepareStatement(sql);
+            statement.setInt(1, departmentId);
+            ResultSet set = statement.executeQuery();
+            if(set.next()){
+                return set.getString("name")+" " + set.getString("lastname");
+            } else {
+                return StringUtils.EMPTY;
+            }
+        } catch (Exception e){
+            log.error("Error occurred", e);
+            return StringUtils.EMPTY;
         } finally {
             DBUtil.closeConnection(connection);
         }

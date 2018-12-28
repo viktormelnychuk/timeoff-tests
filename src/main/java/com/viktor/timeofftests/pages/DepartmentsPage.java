@@ -13,7 +13,6 @@ import java.util.*;
 
 public class DepartmentsPage extends BasePage {
     private WebDriver driver;
-    //private DepartmentService departmentService = DepartmentService.getInstance();
     private By departmentsTable = By.xpath("//table[@class='table table-hover']//tbody/tr");
     private By addNewDepartmentButton = By.id("add_new_department_btn");
     public DepartmentsPage (WebDriver driver){
@@ -37,22 +36,25 @@ public class DepartmentsPage extends BasePage {
         return this;
     }
 
-    public String getDisplayedManagerNameForDepartment(Department defaultDep) {
-        By locator = By.xpath(String.format("//table//tbody//a[text()='%s']/../..//td[2]", defaultDep.getName()));
+    public String getDisplayedManagerNameForDepartment(String departmentName) {
+        By locator = By.xpath(String.format("//table//tbody//a[text()='%s']/../..//td[2]", departmentName));
         return findOne(locator).getText();
     }
 
-//    public Map<String, Integer> getDisplayedEmployeesNumber() {
-//        String numberOfUsersQuery = "//table//tbody//a[text()='%s']/../..//td[4]";
-//        Map<String, Integer> result = new HashMap<>();
-//        List<Department> displayedDepartments = getDisplayedDepartments();
-//        for (Department department : displayedDepartments) {
-//            By locator = By.xpath(String.format(numberOfUsersQuery, department.getName()));
-//            Integer numberOfEmployeesDisplayed = Integer.parseInt(findOne(locator).getText());
-//            result.put(department.getName(), numberOfEmployeesDisplayed);
-//        }
-//        return result;
-//    }
+    public List<Department> getDisplayedDepartments(){
+        return deserializeDepartments(0);
+    }
+    public Map<String, Integer> getDisplayedEmployeesNumber() {
+        String numberOfUsersQuery = "//table//tbody//a[text()='%s']/../..//td[4]";
+        Map<String, Integer> result = new HashMap<>();
+        List<Department> displayedDepartments = getDisplayedDepartments();
+        for (Department department : displayedDepartments) {
+            By locator = By.xpath(String.format(numberOfUsersQuery, department.getName()));
+            Integer numberOfEmployeesDisplayed = Integer.parseInt(findOne(locator).getText());
+            result.put(department.getName(), numberOfEmployeesDisplayed);
+        }
+        return result;
+    }
 
     public AddNewDepartmentModal clickAddNewDepartmentButton(){
         clickButton(addNewDepartmentButton);
@@ -102,5 +104,14 @@ public class DepartmentsPage extends BasePage {
     }
     private boolean getBoolFromYesNo(String word){
         return Objects.equals(word, "Yes");
+    }
+
+    public Map<String, String> getDisplayedManagers() {
+        Map<String, String> result = new HashMap<>();
+        List<Department> allDeps = getDisplayedDepartments();
+        for (Department department : allDeps) {
+            result.put(department.getName(), getDisplayedManagerNameForDepartment(department.getName()));
+        }
+        return result;
     }
 }

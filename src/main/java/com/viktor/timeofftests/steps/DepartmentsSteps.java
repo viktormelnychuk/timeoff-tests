@@ -7,9 +7,11 @@ import com.viktor.timeofftests.services.DepartmentService;
 
 import java.util.Comparator;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 
 import static com.viktor.timeofftests.matcher.CollectionMatchers.hasAllItemsExcludingProperties;
+import static com.viktor.timeofftests.matcher.MapMatchers.mapContainsAllElements;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 
@@ -37,17 +39,25 @@ public class DepartmentsSteps {
         }
     }
 
-    public void validateDisplayedDepartments(int id) {
+    public void validateDepartmentsPage() {
         DepartmentsPage page = new DepartmentsPage(world.driver);
         List<Department> displayed = page.deserializeDepartments(world.currentCompany.getId());
         List<Department> inDb = departmentService.getAllDepartmentsForCompany(world.currentCompany.getId());
         inDb.sort(Comparator.comparing(Department::getName));
         assertThat(displayed, hasAllItemsExcludingProperties(inDb));
+
+        // validate number of employees
+        Map<String, Integer> employeesInDb = departmentService.getAmountOfUsersInDepartments(inDb);
+        Map<String, Integer> displayedNumOfEmployees = page.getDisplayedEmployeesNumber();
+        assertThat(displayedNumOfEmployees, mapContainsAllElements(employeesInDb));
+
+        // validate manager name
+        Map<String, String> displayedManagers = page.getDisplayedManagers();
+        Map<String, String> inDbManagers = departmentService.getManagersForDepartments(inDb);
+        assertThat(displayedManagers, mapContainsAllElements(inDbManagers));
     }
 
     public void validateDepartmentWasCreated(String name, String allowance, String include_pub_holidays, String accrued_allowance){
-        boolean fail = false;
-        StringBuilder result = new StringBuilder();
         Department department = departmentService.getDepartmentWithNameAndCompanyId(name, world.currentCompany.getId());
         assertThat(department.getAllowance(), is(Integer.parseInt(allowance)));
         assertThat(department.isAccuredAllowance(), is(Objects.equals(accrued_allowance,"true")));

@@ -61,7 +61,7 @@ public class UIVerificationStepDefs {
                 settingsSteps.validateLeaveTypes(world.currentCompany.getId());
                 break;
             case "departments":
-                departmentsSteps.validateDisplayedDepartments(world.currentCompany.getId());
+                departmentsSteps.validateDepartmentsPage();
                 break;
             default:
                 throw new Exception("Page is not known");

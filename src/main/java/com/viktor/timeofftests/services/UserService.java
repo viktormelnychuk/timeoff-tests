@@ -20,11 +20,9 @@ import java.util.List;
 @Log4j2
 public class UserService {
     private CompanyService companyService;
-    private DepartmentService departmentService;
 
     public UserService(CompanyService companyService, DepartmentService departmentService){
         this.companyService = companyService;
-        this.departmentService = departmentService;
     }
 
     public void makeDepartmentAdmin(User user){
@@ -204,8 +202,7 @@ public class UserService {
         return createNewUser(user);
     }
 
-    public User createRandomUserInDepartment(int departmentId){
-        int companyId = departmentService.getDepartmentWithId(departmentId).getCompanyId();
+    public User createRandomUserInDepartmentAndCompany(int departmentId, int companyId){
         User user = new User.Builder()
                 .withEmail(UserPool.getEmail())
                 .withName(UserPool.getName())
@@ -217,10 +214,10 @@ public class UserService {
         return createNewUser(user);
     }
 
-    public List<User> createRandomUsersInDepartment(int departmentId, int count){
+    public List<User> createRandomUsersInDepartmentAndCompany(int departmentId, int companyId, int count){
         List<User> result = new ArrayList<>();
         for (int i = 0; i < count; i++){
-            result.add(createRandomUserInDepartment(departmentId));
+            result.add(createRandomUserInDepartmentAndCompany(departmentId, companyId));
         }
         return result;
     }

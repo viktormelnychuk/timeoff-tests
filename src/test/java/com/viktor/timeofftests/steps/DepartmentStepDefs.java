@@ -59,7 +59,8 @@ public class DepartmentStepDefs {
                     .includePublicHolidays(item.isPublicHolidays())
                     .inCompany(companyId)
                     .build());
-            userService.createRandomUsersInDepartment(department.getId(), item.getNumberOfUsers());
+            userService.createRandomUsersInDepartmentAndCompany(department.getId(),world.currentCompany.getId(),
+                    item.getNumberOfUsers());
             this.world.allDepartments.add(department);
         }
         departmentService.setBossesForAllDepartments(companyId);
