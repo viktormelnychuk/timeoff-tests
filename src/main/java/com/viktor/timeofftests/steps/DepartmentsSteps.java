@@ -68,4 +68,29 @@ public class DepartmentsSteps {
         assertThat(department.isAccuredAllowance(), is(Objects.equals(accrued_allowance,"true")));
         assertThat(department.isIncludePublicHolidays(), is(Objects.equals(include_pub_holidays,"true")));
     }
+
+    public void validateDepartmentChanges(int departmentId, Map<String, String> changed) throws Exception {
+        Department department = departmentService.getDepartmentWithId(departmentId);
+        for (String s : changed.keySet()) {
+            switch (s){
+                case "name":
+                    assertThat(department.getName(), is(changed.get(s)));
+                    break;
+                case "allowance":
+                    assertThat(department.getAllowance(), is(Integer.parseInt(changed.get("allowance"))));
+                    break;
+                case "include_pub_holidays":
+                    assertThat(department.isIncludePublicHolidays(), is(Objects.equals(changed.get(s),"true")));
+                    break;
+                case "accrued_allowance":
+                    assertThat(department.isAccuredAllowance(), is(Objects.equals(changed.get(s),"true")));
+                    break;
+                case "manager":
+                    assertThat(department.getBossId(), is(Integer.parseInt(changed.get("manager"))));
+                    break;
+                default:
+                    throw new Exception("Unknown property ["+s+"]");
+            }
+        }
+    }
 }

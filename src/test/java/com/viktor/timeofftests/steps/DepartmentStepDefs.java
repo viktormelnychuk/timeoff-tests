@@ -111,9 +111,10 @@ public class DepartmentStepDefs {
     }
 
     @When("I edit {string} department with:")
-    public void iEditDepartmentWith(String departmentName, DataTable table) {
+    public void iEditDepartmentWith(String departmentName, DataTable table) throws Exception {
         Map<String, String> data = table.transpose().asMap(String.class, String.class);
         Map<String, String> changed = new HashMap<>();
+        Department department = departmentService.getDepartmentWithName(departmentName);
         DepartmentPage page = new DepartmentPage(world.driver);
         if(StringUtils.isNotEmpty(data.get("new_name"))){
             page.fillName(data.get("new_name"));
@@ -132,33 +133,12 @@ public class DepartmentStepDefs {
             page.setAccruedAllowance(Objects.equals(data.get("accrued_allowance"),"true"));
             changed.put("accrued_allowance",data.get("accrued_allowance"));
         }
-
-        if(Objects.equals(data.get("secondary_approver"), "do one")){
-            Department department = departmentService.getDepartmentWithName(departmentName);
-            List<Integer> allUsersNotAdminIds = userService.getAllUsersInCompany(department.getCompanyId())
-                    .stream()
-                    .filter(it -> it.getId() != department.getBossId())
-                    .map(User::getId)
-                    .collect(Collectors.toList());
-            AddSupervisorsModal modal = page.clickAddSecondarySupervisors();
-            modal.checkUser(allUsersNotAdminIds.get(allUsersNotAdminIds.size()/2));
-            modal.clicAddButton();
-        } else if(Objects.equals(data.get("secondary_approver"), "do multiple")){
-            Department department = departmentService.getDepartmentWithName(departmentName);
-            List<Integer> allUsersNotAdminIds = userService.getAllUsersInCompany(department.getCompanyId())
-                    .stream()
-                    .filter(it -> it.getId() != department.getBossId())
-                    .map(User::getId)
-                    .filter(it -> it%2 == 0)
-                    .collect(Collectors.toList());
-            AddSupervisorsModal modal = page.clickAddSecondarySupervisors();
-            modal.checkUser(allUsersNotAdminIds);
-            modal.clicAddButton();
-        }
         if(StringUtils.isNotEmpty(data.get("manager"))){
             int userId = userService.getUserWithEmail(data.get("manager")).getId();
             page.selectManger(userId);
+            changed.put("manager", String.valueOf(userId));
         }
         page.clickSaveButton();
+        departmentsSteps.validateDepartmentChanges(department.getId(), changed);
     }
 }

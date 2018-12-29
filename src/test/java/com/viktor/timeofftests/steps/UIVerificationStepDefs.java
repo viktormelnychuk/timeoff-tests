@@ -4,7 +4,6 @@ import com.viktor.timeofftests.common.World;
 import com.viktor.timeofftests.constants.Pages;
 import com.viktor.timeofftests.pages.GeneralSettingsPage;
 import com.viktor.timeofftests.pages.partials.modals.NewAbsenceModal;
-import com.viktor.timeofftests.services.BankHolidaysService;
 import cucumber.api.java.en.And;
 import cucumber.api.java.en.Then;
 import lombok.extern.log4j.Log4j2;
@@ -17,11 +16,12 @@ public class UIVerificationStepDefs {
 
     private World world;
     private SettingsSteps settingsSteps;
-    private BankHolidaysService bankHolidaysService;
+    private NavigationSteps navigationSteps;
     private DepartmentsSteps departmentsSteps;
-    public UIVerificationStepDefs(World world, SettingsSteps settingsSteps, DepartmentsSteps departmentsSteps){
+    public UIVerificationStepDefs(World world, SettingsSteps settingsSteps, NavigationSteps navigationSteps, DepartmentsSteps departmentsSteps){
         this.world = world;
         this.settingsSteps = settingsSteps;
+        this.navigationSteps = navigationSteps;
         this.departmentsSteps = departmentsSteps;
     }
 
@@ -66,6 +66,7 @@ public class UIVerificationStepDefs {
                 settingsSteps.validateLeaveTypes(world.currentCompany.getId());
                 break;
             case "departments":
+                navigationSteps.navigateToDepartmentsPage();
                 departmentsSteps.validateDepartmentsPage();
                 break;
             default:

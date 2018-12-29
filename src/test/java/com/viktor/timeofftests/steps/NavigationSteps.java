@@ -71,14 +71,15 @@ public class NavigationSteps {
         DepartmentsPage page = new DepartmentsPage(world.driver);
         page.clickDepartmentLink(departmentName);
     }
-    private void navigateToGeneralSettings() {
+    public void navigateToGeneralSettings() {
         String currentUrl = world.driver.getCurrentUrl();
         if(!Objects.equals(currentUrl, TextConstants.GeneralSettingsConstants.PAGE_URL)){
             CalendarPage calendarPage = login();
             calendarPage.menuBar.navigateToGeneralSettings();
         }
     }
-    private void navigateToDepartmentsPage(){
+    public void navigateToDepartmentsPage(){
+        world.driver.get(TextConstants.DepartmentsConstants.PAGE_URL);
         String currentUrl = world.driver.getCurrentUrl();
         if(!Objects.equals(currentUrl, TextConstants.DepartmentsConstants.PAGE_URL)){
             CalendarPage calendarPage = login();
