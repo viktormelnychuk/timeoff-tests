@@ -8,12 +8,14 @@ import com.viktor.timeofftests.models.User;
 import com.viktor.timeofftests.pools.DepartmentPool;
 import com.viktor.timeofftests.pools.UserPool;
 import lombok.extern.log4j.Log4j2;
+import org.apache.commons.lang3.StringUtils;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
@@ -77,6 +79,28 @@ public class UserService {
         } catch (Exception e){
             log.error("Error inserting user", e);
             return null;
+        } finally {
+            DBUtil.closeConnection(connection);
+        }
+    }
+
+    public List<User> getAllUsersInCompany (int companyId){
+        log.debug("Getting all users in company with id={}", companyId);
+        Connection connection = DbConnection.getConnection();
+        String sql = "SELECT * FROM \"Users\" WHERE \"Users\".\"companyId\"=?";
+        try {
+            List<User> users = new ArrayList<>();
+            PreparedStatement statement = connection.prepareStatement(sql);
+            statement.setInt(1, companyId);
+            log.info("Executing {}", statement);
+            ResultSet set = statement.executeQuery();
+            while (set.next()){
+                users.add(deserializeUser(set));
+            }
+            return users;
+        } catch (Exception e){
+            log.error("Error occurred", e);
+            return Collections.emptyList();
         } finally {
             DBUtil.closeConnection(connection);
         }

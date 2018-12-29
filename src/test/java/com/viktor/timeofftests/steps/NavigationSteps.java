@@ -4,9 +4,12 @@ import com.viktor.timeofftests.common.World;
 import com.viktor.timeofftests.constants.Pages;
 import com.viktor.timeofftests.constants.TextConstants;
 import com.viktor.timeofftests.pages.CalendarPage;
+import com.viktor.timeofftests.pages.DepartmentsPage;
 import com.viktor.timeofftests.pages.LoginPage;
+import com.viktor.timeofftests.pages.partials.modals.AddNewDepartmentModal;
 import cucumber.api.java.en.And;
 import cucumber.api.java.en.Given;
+import cucumber.api.java.en.Then;
 import lombok.extern.log4j.Log4j2;
 
 import java.util.Objects;
@@ -45,6 +48,29 @@ public class NavigationSteps {
         }
     }
 
+    @Then("I should be on {string} page")
+    public void iShouldBeOnPage(String page) throws Exception {
+        log.info("Verifying user is on [{}] page", page);
+        switch (page.toLowerCase()){
+            case Pages.CALENDAR:
+                assertTrue(world.driver.getCurrentUrl().contains(TextConstants.CalendarPageConstants.PAGE_URL));
+                break;
+            case Pages.LOGIN:
+                assertTrue(world.driver.getCurrentUrl().contains(TextConstants.LoginPageConstants.PAGE_URL));
+                break;
+            case Pages.REGISTER:
+                assertTrue(world.driver.getCurrentUrl().contains(TextConstants.RegisterPageConstants.PAGE_URL));
+                break;
+            default:
+                throw new Exception("Page was not found");
+        }
+    }
+    @Given("I am on {string} department page")
+    public void iAmOnDepartmentPage(String departmentName) {
+        navigateToDepartmentsPage();
+        DepartmentsPage page = new DepartmentsPage(world.driver);
+        page.clickDepartmentLink(departmentName);
+    }
     private void navigateToGeneralSettings() {
         String currentUrl = world.driver.getCurrentUrl();
         if(!Objects.equals(currentUrl, TextConstants.GeneralSettingsConstants.PAGE_URL)){
@@ -68,21 +94,4 @@ public class NavigationSteps {
         return loginPage.clickLoginButtonExpectingSuccess();
     }
 
-    @And("I should be on {string} page")
-    public void iShouldBeOnPage(String page) throws Exception {
-        log.info("Verifying user is on [{}] page", page);
-        switch (page.toLowerCase()){
-            case Pages.CALENDAR:
-                assertTrue(world.driver.getCurrentUrl().contains(TextConstants.CalendarPageConstants.PAGE_URL));
-                break;
-            case Pages.LOGIN:
-                assertTrue(world.driver.getCurrentUrl().contains(TextConstants.LoginPageConstants.PAGE_URL));
-                break;
-            case Pages.REGISTER:
-                assertTrue(world.driver.getCurrentUrl().contains(TextConstants.RegisterPageConstants.PAGE_URL));
-                break;
-            default:
-                throw new Exception("Page was not found");
-        }
-    }
 }

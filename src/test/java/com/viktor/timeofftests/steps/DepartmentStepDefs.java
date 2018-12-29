@@ -5,11 +5,14 @@ import com.viktor.timeofftests.forms.NewDepartmentForm;
 import com.viktor.timeofftests.models.Company;
 import com.viktor.timeofftests.models.Department;
 import com.viktor.timeofftests.models.User;
+import com.viktor.timeofftests.pages.DepartmentPage;
 import com.viktor.timeofftests.pages.DepartmentsPage;
 import com.viktor.timeofftests.pages.partials.modals.AddNewDepartmentModal;
+import com.viktor.timeofftests.pages.partials.modals.AddSupervisorsModal;
 import com.viktor.timeofftests.services.CompanyService;
 import com.viktor.timeofftests.services.DepartmentService;
 import com.viktor.timeofftests.services.UserService;
+import cucumber.api.java.en.And;
 import cucumber.api.java.en.Given;
 import cucumber.api.java.en.Then;
 import cucumber.api.java.en.When;
@@ -17,6 +20,7 @@ import io.cucumber.datatable.DataTable;
 import lombok.extern.log4j.Log4j2;
 import org.apache.commons.lang3.StringUtils;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -104,5 +108,57 @@ public class DepartmentStepDefs {
                 .filter((u)->u.getEmail().equals(email))
                 .collect(Collectors.toList()).get(0);
         return user.getId();
+    }
+
+    @When("I edit {string} department with:")
+    public void iEditDepartmentWith(String departmentName, DataTable table) {
+        Map<String, String> data = table.transpose().asMap(String.class, String.class);
+        Map<String, String> changed = new HashMap<>();
+        DepartmentPage page = new DepartmentPage(world.driver);
+        if(StringUtils.isNotEmpty(data.get("new_name"))){
+            page.fillName(data.get("new_name"));
+            changed.put("name", data.get("new_name"));
+        }
+        if(StringUtils.isNotEmpty(data.get("allowance"))){
+            page.setAllowance(Integer.parseInt(data.get("allowance")));
+            changed.put("allowance", data.get("allowance"));
+        }
+        if(StringUtils.isNotEmpty(data.get("include_pub_holidays"))){
+            page.setIncludePublicHolidays(Objects.equals(data.get("include_pub_holidays"), "true"));
+            changed.put("include_pub_holidays", data.get("include_pub_holidays"));
+        }
+
+        if(StringUtils.isNotEmpty(data.get("accrued_allowance"))){
+            page.setAccruedAllowance(Objects.equals(data.get("accrued_allowance"),"true"));
+            changed.put("accrued_allowance",data.get("accrued_allowance"));
+        }
+
+        if(Objects.equals(data.get("secondary_approver"), "do one")){
+            Department department = departmentService.getDepartmentWithName(departmentName);
+            List<Integer> allUsersNotAdminIds = userService.getAllUsersInCompany(department.getCompanyId())
+                    .stream()
+                    .filter(it -> it.getId() != department.getBossId())
+                    .map(User::getId)
+                    .collect(Collectors.toList());
+            AddSupervisorsModal modal = page.clickAddSecondarySupervisors();
+            modal.checkUser(allUsersNotAdminIds.get(allUsersNotAdminIds.size()/2));
+            modal.clicAddButton();
+        } else if(Objects.equals(data.get("secondary_approver"), "do multiple")){
+            Department department = departmentService.getDepartmentWithName(departmentName);
+            List<Integer> allUsersNotAdminIds = userService.getAllUsersInCompany(department.getCompanyId())
+                    .stream()
+                    .filter(it -> it.getId() != department.getBossId())
+                    .map(User::getId)
+                    .filter(it -> it%2 == 0)
+                    .collect(Collectors.toList());
+            AddSupervisorsModal modal = page.clickAddSecondarySupervisors();
+            modal.checkUser(allUsersNotAdminIds);
+            modal.clicAddButton();
+        }
+        if(StringUtils.isNotEmpty(data.get("manager"))){
+            int userId = userService.getUserWithEmail(data.get("manager")).getId();
+            page.selectManger(userId);
+        }
+        page.clickSaveButton();
     }
 }
