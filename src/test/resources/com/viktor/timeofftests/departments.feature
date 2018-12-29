@@ -60,3 +60,23 @@ Feature: Tests for departments
       | Department 1 | Dep21    | 20        | false                | false             |                    |
       | Department 2 |          | 20        |                      | false             | tester3@viktor.com |
       | Department 3 | Dep21    | 20        | false                | false             | tester2@viktor.com |
+
+  Scenario Outline: Add secondary supervisors
+
+    Given following departments are created:
+      | name         | multiple_supervisors |
+      | Department 1 | do                   |
+      | Department 2 | do                   |
+      | Department 3 | do not do            |
+      | Department 4 | do not do            |
+
+    And I am on "<name>" department page
+
+    When I "<action>" "<amount>" additional supervisor
+
+    Then "<name>" department page should reflect correct information
+
+    Examples:
+    | name | action | amount |
+
+

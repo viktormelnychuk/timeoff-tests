@@ -213,6 +213,20 @@ public class DepartmentService {
     }
 
 
+    public void assignSecondarySupervisors(int departmentID) {
+        log.debug("Starting to assign secondary supervisors");
+        List<Integer> allUsersExcludingAdmin = getAllUsersExcludingAdmin(departmentID);
+        Connection connection = DbConnection.getConnection();
+        try{
+            //TODO: Implement. This one is tricky.
+            String sql = "";
+            PreparedStatement statement = connection.prepareStatement(sql);
+        } catch (Exception e){
+            log.error("Error occurred", e);
+        } finally {
+            DBUtil.closeConnection(connection);
+        }
+    }
     public Department createDepartment(Department department){
         log.debug("Inserting new department {}", department);
         Connection connection = DbConnection.getConnection();

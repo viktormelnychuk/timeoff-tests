@@ -68,6 +68,9 @@ public class DepartmentStepDefs {
                     .build());
             userService.createRandomUsersInDepartmentAndCompany(department.getId(),world.currentCompany.getId(),
                     item.getNumberOfUsers());
+            if(item.isSecondarySupervisors()){
+                departmentService.assignSecondarySupervisors();
+            }
             this.world.allDepartments.add(department);
         }
         departmentService.setBossesForAllDepartments(companyId);
@@ -140,5 +143,19 @@ public class DepartmentStepDefs {
         }
         page.clickSaveButton();
         departmentsSteps.validateDepartmentChanges(department.getId(), changed);
+    }
+
+    @When("I {string} {string} additional supervisor")
+    public void iAdditionalSupervisor(String action, String one) throws Exception {
+        switch (action.toLowerCase()){
+            case "add":
+                departmentsSteps.addSecondarySupervisors(one);
+                break;
+            case "remove":
+                departmentsSteps.removeSecondarySupervisors(one);
+                break;
+            default:
+                throw new Exception("Unknown action ["+action+"]");
+        }
     }
 }

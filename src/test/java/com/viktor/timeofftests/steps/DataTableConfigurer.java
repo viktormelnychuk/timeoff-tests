@@ -34,6 +34,9 @@ public class DataTableConfigurer implements TypeRegistryConfigurer {
         form.setPublicHolidays(transformToBoolean(entry.get("include_pub_holidays"), true));
         form.setAccruedAllowance(transformToBoolean(entry.get("accrued_allowance"), false));
         form.setNumberOfUsers(Integer.parseInt(entry.get("num_of_users")));
+        if(StringUtils.equals(entry.get("multiple_supervisors"), "do")){
+            form.setSecondarySupervisors(true);
+        }
         return form;
     }
 

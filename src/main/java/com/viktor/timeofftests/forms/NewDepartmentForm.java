@@ -10,4 +10,5 @@ public class NewDepartmentForm {
     private boolean accruedAllowance;
     private int numberOfUsers;
     private String companyName;
+    private boolean secondarySupervisors = false;
 }
