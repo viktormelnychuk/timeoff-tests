@@ -19,11 +19,42 @@ public class CollectionMatchers{
     public static Matcher<List> containsSubList(List expected){
         return new ContainsSubList(expected);
     }
+
+    public static Matcher<List> containsAllItems(List expected){
+        return new ContainsAllItems(expected);
+    }
 }
+
+class ContainsAllItems extends TypeSafeDiagnosingMatcher<List>{
+    private List expected;
+    ContainsAllItems (List expected){
+        this.expected = expected;
+    }
+    @Override
+    protected boolean matchesSafely(List actual, Description description) {
+        boolean passed = true;
+        if(actual.size() != expected.size()){
+            description.appendText(String.format("Expected list to contain less than %d items but was %d",expected.size(), actual.size()));
+            return passed = false;
+        }
+        for(int i = 0; i < expected.size(); i++){
+            if(!actual.contains(expected.get(i))){
+                passed = false;
+                description.appendText(String.format("Item %s was not found in list", expected.get(i).toString()));
+            }
+        }
+        return passed;
+    }
+
+    @Override
+    public void describeTo(Description description) {
+
+    }
+}
+
 
 class ContainsSubList extends TypeSafeDiagnosingMatcher<List>{
     private List expected;
-    private List actual;
 
     ContainsSubList(List expected){
         this.expected = expected;

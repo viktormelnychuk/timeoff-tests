@@ -11,4 +11,5 @@ public class NewDepartmentForm {
     private int numberOfUsers;
     private String companyName;
     private boolean secondarySupervisors = false;
+    private int amountOfSecondarySupervisors = 0;
 }

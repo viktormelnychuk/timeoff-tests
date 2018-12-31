@@ -2,19 +2,26 @@ package com.viktor.timeofftests.steps;
 
 import com.viktor.timeofftests.common.World;
 import com.viktor.timeofftests.models.Department;
+import com.viktor.timeofftests.pages.DepartmentPage;
 import com.viktor.timeofftests.pages.DepartmentsPage;
+import com.viktor.timeofftests.pages.partials.modals.AddSupervisorsModal;
 import com.viktor.timeofftests.services.DepartmentService;
 import lombok.extern.log4j.Log4j2;
+import org.apache.commons.lang3.StringUtils;
 
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
+import static com.viktor.timeofftests.matcher.CollectionMatchers.containsAllItems;
 import static com.viktor.timeofftests.matcher.CollectionMatchers.hasAllItemsExcludingProperties;
 import static com.viktor.timeofftests.matcher.MapMatchers.mapContainsAllElements;
+import static org.hamcrest.CoreMatchers.hasItems;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
+import static org.junit.Assert.fail;
+
 @Log4j2
 public class DepartmentsSteps {
     private DepartmentService departmentService;
@@ -64,7 +71,7 @@ public class DepartmentsSteps {
     public void validateDepartmentWasCreated(String name, String allowance, String include_pub_holidays, String accrued_allowance){
         log.info("Verifying department with name [{}] was created", name);
         Department department = departmentService.getDepartmentWithNameAndCompanyId(name, world.currentCompany.getId());
-        assertThat(department.getAllowance(), is(Integer.parseInt(allowance)));
+        assertThat(department.getAllowance(), is(Double.parseDouble(allowance)));
         assertThat(department.isAccuredAllowance(), is(Objects.equals(accrued_allowance,"true")));
         assertThat(department.isIncludePublicHolidays(), is(Objects.equals(include_pub_holidays,"true")));
     }
@@ -77,7 +84,7 @@ public class DepartmentsSteps {
                     assertThat(department.getName(), is(changed.get(s)));
                     break;
                 case "allowance":
-                    assertThat(department.getAllowance(), is(Integer.parseInt(changed.get("allowance"))));
+                    assertThat(department.getAllowance(), is(Double.parseDouble(changed.get("allowance"))));
                     break;
                 case "include_pub_holidays":
                     assertThat(department.isIncludePublicHolidays(), is(Objects.equals(changed.get(s),"true")));
@@ -92,5 +99,58 @@ public class DepartmentsSteps {
                     throw new Exception("Unknown property ["+s+"]");
             }
         }
+    }
+
+    public void addSecondarySupervisors(int departmentId, String amount) {
+        log.info("Adding [{}] secondary supervisors for department [{}]", amount, departmentId);
+        List<Integer> allUsersExcludingAdmin = departmentService.getAllUsersExcludingAdmin(departmentId);
+        int supervisorsToAdd = Integer.parseInt(amount);
+        DepartmentPage page  = new DepartmentPage(world.driver);
+        AddSupervisorsModal modal = page.clickAddSecondarySupervisors();
+        try {
+            List<Integer> usersToAdd = allUsersExcludingAdmin.subList(0, supervisorsToAdd);
+            modal.checkUser(usersToAdd);
+            modal.clicAddButton();
+            validateSecondarySupervisorsAdded(departmentId,usersToAdd);
+        } catch (IndexOutOfBoundsException e){
+            log.error("Company does not contain enough users");
+            throw e;
+        }
+
+    }
+
+    private void validateSecondarySupervisorsAdded(int departmentId, List<Integer> usersToAdd) {
+        log.info("Validating secondary supervisors were added");
+        List<Integer> departmentSupervisors = departmentService.getDepartmentSupervisors(departmentId);
+        if(!departmentSupervisors.containsAll(usersToAdd)){
+            StringBuilder builder = new StringBuilder();
+            builder.append("Not all users were found as department supervisors. Expected to have \r\n");
+            builder.append(usersToAdd);
+            builder.append("\r\n");
+            builder.append("But found ");
+            builder.append(departmentSupervisors);
+            fail(builder.toString());
+        }
+    }
+
+    public void removeSecondarySupervisors(String amount) {
+        log.info("Removing {} secondary supervisors", amount);
+        DepartmentPage page = new DepartmentPage(world.driver);
+        page.deleteSecondarySupervisor(Integer.parseInt(amount));
+    }
+
+    public void validateDepartmentPage(String departmentName) {
+        log.info("Validating [] department page", departmentName);
+        DepartmentPage page = new DepartmentPage(world.driver);
+        Department department = departmentService.getDepartmentWithName(departmentName);
+        assertThat(department.getName(), is(page.getDepartmentName()));
+        assertThat(department.getBossId(), is(page.getManagerId()));
+        assertThat(department.getAllowance(), is(page.getAllowance()));
+        assertThat(department.isIncludePublicHolidays(), is(page.isPublicHolidaysIncluded()));
+        assertThat(department.isAccuredAllowance(), is(page.isAccruedAllowance()));
+
+        List<Integer> displayedSecondaryApprovers = page.getSecondaryApproversIds();
+        List<Integer> departmentSupervisors = departmentService.getDepartmentSupervisors(department.getId());
+        assertThat(displayedSecondaryApprovers, containsAllItems(departmentSupervisors));
     }
 }

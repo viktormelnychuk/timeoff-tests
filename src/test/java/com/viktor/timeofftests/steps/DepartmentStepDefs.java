@@ -69,7 +69,7 @@ public class DepartmentStepDefs {
             userService.createRandomUsersInDepartmentAndCompany(department.getId(),world.currentCompany.getId(),
                     item.getNumberOfUsers());
             if(item.isSecondarySupervisors()){
-                departmentService.assignSecondarySupervisors();
+                departmentService.assignSecondarySupervisors(department.getId(), item.getAmountOfSecondarySupervisors());
             }
             this.world.allDepartments.add(department);
         }
@@ -145,14 +145,15 @@ public class DepartmentStepDefs {
         departmentsSteps.validateDepartmentChanges(department.getId(), changed);
     }
 
-    @When("I {string} {string} additional supervisor")
-    public void iAdditionalSupervisor(String action, String one) throws Exception {
+    @When("I {string} {string} additional supervisors for department {string}")
+    public void iAdditionalSupervisor(String action, String amount, String departmentName) throws Exception {
+        Department department = departmentService.getDepartmentWithName(departmentName);
         switch (action.toLowerCase()){
             case "add":
-                departmentsSteps.addSecondarySupervisors(one);
+                departmentsSteps.addSecondarySupervisors(department.getId(), amount);
                 break;
             case "remove":
-                departmentsSteps.removeSecondarySupervisors(one);
+                departmentsSteps.removeSecondarySupervisors(amount);
                 break;
             default:
                 throw new Exception("Unknown action ["+action+"]");

@@ -64,19 +64,24 @@ Feature: Tests for departments
   Scenario Outline: Add secondary supervisors
 
     Given following departments are created:
-      | name         | multiple_supervisors |
-      | Department 1 | do                   |
-      | Department 2 | do                   |
-      | Department 3 | do not do            |
-      | Department 4 | do not do            |
+      | name         | multiple_supervisors | amount_of_secondary_supervisors | num_of_users |
+      | Department 1 | do                   | 2                               | 3            |
+      | Department 2 | do                   | 3                               | 6            |
+      | Department 3 | do not do            |                                 | 4            |
+      | Department 4 | do not do            |                                 | 10           |
 
     And I am on "<name>" department page
 
-    When I "<action>" "<amount>" additional supervisor
+    When I "<action>" "<amount>" additional supervisors for department "<name>"
 
     Then "<name>" department page should reflect correct information
 
     Examples:
-    | name | action | amount |
+    | name         | action    | amount |
+    | Department 1 | remove    | 1      |
+    | Department 2 | remove    | 3      |
+    | Department 3 | add       | 1      |
+    | Department 4 | add       | 4      |
+
 
 
