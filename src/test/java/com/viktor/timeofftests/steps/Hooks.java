@@ -23,6 +23,6 @@ public class Hooks {
 
     @After
     public void afterHook(){
-        world.driver.quit();
+        DriverUtil.returnDriver(world.driver);
     }
 }
