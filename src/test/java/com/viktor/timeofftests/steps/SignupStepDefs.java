@@ -22,7 +22,7 @@ public class SignupStepDefs {
 
     @When("^I signup as:$")
     public void iSignupAs(DataTable table) {
-        log.info("Starting to signup as {}", table);
+        log.info("Starting to signup as \r\n{}", table);
         SignupForm form = table.convert(SignupForm.class, false);
         SignupPage signupPage = new SignupPage(world.driver);
         signupPage.fillCompanyName(form.getCompanyName());

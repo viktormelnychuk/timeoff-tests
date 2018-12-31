@@ -62,6 +62,7 @@ public class UserStepDefs {
             user.setAdmin(true);
         }
         world.currentUser = userService.createNewUser(user);
+        userService.makeDepartmentAdmin(world.currentUser);
         world.currentCompany = company;
         world.currentUserDepartment = department;
         world.allDepartments.add(department);

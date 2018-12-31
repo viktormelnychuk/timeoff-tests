@@ -4,9 +4,12 @@ import com.viktor.timeofftests.common.World;
 import com.viktor.timeofftests.constants.Pages;
 import com.viktor.timeofftests.constants.TextConstants;
 import com.viktor.timeofftests.pages.CalendarPage;
+import com.viktor.timeofftests.pages.DepartmentsPage;
 import com.viktor.timeofftests.pages.LoginPage;
+import com.viktor.timeofftests.pages.partials.modals.AddNewDepartmentModal;
 import cucumber.api.java.en.And;
 import cucumber.api.java.en.Given;
+import cucumber.api.java.en.Then;
 import lombok.extern.log4j.Log4j2;
 
 import java.util.Objects;
@@ -45,30 +48,7 @@ public class NavigationSteps {
         }
     }
 
-    private void navigateToGeneralSettings() {
-        String currentUrl = world.driver.getCurrentUrl();
-        if(!Objects.equals(currentUrl, TextConstants.GeneralSettingsConstants.PAGE_URL)){
-            CalendarPage calendarPage = login();
-            calendarPage.menuBar.navigateToGeneralSettings();
-        }
-    }
-    private void navigateToDepartmentsPage(){
-        String currentUrl = world.driver.getCurrentUrl();
-        if(!Objects.equals(currentUrl, TextConstants.DepartmentsConstants.PAGE_URL)){
-            CalendarPage calendarPage = login();
-            calendarPage.menuBar.navigateToDepartments();
-        }
-    }
-    private CalendarPage login(){
-        log.info("Logging in as {}@{}", world.currentUser.getEmail(), world.currentUser.getRawPassword());
-        world.driver.get(TextConstants.GeneralSettingsConstants.PAGE_URL);
-        LoginPage loginPage = new LoginPage(world.driver);
-        loginPage.fillEmail(world.currentUser.getEmail());
-        loginPage.fillPassword(world.currentUser.getRawPassword());
-        return loginPage.clickLoginButtonExpectingSuccess();
-    }
-
-    @And("I should be on {string} page")
+    @Then("I should be on {string} page")
     public void iShouldBeOnPage(String page) throws Exception {
         log.info("Verifying user is on [{}] page", page);
         switch (page.toLowerCase()){
@@ -85,4 +65,34 @@ public class NavigationSteps {
                 throw new Exception("Page was not found");
         }
     }
+    @Given("I am on {string} department page")
+    public void iAmOnDepartmentPage(String departmentName) {
+        navigateToDepartmentsPage();
+        DepartmentsPage page = new DepartmentsPage(world.driver);
+        page.clickDepartmentLink(departmentName);
+    }
+    public void navigateToGeneralSettings() {
+        String currentUrl = world.driver.getCurrentUrl();
+        if(!Objects.equals(currentUrl, TextConstants.GeneralSettingsConstants.PAGE_URL)){
+            CalendarPage calendarPage = login();
+            calendarPage.menuBar.navigateToGeneralSettings();
+        }
+    }
+    public void navigateToDepartmentsPage(){
+        world.driver.get(TextConstants.DepartmentsConstants.PAGE_URL);
+        String currentUrl = world.driver.getCurrentUrl();
+        if(!Objects.equals(currentUrl, TextConstants.DepartmentsConstants.PAGE_URL)){
+            CalendarPage calendarPage = login();
+            calendarPage.menuBar.navigateToDepartments();
+        }
+    }
+    private CalendarPage login(){
+        log.info("Logging in as {}@{}", world.currentUser.getEmail(), world.currentUser.getRawPassword());
+        world.driver.get(TextConstants.GeneralSettingsConstants.PAGE_URL);
+        LoginPage loginPage = new LoginPage(world.driver);
+        loginPage.fillEmail(world.currentUser.getEmail());
+        loginPage.fillPassword(world.currentUser.getRawPassword());
+        return loginPage.clickLoginButtonExpectingSuccess();
+    }
+
 }

@@ -63,7 +63,7 @@ public class BankHolidaysService {
             String sql = "SELECT * FROM \"BankHolidays\" WHERE \"companyId\"=?";
             PreparedStatement statement = connection.prepareStatement(sql);
             statement.setInt(1, companyID);
-            log.debug("Executing ", statement);
+            log.debug("Executing {}", statement);
             ResultSet set = statement.executeQuery();
             if(set.next()){
                 return deserializeBankHolidays(set);

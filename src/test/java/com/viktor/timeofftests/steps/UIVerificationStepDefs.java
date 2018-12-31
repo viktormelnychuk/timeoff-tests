@@ -2,13 +2,15 @@ package com.viktor.timeofftests.steps;
 
 import com.viktor.timeofftests.common.World;
 import com.viktor.timeofftests.constants.Pages;
+import com.viktor.timeofftests.pages.DepartmentPage;
 import com.viktor.timeofftests.pages.GeneralSettingsPage;
 import com.viktor.timeofftests.pages.partials.modals.NewAbsenceModal;
-import com.viktor.timeofftests.services.BankHolidaysService;
 import cucumber.api.java.en.And;
 import cucumber.api.java.en.Then;
 import lombok.extern.log4j.Log4j2;
 import org.openqa.selenium.By;
+
+import java.util.List;
 
 import static org.junit.Assert.*;
 import static org.hamcrest.Matchers.*;
@@ -17,11 +19,12 @@ public class UIVerificationStepDefs {
 
     private World world;
     private SettingsSteps settingsSteps;
-    private BankHolidaysService bankHolidaysService;
+    private NavigationSteps navigationSteps;
     private DepartmentsSteps departmentsSteps;
-    public UIVerificationStepDefs(World world, SettingsSteps settingsSteps, DepartmentsSteps departmentsSteps){
+    public UIVerificationStepDefs(World world, SettingsSteps settingsSteps, NavigationSteps navigationSteps, DepartmentsSteps departmentsSteps){
         this.world = world;
         this.settingsSteps = settingsSteps;
+        this.navigationSteps = navigationSteps;
         this.departmentsSteps = departmentsSteps;
     }
 
@@ -66,6 +69,7 @@ public class UIVerificationStepDefs {
                 settingsSteps.validateLeaveTypes(world.currentCompany.getId());
                 break;
             case "departments":
+                navigationSteps.navigateToDepartmentsPage();
                 departmentsSteps.validateDepartmentsPage();
                 break;
             default:
@@ -94,5 +98,10 @@ public class UIVerificationStepDefs {
         log.info("Validating displayed bank holidays");
         settingsSteps.validateDisplayedBankHolidays();
 
+    }
+
+    @Then("{string} department page should reflect correct information")
+    public void departmentPageShouldReflectCorrectInformation(String departmentName) {
+        departmentsSteps.validateDepartmentPage(departmentName);
     }
 }

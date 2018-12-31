@@ -30,10 +30,20 @@ public class DataTableConfigurer implements TypeRegistryConfigurer {
     private NewDepartmentForm transformToNewDepartmentForm(Map<String, String> entry) {
         NewDepartmentForm form = new NewDepartmentForm();
         form.setName(entry.get("name"));
-        form.setAllowance(Integer.parseInt(entry.get("allowance")));
+        if(StringUtils.isNotEmpty(entry.get("allowance"))){
+            form.setAllowance(Integer.parseInt(entry.get("allowance")));
+        } else {
+            form.setAllowance(Constants.DEFAULT_DEPARTMENT_ALLOWANCE);
+        }
         form.setPublicHolidays(transformToBoolean(entry.get("include_pub_holidays"), true));
         form.setAccruedAllowance(transformToBoolean(entry.get("accrued_allowance"), false));
         form.setNumberOfUsers(Integer.parseInt(entry.get("num_of_users")));
+        if(StringUtils.equals(entry.get("multiple_supervisors"), "do")){
+            form.setSecondarySupervisors(true);
+        }
+        if(StringUtils.isNotEmpty(entry.get("amount_of_secondary_supervisors"))){
+            form.setAmountOfSecondarySupervisors(Integer.parseInt(entry.get("amount_of_secondary_supervisors")));
+        }
         return form;
     }
 

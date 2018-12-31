@@ -8,6 +8,7 @@ import org.apache.commons.lang3.StringUtils;
 
 import java.sql.*;
 import java.util.*;
+import java.util.Date;
 
 @Log4j2
 public class DepartmentService {
@@ -213,6 +214,37 @@ public class DepartmentService {
     }
 
 
+    public void assignSecondarySupervisor(int departmentID) throws Exception {
+        log.debug("Starting to assign secondary supervisors");
+        List<Integer> allUsersExcludingAdmin = getAllUsersExcludingAdmin(departmentID);
+        Connection connection = DbConnection.getConnection();
+        try{
+            String sql = "INSERT INTO \"DepartmentSupervisor\" (department_id, user_id, created_at)" +
+                    " VALUES(?," +
+                    "        (SELECT \"Users\".id FROM \"Users\" WHERE" +
+                    "              \"Users\".id !=(SELECT \"Departments\".\"bossId\" FROM \"Departments\" WHERE \"Departments\".id = ?) AND" +
+                    "              \"Users\".id NOT IN (SELECT \"DepartmentSupervisor\".user_id FROM \"DepartmentSupervisor\") LIMIT 1)," +
+                    "        ?);";
+            PreparedStatement statement = connection.prepareStatement(sql);
+            statement.setInt(1, departmentID);
+            statement.setInt(2, departmentID);
+            statement.setTimestamp(3, new Timestamp(new Date().getTime()));
+            log.debug("Executing {}", statement);
+            int rowsAffected = statement.executeUpdate();
+            if(rowsAffected == 0){
+                throw new Exception("Error assigning supervisors. Make sure there are non-manager users in company");
+            }
+        } catch (SQLException e){
+            log.error("Error occurred", e);
+        } finally {
+            DBUtil.closeConnection(connection);
+        }
+    }
+    public void assignSecondarySupervisors(int departmentID ,int count) throws Exception {
+        for(int i = 0; i < count; i++){
+            assignSecondarySupervisor(departmentID);
+        }
+    }
     public Department createDepartment(Department department){
         log.debug("Inserting new department {}", department);
         Connection connection = DbConnection.getConnection();
@@ -220,7 +252,7 @@ public class DepartmentService {
         try{
             PreparedStatement insertDepartment = connection.prepareStatement(sql);
             insertDepartment.setString(1, department.getName());
-            insertDepartment.setInt(2, department.getAllowance());
+            insertDepartment.setDouble(2, department.getAllowance());
             insertDepartment.setBoolean(3,department.isIncludePublicHolidays());
             insertDepartment.setBoolean(4,department.isAccuredAllowance());
             insertDepartment.setTimestamp(5,new Timestamp(new java.util.Date().getTime()));
