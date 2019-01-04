@@ -15,30 +15,17 @@ import java.util.*;
 @Log4j2
 public class DriverUtil {
     private WebDriver driver;
-    private static List<WebDriver> driverPool = new LinkedList<>();
     private static SessionService sessionService = new SessionService();
 
     public static WebDriver getDriver(DriverEnum driverType){
-        while(driverPool.size() < 3){
             log.info("Starting new {} browser", driverType.toString());
             if (driverType == DriverEnum.FIREFOX){
-                driverPool.add(new FirefoxDriver());
-            } else if (driverType == DriverEnum.CHROME){
+                return new FirefoxDriver();
+            } else {
                 ChromeOptions chromeOptions = new ChromeOptions();
                 chromeOptions.addArguments("headless");
-                driverPool.add(new ChromeDriver());
+                return new ChromeDriver(chromeOptions);
             }
-        }
-        WebDriver d = driverPool.get(0);
-        Runtime.getRuntime().addShutdownHook(new ShutdownHooks(driverPool));
-        driverPool.remove(0);
-        return d;
-    }
-
-    public static void returnDriver(WebDriver driver){
-        driver.manage().deleteAllCookies();
-        driver.navigate().refresh();
-        driverPool.add(driver);
     }
 
     private static String getDriverCookie(String key, WebDriver driver){
