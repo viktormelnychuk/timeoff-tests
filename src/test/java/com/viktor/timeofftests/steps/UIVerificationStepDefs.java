@@ -2,15 +2,12 @@ package com.viktor.timeofftests.steps;
 
 import com.viktor.timeofftests.common.World;
 import com.viktor.timeofftests.constants.Pages;
-import com.viktor.timeofftests.pages.DepartmentPage;
 import com.viktor.timeofftests.pages.GeneralSettingsPage;
 import com.viktor.timeofftests.pages.partials.modals.NewAbsenceModal;
 import cucumber.api.java.en.And;
 import cucumber.api.java.en.Then;
 import lombok.extern.log4j.Log4j2;
 import org.openqa.selenium.By;
-
-import java.util.List;
 
 import static org.junit.Assert.*;
 import static org.hamcrest.Matchers.*;
@@ -66,7 +63,7 @@ public class UIVerificationStepDefs {
                 settingsSteps.validateWeeklyScheduleForCompany(world.currentCompany.getId());
                 break;
             case "leave types":
-                settingsSteps.validateLeaveTypes(world.currentCompany.getId());
+                settingsSteps.validateDisplayedLeaveTypes(world.currentCompany.getId());
                 break;
             case "departments":
                 navigationSteps.navigateToDepartmentsPage();

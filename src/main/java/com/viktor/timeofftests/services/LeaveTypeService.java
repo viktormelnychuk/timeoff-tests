@@ -2,9 +2,11 @@ package com.viktor.timeofftests.services;
 
 import com.viktor.timeofftests.common.db.DBUtil;
 import com.viktor.timeofftests.common.db.DbConnection;
+import com.viktor.timeofftests.forms.LeaveTypeForm;
 import com.viktor.timeofftests.models.Company;
 import com.viktor.timeofftests.models.LeaveType;
 import lombok.extern.log4j.Log4j2;
+import org.apache.commons.lang3.StringUtils;
 import org.openqa.selenium.By;
 import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.WebElement;
@@ -13,10 +15,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Timestamp;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 @Log4j2
 public class LeaveTypeService {
@@ -97,26 +96,82 @@ public class LeaveTypeService {
             DBUtil.closeConnection(connection);
         }
     }
+    public LeaveType findOneByForm(LeaveTypeForm form) {
+        log.debug("Gettign leave type with values {}", form);
+        Connection connection = DbConnection.getConnection();
+        try{
+            String sql = "SELECT * FROM \"LeaveTypes\" WHERE color=? AND name=? AND use_allowance=? AND \"limit\"=?";
+            PreparedStatement statement = connection.prepareStatement(sql);
+            //adjusting leave type color
+            statement.setString(1, form.getColor());
+            statement.setString(2, form.getName());
+            statement.setBoolean(3, form.isUseAllowance());
+            statement.setInt(4, form.getLimit());
+            log.debug("Executing {}", statement);
+            ResultSet set = statement.executeQuery();
+            if(set.next()){
+                return deserializeLeaveType(set);
+            } else {
+                return null;
+            }
+        } catch (Exception e){
+            log.error("Erro occurred", e);
+            return null;
+        } finally {
+            DBUtil.closeConnection(connection);
+        }
+    }
 
-
+    public LeaveType getLeaveTypeById(int toEditLeaveId) {
+        log.debug("Getting leave type with id={}", toEditLeaveId);
+        Connection connection = DbConnection.getConnection();
+        try{
+            String sql = "SELECT * FROM \"LeaveTypes\" WHERE id=?";
+            PreparedStatement statement = connection.prepareStatement(sql);
+            statement.setInt(1, toEditLeaveId);
+            log.debug("Executing {}", statement);
+            ResultSet set = statement.executeQuery();
+            if(set.next()){
+                return deserializeLeaveType(set);
+            } else {
+                return null;
+            }
+        } catch (Exception e){
+            log.error("Error occurred", e);
+            return null;
+        } finally {
+            DBUtil.closeConnection(connection);
+        }
+    }
     private List<LeaveType> deserializeLeaveTypes(ResultSet set){
         List<LeaveType> leaveTypes = new ArrayList<>();
         try {
             do {
-                LeaveType leaveType = new LeaveType();
-                leaveType.setId(set.getInt("id"));
-                leaveType.setName(set.getString("name"));
-                leaveType.setColorHex(set.getString("color"));
-                leaveType.setUseAllowance(set.getBoolean("use_allowance"));
-                leaveType.setLimit(set.getInt("limit"));
-                leaveType.setSortOrder(set.getInt("sort_order"));
-                leaveType.setCompanyId(set.getInt("companyId"));
-                leaveTypes.add(leaveType);
+                leaveTypes.add(deserializeLeaveType(set));
             } while ((set.next()));
             return leaveTypes;
         } catch (Exception e){
             log.error("Error deserializing leave types from Database", e);
-            return new ArrayList<LeaveType>();
+            return Collections.emptyList();
         }
     }
+
+    private LeaveType deserializeLeaveType(ResultSet set){
+        try{
+            LeaveType leaveType = new LeaveType();
+            leaveType.setId(set.getInt("id"));
+            leaveType.setName(set.getString("name"));
+            leaveType.setColorHex(set.getString("color"));
+            leaveType.setUseAllowance(set.getBoolean("use_allowance"));
+            leaveType.setLimit(set.getInt("limit"));
+            leaveType.setSortOrder(set.getInt("sort_order"));
+            leaveType.setCompanyId(set.getInt("companyId"));
+            return leaveType;
+        } catch (Exception e){
+            log.error("Error deserializing leave types from Database", e);
+            return null;
+        }
+    }
+
+
 }

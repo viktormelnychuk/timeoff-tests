@@ -1,10 +1,7 @@
 package com.viktor.timeofftests.steps;
 
 import com.viktor.timeofftests.common.Constants;
-import com.viktor.timeofftests.forms.CompanySettingsForm;
-import com.viktor.timeofftests.forms.NewDepartmentForm;
-import com.viktor.timeofftests.forms.SignupForm;
-import com.viktor.timeofftests.forms.WeeklyScheduleForm;
+import com.viktor.timeofftests.forms.*;
 import com.viktor.timeofftests.models.User;
 import com.viktor.timeofftests.pools.UserPool;
 import cucumber.api.TypeRegistry;
@@ -27,6 +24,21 @@ public class DataTableConfigurer implements TypeRegistryConfigurer {
         typeRegistry.defineDataTableType(new DataTableType(CompanySettingsForm.class, this::transformToForm));
         typeRegistry.defineDataTableType(new DataTableType(NewDepartmentForm.class, this::transformToNewDepartmentForm));
         typeRegistry.defineDataTableType(new DataTableType(WeeklyScheduleForm.class, this::transformToWeeklyScheduleForm));
+        typeRegistry.defineDataTableType(new DataTableType(LeaveTypeForm.class, this::transformToLeaveTypeForm));
+    }
+
+    private LeaveTypeForm transformToLeaveTypeForm (Map<String,String> entry){
+        LeaveTypeForm form = new LeaveTypeForm();
+        form.setName(entry.get("name"));
+        if(StringUtils.isNotEmpty(entry.get("color"))){
+            String color = "leave_type_" + StringUtils.replace(entry.get("color")," ","_");
+            form.setColor(color);
+        }
+
+        form.setLimit(Integer.parseInt(entry.get("limit")));
+        form.setPrimary(transformToBoolean(entry.get("primary"), false));
+        form.setUseAllowance(transformToBoolean(entry.get("use_allowance"), true));
+        return form;
     }
 
     private WeeklyScheduleForm transformToWeeklyScheduleForm(Map<String, String> entry){

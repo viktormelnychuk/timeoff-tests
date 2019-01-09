@@ -2,6 +2,7 @@ package com.viktor.timeofftests.steps;
 
 import com.viktor.timeofftests.common.World;
 import com.viktor.timeofftests.forms.CompanySettingsForm;
+import com.viktor.timeofftests.forms.LeaveTypeForm;
 import com.viktor.timeofftests.forms.WeeklyScheduleForm;
 import com.viktor.timeofftests.models.Company;
 import com.viktor.timeofftests.models.LeaveType;
@@ -25,9 +26,12 @@ import org.apache.commons.lang3.StringUtils;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.stream.Collectors;
 
 import static com.viktor.timeofftests.matcher.StringMatchers.stringContainsAllSubstringsInAnyOrder;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.notNullValue;
 import static org.junit.Assert.assertEquals;
 
 @Log4j2
@@ -100,6 +104,12 @@ public class SettingsStepDefs {
     public void iEditLeaveTypeTo(String toEdit, DataTable table) {
         log.info("Starting to edit leave type with name [{}]", toEdit);
         Map<String, String> data = table.transpose().asMap(String.class, String.class);
+        int toEditLeaveId = leaveTypeService.getLeaveTypesForCompanyWithId(world.currentCompany.getId())
+                .stream()
+                .filter(o -> Objects.equals(o.getName(), toEdit))
+                .collect(Collectors.toList())
+                .get(0)
+                .getId();
         LeaveTypesSettings page = new LeaveTypesSettings(world.driver);
         if(StringUtils.isNotEmpty(data.get("name"))){
             page.editLeaveTypeName(toEdit, data.get("name"));
@@ -126,6 +136,9 @@ public class SettingsStepDefs {
         }
         page.clickSaveButton();
         log.info("Done to edit leave type with name [{}]", toEdit);
+        log.info("Validating edit leave type with name [{}]", toEdit);
+        LeaveTypeForm form = table.convert(LeaveTypeForm.class, false);
+        settingsSteps.validateLeaveType(toEditLeaveId, form);
     }
 
     @When("I add new leave type:")
