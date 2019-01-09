@@ -4,6 +4,7 @@ import com.viktor.timeofftests.common.Constants;
 import com.viktor.timeofftests.forms.CompanySettingsForm;
 import com.viktor.timeofftests.forms.NewDepartmentForm;
 import com.viktor.timeofftests.forms.SignupForm;
+import com.viktor.timeofftests.forms.WeeklyScheduleForm;
 import com.viktor.timeofftests.models.User;
 import com.viktor.timeofftests.pools.UserPool;
 import cucumber.api.TypeRegistry;
@@ -25,6 +26,20 @@ public class DataTableConfigurer implements TypeRegistryConfigurer {
         typeRegistry.defineDataTableType(new DataTableType(SignupForm.class,this::transformToSignupForm));
         typeRegistry.defineDataTableType(new DataTableType(CompanySettingsForm.class, this::transformToForm));
         typeRegistry.defineDataTableType(new DataTableType(NewDepartmentForm.class, this::transformToNewDepartmentForm));
+        typeRegistry.defineDataTableType(new DataTableType(WeeklyScheduleForm.class, this::transformToWeeklyScheduleForm));
+    }
+
+    private WeeklyScheduleForm transformToWeeklyScheduleForm(Map<String, String> entry){
+        WeeklyScheduleForm form = new WeeklyScheduleForm();
+        form.setMonday(transformToIntForWeeklySchedule(entry.get("monday")));
+        form.setTuesday(transformToIntForWeeklySchedule(entry.get("tuesday")));
+        form.setWednesday(transformToIntForWeeklySchedule(entry.get("wednesday")));
+        form.setThursday(transformToIntForWeeklySchedule(entry.get("thursday")));
+        form.setFriday(transformToIntForWeeklySchedule(entry.get("friday")));
+        form.setSaturday(transformToIntForWeeklySchedule(entry.get("saturday")));
+        form.setSunday(transformToIntForWeeklySchedule(entry.get("sunday")));
+
+        return form;
     }
 
     private NewDepartmentForm transformToNewDepartmentForm(Map<String, String> entry) {
@@ -168,6 +183,14 @@ public class DataTableConfigurer implements TypeRegistryConfigurer {
             return defaultNull;
         }
         return Objects.equals(s, "true");
+    }
+
+    private int transformToIntForWeeklySchedule(String s){
+        if(Objects.equals(s,"true")){
+            return 1;
+        } else {
+            return 2;
+        }
     }
 
     private Date transformToDate(String s){

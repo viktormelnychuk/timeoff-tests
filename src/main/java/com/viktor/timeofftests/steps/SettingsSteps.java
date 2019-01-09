@@ -2,6 +2,7 @@ package com.viktor.timeofftests.steps;
 
 import com.viktor.timeofftests.common.World;
 import com.viktor.timeofftests.constants.TextConstants;
+import com.viktor.timeofftests.forms.WeeklyScheduleForm;
 import com.viktor.timeofftests.models.BankHoliday;
 import com.viktor.timeofftests.models.Company;
 import com.viktor.timeofftests.models.LeaveType;
@@ -52,13 +53,7 @@ public class SettingsSteps {
     public void validateWeeklyScheduleForCompany(int companyID) {
         Schedule inDb = scheduleService.getScheduleForCompanyId(companyID);
         Schedule visible = new CompanyScheduleSettings(world.driver).getVisibleSchedule();
-        assertEquals(inDb.getMonday(), visible.getMonday());
-        assertEquals(inDb.getTuesday(), visible.getTuesday());
-        assertEquals(inDb.getWednesday(), visible.getWednesday());
-        assertEquals(inDb.getThursday(), visible.getThursday());
-        assertEquals(inDb.getFriday(), visible.getFriday());
-        assertEquals(inDb.getSaturday(), visible.getSaturday());
-        assertEquals(inDb.getSunday(), visible.getSunday());
+        assertThat(inDb, samePropertyValuesAs(visible,"id","companyId","userID"));
     }
 
     public void validateLeaveTypes(int id) {
@@ -142,5 +137,16 @@ public class SettingsSteps {
     public void validateBankHolidayCreated(String name) {
         BankHoliday bh = bankHolidaysService.getWithNameForCompany(name, world.currentCompany.getId());
         assertThat(bh, is(notNullValue()));
+    }
+
+    public void validateNewSchedule(WeeklyScheduleForm form) {
+        Schedule inDb = scheduleService.getScheduleForCompanyId(world.currentCompany.getId());
+        assertEquals(inDb.getMonday(), form.getMonday());
+        assertEquals(inDb.getTuesday(), form.getTuesday());
+        assertEquals(inDb.getWednesday(), form.getWednesday());
+        assertEquals(inDb.getThursday(), form.getThursday());
+        assertEquals(inDb.getFriday(), form.getFriday());
+        assertEquals(inDb.getSaturday(), form.getSaturday());
+        assertEquals(inDb.getSunday(), form.getSunday());
     }
 }

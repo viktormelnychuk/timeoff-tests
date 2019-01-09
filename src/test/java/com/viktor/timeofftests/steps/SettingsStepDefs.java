@@ -2,6 +2,8 @@ package com.viktor.timeofftests.steps;
 
 import com.viktor.timeofftests.common.World;
 import com.viktor.timeofftests.forms.CompanySettingsForm;
+import com.viktor.timeofftests.forms.WeeklyScheduleForm;
+import com.viktor.timeofftests.models.Company;
 import com.viktor.timeofftests.models.LeaveType;
 import com.viktor.timeofftests.pages.GeneralSettingsPage;
 import com.viktor.timeofftests.pages.partials.modals.AddNewBankHolidayModal;
@@ -11,6 +13,7 @@ import com.viktor.timeofftests.pages.partials.settings.BankHolidaySettings;
 import com.viktor.timeofftests.pages.partials.settings.CompanyScheduleSettings;
 import com.viktor.timeofftests.pages.partials.settings.CompanySettings;
 import com.viktor.timeofftests.pages.partials.settings.LeaveTypesSettings;
+import com.viktor.timeofftests.services.CompanyService;
 import com.viktor.timeofftests.services.LeaveTypeService;
 import com.viktor.timeofftests.services.ScheduleService;
 import cucumber.api.java.en.Given;
@@ -25,6 +28,7 @@ import java.util.*;
 
 import static com.viktor.timeofftests.matcher.StringMatchers.stringContainsAllSubstringsInAnyOrder;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.Assert.assertEquals;
 
 @Log4j2
 public class SettingsStepDefs {
@@ -32,13 +36,15 @@ public class SettingsStepDefs {
     private World world;
     private ScheduleService scheduleService;
     private LeaveTypeService leaveTypeService;
+    private CompanyService companyService;
     private SettingsSteps settingsSteps;
     private List<String> deletedHolidays = new ArrayList<>();
 
-    public SettingsStepDefs(World world, ScheduleService scheduleService, LeaveTypeService leaveTypeService, SettingsSteps settingsSteps){
+    public SettingsStepDefs(World world, ScheduleService scheduleService, LeaveTypeService leaveTypeService, CompanyService companyService, SettingsSteps settingsSteps){
         this.world = world;
         this.scheduleService = scheduleService;
         this.leaveTypeService = leaveTypeService;
+        this.companyService = companyService;
         this.settingsSteps = settingsSteps;
     }
 
@@ -65,8 +71,12 @@ public class SettingsStepDefs {
             companySettings.setCompanyTimeZone(form.getTimezone());
             world.editedCompany.setTimezone(form.getTimezone());
         }
+
         log.info("Done editing company settings");
         companySettings.saveCompanySettings();
+        Company actual = companyService.getCompanyWithId(world.editedCompany.getId());
+        log.info("Verifying database contains edited company");
+        assertEquals(world.editedCompany, actual);
     }
 
     @When("I edit weekly schedule to:")
@@ -79,6 +89,7 @@ public class SettingsStepDefs {
         }
         page.saveSchedule();
         log.info("Done to edit weekly schedule");
+        settingsSteps.validateNewSchedule(table.convert(WeeklyScheduleForm.class, false));
     }
 
     private boolean transofrmTrueAndFalseToBool(String s){

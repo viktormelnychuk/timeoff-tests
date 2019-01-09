@@ -11,7 +11,6 @@ Feature: Edit company wide settings
     | <company_name> | <country> | <date_format> | <time_zone> |
 
     Then "company settings" page should reflect correct information
-    And database should contain edited company
 
     Examples:
       |  company_name  |  country  |  date_format  |  time_zone    |

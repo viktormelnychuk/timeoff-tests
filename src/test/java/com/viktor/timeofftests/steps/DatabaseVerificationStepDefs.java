@@ -86,14 +86,6 @@ public class DatabaseVerificationStepDefs {
         assertNull("user was found when shouldn't be ",user);
     }
 
-    @Then("database should contain edited company")
-    public void databaseShouldContainEditedCompany() {
-        Company expected = world.editedCompany;
-        Company actual = companyService.getCompanyWithId(world.editedCompany.getId());
-        log.info("Verifying database contains edited company");
-        assertEquals(expected, actual);
-    }
-
     @Then("database should have correct weekly schedule associated with company {string}")
     public void databaseShouldHaveCorrectWeeklyScheduleAssociatedWithCompany(String arg0) {
         //TODO: This step does not verify anything
