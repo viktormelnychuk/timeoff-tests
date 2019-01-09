@@ -13,9 +13,7 @@ import com.viktor.timeofftests.pages.partials.settings.CompanySettings;
 import com.viktor.timeofftests.pages.partials.settings.LeaveTypesSettings;
 import com.viktor.timeofftests.services.LeaveTypeService;
 import com.viktor.timeofftests.services.ScheduleService;
-import cucumber.api.java.en.And;
 import cucumber.api.java.en.Given;
-import cucumber.api.java.en.Then;
 import cucumber.api.java.en.When;
 import io.cucumber.datatable.DataTable;
 import lombok.extern.log4j.Log4j2;
@@ -27,7 +25,7 @@ import java.util.*;
 
 import static com.viktor.timeofftests.matcher.StringMatchers.stringContainsAllSubstringsInAnyOrder;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.*;
+
 @Log4j2
 public class SettingsStepDefs {
 
@@ -208,7 +206,7 @@ public class SettingsStepDefs {
         log.info("Starting to delete company with name [{}]", arg0);
         RemoveCompanyModal modal = new GeneralSettingsPage(world.driver).clickDeleteCompanyButton();
         modal.fillCompanyName(arg0);
-        modal.clickDeleteButtonExpectingSuccess();
+        modal.clickDeleteButton();
         log.info("Done deleting company with name [{}]", arg0);
     }
 }

@@ -1,7 +1,6 @@
 package com.viktor.timeofftests.pages.partials.modals;
 
 import com.viktor.timeofftests.pages.BasePage;
-import com.viktor.timeofftests.pages.GeneralSettingsPage;
 import com.viktor.timeofftests.pages.LoginPage;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
@@ -17,19 +16,12 @@ public class RemoveCompanyModal extends BasePage {
         this.driver = driver;
     }
 
-    public RemoveCompanyModal fillCompanyName(String company){
+    public void fillCompanyName(String company){
         fillInputField(companyNameInp, company);
-        return this;
     }
 
-    public GeneralSettingsPage clickDeleteButtonExpectingFailure(){
+    public void clickDeleteButton(){
         clickButton(deleteCompanyButton);
-        return new GeneralSettingsPage(this.driver);
-    }
-
-    public LoginPage clickDeleteButtonExpectingSuccess(){
-        clickButton(deleteCompanyButton);
-        return new LoginPage(this.driver);
     }
 
     @Override

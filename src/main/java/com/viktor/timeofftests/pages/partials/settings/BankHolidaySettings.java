@@ -5,8 +5,6 @@ import com.viktor.timeofftests.models.BankHoliday;
 import com.viktor.timeofftests.pages.BasePage;
 import com.viktor.timeofftests.pages.GeneralSettingsPage;
 import com.viktor.timeofftests.pages.partials.modals.AddNewBankHolidayModal;
-import com.viktor.timeofftests.services.BankHolidaysService;
-import lombok.Getter;
 import lombok.extern.log4j.Log4j2;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
@@ -55,9 +53,9 @@ public class BankHolidaySettings extends BasePage {
 
     public Map<Integer, String> editMultipleHolidayNamesWithRandomString(int... indexes){
         Map<Integer, String> results = new HashMap<>();
-        for(int i = 0; i < indexes.length; i++){
-            String newName = editHolidayNameWithRandomStringByIndex(indexes[i]);
-            results.put(indexes[i], newName);
+        for (int index : indexes) {
+            String newName = editHolidayNameWithRandomStringByIndex(index);
+            results.put(index, newName);
         }
         return results;
     }
@@ -73,9 +71,8 @@ public class BankHolidaySettings extends BasePage {
         return result;
     }
 
-    public GeneralSettingsPage clickSubmitButton(){
+    public void clickSubmitButton(){
         clickButton(submitButton);
-        return new GeneralSettingsPage(this.driver);
     }
 
     public GeneralSettingsPage clickImportDefaultButton(){

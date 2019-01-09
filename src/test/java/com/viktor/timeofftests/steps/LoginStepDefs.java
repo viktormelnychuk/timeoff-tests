@@ -21,6 +21,6 @@ public class LoginStepDefs {
         loginPage.open();
         loginPage.fillEmail(email);
         loginPage.fillPassword(password);
-        loginPage.clickLoginButtonExpectingSuccess();
+        loginPage.clickLoginButton();
     }
 }

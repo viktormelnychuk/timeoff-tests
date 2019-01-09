@@ -10,6 +10,7 @@ Feature: Signup as new user
     And I should be on "Register" page
     And user "tester@viktor.com" should not be present in database
 
+#add different timezones and conutries
   Scenario: Signup as new user with default timezone and country
 
     Given I am on "Register" page

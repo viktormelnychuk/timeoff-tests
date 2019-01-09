@@ -7,7 +7,6 @@ import com.viktor.timeofftests.pages.DepartmentsPage;
 import com.viktor.timeofftests.pages.partials.modals.AddSupervisorsModal;
 import com.viktor.timeofftests.services.DepartmentService;
 import lombok.extern.log4j.Log4j2;
-import org.apache.commons.lang3.StringUtils;
 
 import java.util.Comparator;
 import java.util.List;
@@ -110,7 +109,7 @@ public class DepartmentsSteps {
         try {
             List<Integer> usersToAdd = allUsersExcludingAdmin.subList(0, supervisorsToAdd);
             modal.checkUser(usersToAdd);
-            modal.clicAddButton();
+            modal.clickAddButton();
             validateSecondarySupervisorsAdded(departmentId,usersToAdd);
         } catch (IndexOutOfBoundsException e){
             log.error("Company does not contain enough users");

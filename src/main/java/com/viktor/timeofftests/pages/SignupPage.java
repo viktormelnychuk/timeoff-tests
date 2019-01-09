@@ -68,9 +68,6 @@ public class SignupPage extends BasePage{
         clickButton(this.createButton);
     }
 
-    public void  clickCreateButtonExpectingFailure(){
-        clickButton(this.createButton);
-    }
     public String getAlertMessage(){
         return findOne(this.alert).getText();
     }

@@ -20,30 +20,26 @@ public class AddNewDepartmentModal extends BasePage {
         this.driver = driver;
     }
 
-    public AddNewDepartmentModal fillName(String name){
+    public void fillName(String name){
         fillInputField(nameInput, name);
-        return this;
     }
 
-    public AddNewDepartmentModal selectAllowance(String allowance){
+    public void selectAllowance(String allowance){
         selectOption(allowanceSelect, allowance);
-        return this;
     }
 
-    public AddNewDepartmentModal setIncludePublicHolidays(boolean include){
+    public void setIncludePublicHolidays(boolean include){
         WebElement element = findOne(includePublicChk);
         if(element.isSelected() != include){
             element.click();
         }
-        return this;
     }
 
-    public AddNewDepartmentModal setAccruedAllowance (boolean include){
+    public void setAccruedAllowance (boolean include){
         WebElement element = findOne(accruedAllowanceChk);
         if(element.isSelected() != include){
             element.click();
         }
-        return this;
     }
 
     public AddNewDepartmentModal setBoss (int userId){
@@ -60,14 +56,8 @@ public class AddNewDepartmentModal extends BasePage {
     }
 
 
-    public DepartmentsPage clickCreateButtonExpectingSuccess(){
+    public void clickCreateButtonExpectingSuccess(){
         clickButton(createButton);
-        return new DepartmentsPage(this.driver);
-    }
-
-    public AddNewDepartmentModal clickCreateButtonExpectingFailure(){
-        clickButton(createButton);
-        return this;
     }
 
     public boolean modalDisplayed(){

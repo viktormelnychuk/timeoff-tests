@@ -22,23 +22,21 @@ public class AddNewBankHolidayModal extends BasePage {
     }
 
 
-    public AddNewBankHolidayModal fillName(String name){
+    public void fillName(String name){
         fillInputField(nameInput, name);
-        return this;
     }
 
-    public AddNewBankHolidayModal fillDate(Date date){
+    public void fillDate(Date date){
         WebElement inputElement = findOne(dateInput);
         String dateFormat = inputElement.getAttribute("data-date-format").replaceAll("mm","MM");
         DateFormat format = new SimpleDateFormat(dateFormat);
         String dateToInsert = format.format(date);
         fillInputField(dateInput, dateToInsert);
-        return this;
     }
 
-    public GeneralSettingsPage clickCreateButton(){
+    public void clickCreateButton(){
         clickButton(createButton);
-        return new GeneralSettingsPage(this.driver);
+        new GeneralSettingsPage(this.driver);
     }
 
     @Override

@@ -6,8 +6,6 @@ import com.viktor.timeofftests.constants.TextConstants;
 import com.viktor.timeofftests.pages.CalendarPage;
 import com.viktor.timeofftests.pages.DepartmentsPage;
 import com.viktor.timeofftests.pages.LoginPage;
-import com.viktor.timeofftests.pages.partials.modals.AddNewDepartmentModal;
-import cucumber.api.java.en.And;
 import cucumber.api.java.en.Given;
 import cucumber.api.java.en.Then;
 import lombok.extern.log4j.Log4j2;
@@ -92,7 +90,7 @@ public class NavigationSteps {
         LoginPage loginPage = new LoginPage(world.driver);
         loginPage.fillEmail(world.currentUser.getEmail());
         loginPage.fillPassword(world.currentUser.getRawPassword());
-        return loginPage.clickLoginButtonExpectingSuccess();
+        return loginPage.clickLoginButton();
     }
 
 }

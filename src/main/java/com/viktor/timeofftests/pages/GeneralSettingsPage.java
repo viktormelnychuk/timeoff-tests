@@ -26,14 +26,6 @@ public class GeneralSettingsPage extends BasePage {
         this.leaveTypesSettings = new LeaveTypesSettings(driver);
         this.bankHolidaySettings = new BankHolidaySettings(driver);
     }
-
-    GeneralSettingsPage navigate(){
-        if(DriverUtil.sessionCookiePresent(this.driver)){
-            return menuBar.navigateToGeneralSettings();
-        }
-        else return null;
-    }
-
     public RemoveCompanyModal clickDeleteCompanyButton(){
         clickButton(removeCompanyButton);
         return new RemoveCompanyModal(this.driver);
@@ -42,9 +34,6 @@ public class GeneralSettingsPage extends BasePage {
     @Override
     public String getBaseUrl() {
         return "http://localhost:3000/settings/general/";
-    }
-    public String getPageTitle(){
-        return findOne(pageTitle).getText();
     }
     public String getAlertText(){return findOne(alert).getText();}
 
