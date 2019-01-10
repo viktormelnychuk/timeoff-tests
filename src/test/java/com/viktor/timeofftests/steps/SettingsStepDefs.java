@@ -102,7 +102,7 @@ public class SettingsStepDefs {
 
     @When("I edit {string} leave type to:")
     public void iEditLeaveTypeTo(String toEdit, DataTable table) {
-        log.info("Starting to edit leave type with name [{}]", toEdit);
+        log.info("Starting to edit leave type with name [{}] with following \r\n", toEdit, table);
         Map<String, String> data = table.transpose().asMap(String.class, String.class);
         int toEditLeaveId = leaveTypeService.getLeaveTypesForCompanyWithId(world.currentCompany.getId())
                 .stream()
@@ -145,12 +145,14 @@ public class SettingsStepDefs {
     public void iAddNewLeaveType(DataTable table) {
         log.info("Start adding new leave type");
         Map<String, String> map = table.transpose().asMap(String.class, String.class);
+        LeaveTypeForm form = table.convert(LeaveTypeForm.class, false);
         AddNewLeaveTypeModal modal = new GeneralSettingsPage(world.driver).leaveTypesSettings.clickAddButton();
-        modal.setName(map.get("name"));
-        modal.setAllowance(Objects.equals(map.get("use_allowance"), "true"));
-        modal.setLimit(map.get("limit"));
-        modal.setColor(StringUtils.capitalize(map.get("color")));
+        modal.setName(form.getName());
+        modal.setAllowance(form.isUseAllowance());
+        modal.setLimit(form.getLimit());
+        modal.setColor(form.getColor());
         modal.clickCreateButton();
+        settingsSteps.validateLeaveTypeCreated(form);
         log.info("Done adding new leave type");
     }
 
@@ -159,15 +161,23 @@ public class SettingsStepDefs {
         log.info("Start deleting leave type");
         LeaveTypesSettings page = new LeaveTypesSettings(world.driver);
         page.deleteLeave(leaveTypeName);
+        settingsSteps.validateLeaveTypeDoesNotExist(leaveTypeName);
         log.info("Done deleting leave type");
     }
 
     @Given("following leave type is created:")
     public void followingLeaveTypeIsCreated(DataTable table) {
-        log.info("Start inserting leave types");
-        Map<String, String> data = table.transpose().asMap(String.class, String.class);
-        LeaveType leaveType = new LeaveType(data);
-        leaveTypeService.insertLeaveTypes(world.currentCompany.getId(), leaveType);
+        log.info("Start inserting leave types \r\n {}", table);
+        LeaveTypeForm form = table.convert(LeaveTypeForm.class, false);
+        Map<String, String> map = table.transpose().asMap(String.class, String.class);
+        long count = leaveTypeService.getLeaveTypesForCompanyWithId(world.currentCompany.getId())
+                .stream()
+                .filter(o -> StringUtils.equals(o.getName(), form.getName()))
+                .count();
+        if(count == 0){
+            leaveTypeService.insertLeaveTypes(world.currentCompany.getId(),
+                    new LeaveType(map));
+        }
         log.info("Done inserting leave types");
     }
 

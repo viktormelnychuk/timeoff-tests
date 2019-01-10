@@ -52,10 +52,7 @@ Feature: Edit company wide settings
     Examples:
       |original_name |  name     |  color  |  use_allowance  | limit   |
       | Holiday      | Something | color 2 | false           | 20      |
-      | Leave        |           | color 2 | false           | 20      |
-      | Sick leave   |           |         | false           | 20      |
-      | Holiday      |           |         | true            | 20      |
-      | Holiday      |           |         |                 | 20      |
+      | Leave        |           | color 3 | false           | 20      |
 
   Scenario: Admin user can add new leave type
     Given  I am on "Settings" page

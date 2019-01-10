@@ -164,4 +164,18 @@ public class SettingsSteps {
         }
         assertThat(form.isUseAllowance(), is(inDb.isUseAllowance()));
     }
+
+    public void validateLeaveTypeCreated(LeaveTypeForm form) {
+        LeaveType inDb = leaveTypeService.findOneByForm(form);
+        assertThat(inDb, is(notNullValue()));
+    }
+
+    public void validateLeaveTypeDoesNotExist(String leaveTypeName) {
+        long count = leaveTypeService.getLeaveTypesForCompanyWithId(world.currentCompany.getId())
+                .stream()
+                .filter(o -> StringUtils.equals(o.getName(), leaveTypeName))
+                .count();
+        String reason = String.format("Leave type with name=[%s] was found", leaveTypeName);
+        assertThat(reason,count, is(0));
+    }
 }

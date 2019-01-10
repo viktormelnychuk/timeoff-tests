@@ -97,7 +97,7 @@ public class LeaveTypeService {
         }
     }
     public LeaveType findOneByForm(LeaveTypeForm form) {
-        log.debug("Gettign leave type with values {}", form);
+        log.debug("Getting leave type with values {}", form);
         Connection connection = DbConnection.getConnection();
         try{
             String sql = "SELECT * FROM \"LeaveTypes\" WHERE color=? AND name=? AND use_allowance=? AND \"limit\"=?";
