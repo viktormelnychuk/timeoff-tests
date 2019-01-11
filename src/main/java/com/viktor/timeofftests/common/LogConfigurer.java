@@ -10,8 +10,6 @@ import java.util.Properties;
 public class LogConfigurer {
 
     public static void configureLogger(String dirPath){
-        Properties props = System.getProperties();
-        props.setProperty("log4j2.debug","TRUE");
         ConfigurationBuilder<BuiltConfiguration> builder = ConfigurationBuilderFactory.newConfigurationBuilder();
         AppenderComponentBuilder console = builder.newAppender("stdout", "Console");
 

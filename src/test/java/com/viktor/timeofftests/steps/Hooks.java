@@ -8,7 +8,6 @@ import com.viktor.timeofftests.common.db.DBUtil;
 import cucumber.api.Scenario;
 import cucumber.api.java.After;
 import cucumber.api.java.Before;
-import lombok.extern.log4j.Log4j2;
 import org.apache.commons.io.FileUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -17,12 +16,8 @@ import org.openqa.selenium.TakesScreenshot;
 
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.UUID;
 
 
 public class Hooks {
@@ -33,16 +28,16 @@ public class Hooks {
     public Hooks (World world){
         this.world = world;
     }
-//
-//    @Before(order = 10)
-//    public void beforeAll(){
-//        if(!dunit){
-//            SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy_MM_dd_hh-mm-ss");
-//            dirPath = "logs/" + UUID.randomUUID() + "/";
-//            LogConfigurer.configureLogger(dirPath);
-//            dunit = true;
-//        }
-//    }
+
+    @Before(order = 10)
+    public void beforeAll(){
+        if(!dunit){
+            SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy_MM_dd_hh-mm-ss");
+            dirPath = "logs/" + dateFormat.format(new Date()) + "/";
+            LogConfigurer.configureLogger(dirPath);
+            dunit = true;
+        }
+    }
 
     @Before
     public void beforeHook(Scenario scenario) {
