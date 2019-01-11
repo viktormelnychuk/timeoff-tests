@@ -2,6 +2,8 @@ package com.viktor.timeofftests.steps;
 
 import com.viktor.timeofftests.common.World;
 import com.viktor.timeofftests.constants.TextConstants;
+import com.viktor.timeofftests.forms.LeaveTypeForm;
+import com.viktor.timeofftests.forms.WeeklyScheduleForm;
 import com.viktor.timeofftests.models.BankHoliday;
 import com.viktor.timeofftests.models.Company;
 import com.viktor.timeofftests.models.LeaveType;
@@ -16,6 +18,7 @@ import com.viktor.timeofftests.pages.partials.settings.LeaveTypesSettings;
 import com.viktor.timeofftests.services.BankHolidaysService;
 import com.viktor.timeofftests.services.LeaveTypeService;
 import com.viktor.timeofftests.services.ScheduleService;
+import org.apache.commons.lang3.StringUtils;
 
 import java.util.Comparator;
 import java.util.List;
@@ -52,19 +55,12 @@ public class SettingsSteps {
     public void validateWeeklyScheduleForCompany(int companyID) {
         Schedule inDb = scheduleService.getScheduleForCompanyId(companyID);
         Schedule visible = new CompanyScheduleSettings(world.driver).getVisibleSchedule();
-        assertEquals(inDb.getMonday(), visible.getMonday());
-        assertEquals(inDb.getTuesday(), visible.getTuesday());
-        assertEquals(inDb.getWednesday(), visible.getWednesday());
-        assertEquals(inDb.getThursday(), visible.getThursday());
-        assertEquals(inDb.getFriday(), visible.getFriday());
-        assertEquals(inDb.getSaturday(), visible.getSaturday());
-        assertEquals(inDb.getSunday(), visible.getSunday());
+        assertThat(inDb, samePropertyValuesAs(visible,"id","companyId","userID"));
     }
 
-    public void validateLeaveTypes(int id) {
+    public void validateDisplayedLeaveTypes(int id) {
         List<LeaveType> inDb = leaveTypeService.getLeaveTypesForCompanyWithId(id);
         LeaveTypesSettings page = new LeaveTypesSettings(world.driver);
-        world.inDbLeaveTypes = inDb;
         assertThat(page.getDisplayedLeaveTypes(world.currentCompany.getId()), containsInAnyOrder(inDb.toArray()));
     }
 
@@ -142,5 +138,44 @@ public class SettingsSteps {
     public void validateBankHolidayCreated(String name) {
         BankHoliday bh = bankHolidaysService.getWithNameForCompany(name, world.currentCompany.getId());
         assertThat(bh, is(notNullValue()));
+    }
+
+    public void validateNewSchedule(WeeklyScheduleForm form) {
+        Schedule inDb = scheduleService.getScheduleForCompanyId(world.currentCompany.getId());
+        assertEquals(inDb.getMonday(), form.getMonday());
+        assertEquals(inDb.getTuesday(), form.getTuesday());
+        assertEquals(inDb.getWednesday(), form.getWednesday());
+        assertEquals(inDb.getThursday(), form.getThursday());
+        assertEquals(inDb.getFriday(), form.getFriday());
+        assertEquals(inDb.getSaturday(), form.getSaturday());
+        assertEquals(inDb.getSunday(), form.getSunday());
+    }
+
+    public void validateLeaveType(int toEditLeaveId, LeaveTypeForm form) {
+        LeaveType inDb = leaveTypeService.getLeaveTypeById(toEditLeaveId);
+        if(StringUtils.isNotEmpty(form.getName())){
+            assertThat(form.getName(), is(inDb.getName()));
+        }
+        if(StringUtils.isNotEmpty(form.getColor())){
+            assertThat(form.getColor(), is(inDb.getColorHex()));
+        }
+        if(form.getLimit() != 0){
+            assertThat(form.getLimit(), is(inDb.getLimit()));
+        }
+        assertThat(form.isUseAllowance(), is(inDb.isUseAllowance()));
+    }
+
+    public void validateLeaveTypeCreated(LeaveTypeForm form) {
+        LeaveType inDb = leaveTypeService.findOneByForm(form);
+        assertThat(inDb, is(notNullValue()));
+    }
+
+    public void validateLeaveTypeDoesNotExist(String leaveTypeName) {
+        long count = leaveTypeService.getLeaveTypesForCompanyWithId(world.currentCompany.getId())
+                .stream()
+                .filter(o -> StringUtils.equals(o.getName(), leaveTypeName))
+                .count();
+        String reason = String.format("Leave type with name=[%s] was found", leaveTypeName);
+        assertThat(reason,count, is(0L));
     }
 }

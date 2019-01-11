@@ -1,11 +1,9 @@
 package com.viktor.timeofftests.pages.partials.settings;
 
-import com.viktor.timeofftests.common.World;
 import com.viktor.timeofftests.models.LeaveType;
 import com.viktor.timeofftests.pages.BasePage;
 import com.viktor.timeofftests.pages.GeneralSettingsPage;
 import com.viktor.timeofftests.pages.partials.modals.AddNewLeaveTypeModal;
-import com.viktor.timeofftests.services.LeaveTypeService;
 import org.openqa.selenium.By;
 import org.openqa.selenium.TimeoutException;
 import org.openqa.selenium.WebDriver;
@@ -46,21 +44,18 @@ public class LeaveTypesSettings extends BasePage {
 
     }
 
-    public LeaveTypesSettings editLeaveTypeName(String oldName, String newName){
+    public void editLeaveTypeName(String oldName, String newName){
         By locator = By.xpath(String.format(leaveTypeNameQuery,oldName));
         fillInputField(locator, newName);
-        return this;
     }
 
-    public GeneralSettingsPage clickSaveButton(){
+    public void clickSaveButton(){
         clickButton(saveChangesButton);
-        return new GeneralSettingsPage(this.driver);
     }
 
-    public LeaveTypesSettings setPrimaryLeaveType(String name){
+    public void setPrimaryLeaveType(String name){
         By locator = By.xpath(String.format(leaveTypeOrderQuery, name));
         clickButton(locator);
-        return this;
     }
 
     @Override
@@ -68,18 +63,16 @@ public class LeaveTypesSettings extends BasePage {
         return null;
     }
 
-    public LeaveTypesSettings setUseAllowanceForLeave(String name, boolean b) {
+    public void setUseAllowanceForLeave(String name, boolean b) {
         By locator = By.xpath(String.format(leaveTypeUseAllowanceQuery,name));
         if(Objects.equals(findOne(locator).getAttribute("checked"), "true") != b){
             clickButton(locator);
         }
-        return this;
     }
 
-    public LeaveTypesSettings setLimit(String name, int limit) {
+    public void setLimit(String name, int limit) {
         By locator = By.xpath(String.format(leaveTypeLimitQuery,name));
         fillInputField(locator, Integer.toString(limit));
-        return this;
     }
 
 
@@ -89,10 +82,9 @@ public class LeaveTypesSettings extends BasePage {
         findOne(By.linkText(color)).click();
     }
 
-    public GeneralSettingsPage deleteLeave (String name){
+    public void deleteLeave (String name){
         By locator = By.xpath(String.format(leaveTypeDeleteQuery,name));
         clickButton(locator);
-        return new GeneralSettingsPage(this.driver);
     }
 
     public AddNewLeaveTypeModal clickAddButton(){

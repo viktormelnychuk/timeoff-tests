@@ -1,6 +1,5 @@
 package com.viktor.timeofftests.pages;
 
-import com.gargoylesoftware.htmlunit.ElementNotFoundException;
 import com.viktor.timeofftests.models.Department;
 import com.viktor.timeofftests.pages.partials.modals.AddSupervisorsModal;
 import org.openqa.selenium.By;
@@ -26,35 +25,32 @@ public class DepartmentPage extends BasePage {
     private By addNewSecondarySupervisorLink = By.xpath("//form[@id='department_edit_form']//a[@data-vpp-add-new-secondary-supervisor='1']");
     private By allSecondarySupervisors = By.xpath("//form[@id='department_edit_form']//ul//li[descendant::button]");
     private String deleteSecondarySupervisorQuery = "//button[@name='remove_supervisor_id' and @value='%s']";
+
     @Override
     public String getBaseUrl() {
         return "http://localhost:3000/settings/departments/edit/%s/";
     }
 
-    public DepartmentPage fillName(String value){
+    public void fillName(String value){
         fillInputField(nameInp, value);
-        return this;
     }
 
-    public DepartmentPage selectManger(int userId){
+    public void selectManger(int userId){
         selectOption(managerSelect, String.valueOf(userId));
-        return this;
     }
 
-    public DepartmentPage setIncludePublicHolidays(boolean value){
+    public void setIncludePublicHolidays(boolean value){
         WebElement element = findOne(usePublicHolidayCheck);
         if(element.isSelected()!=value){
             element.click();
         }
-        return this;
     }
 
-    public DepartmentPage setAccruedAllowance(boolean value){
+    public void setAccruedAllowance(boolean value){
         WebElement element = findOne(accruedCheck);
         if(element.isSelected()!=value){
             element.click();
         }
-        return this;
     }
 
     public void deleteSecondarySupervisor(int amount){
@@ -66,30 +62,17 @@ public class DepartmentPage extends BasePage {
         }
     }
 
-    public DepartmentPage setAllowance(int allowance){
+    public void setAllowance(int allowance){
         selectOption(allowanceSelect, String.valueOf(allowance));
-        return this;
     }
 
-    public DepartmentPage clickSaveButton(){
+    public void clickSaveButton(){
         clickButton(saveChangesButton);
-        return new DepartmentPage(this.driver);
     }
 
     public DepartmentPage (WebDriver driver){
         super(driver);
         this.driver = driver;
-    }
-
-    public Department getDisplayedDepartment(){
-        Department department = new Department();
-        department.setName(getInputValue(nameInp));
-        department.setAllowance(Integer.parseInt(getSelectedOption(allowanceSelect)));
-        department.setBossId(Integer.parseInt(getSelectedOptionValue(managerSelect)));
-        department.setIncludePublicHolidays(isCheckboxChecked(usePublicHolidayCheck));
-        department.setAccuredAllowance(isCheckboxChecked(accruedCheck));
-        department.setId(Integer.parseInt(findOne(addNewSecondarySupervisorLink).getAttribute("data-department_id")));
-        return department;
     }
 
     public AddSupervisorsModal clickAddSecondarySupervisors(){

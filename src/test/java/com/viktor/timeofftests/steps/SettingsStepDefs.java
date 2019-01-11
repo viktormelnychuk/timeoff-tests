@@ -2,6 +2,9 @@ package com.viktor.timeofftests.steps;
 
 import com.viktor.timeofftests.common.World;
 import com.viktor.timeofftests.forms.CompanySettingsForm;
+import com.viktor.timeofftests.forms.LeaveTypeForm;
+import com.viktor.timeofftests.forms.WeeklyScheduleForm;
+import com.viktor.timeofftests.models.Company;
 import com.viktor.timeofftests.models.LeaveType;
 import com.viktor.timeofftests.pages.GeneralSettingsPage;
 import com.viktor.timeofftests.pages.partials.modals.AddNewBankHolidayModal;
@@ -11,11 +14,10 @@ import com.viktor.timeofftests.pages.partials.settings.BankHolidaySettings;
 import com.viktor.timeofftests.pages.partials.settings.CompanyScheduleSettings;
 import com.viktor.timeofftests.pages.partials.settings.CompanySettings;
 import com.viktor.timeofftests.pages.partials.settings.LeaveTypesSettings;
+import com.viktor.timeofftests.services.CompanyService;
 import com.viktor.timeofftests.services.LeaveTypeService;
 import com.viktor.timeofftests.services.ScheduleService;
-import cucumber.api.java.en.And;
 import cucumber.api.java.en.Given;
-import cucumber.api.java.en.Then;
 import cucumber.api.java.en.When;
 import io.cucumber.datatable.DataTable;
 import lombok.extern.log4j.Log4j2;
@@ -24,23 +26,29 @@ import org.apache.commons.lang3.StringUtils;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.stream.Collectors;
 
 import static com.viktor.timeofftests.matcher.StringMatchers.stringContainsAllSubstringsInAnyOrder;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.*;
+import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.notNullValue;
+import static org.junit.Assert.assertEquals;
+
 @Log4j2
 public class SettingsStepDefs {
 
     private World world;
     private ScheduleService scheduleService;
     private LeaveTypeService leaveTypeService;
+    private CompanyService companyService;
     private SettingsSteps settingsSteps;
     private List<String> deletedHolidays = new ArrayList<>();
 
-    public SettingsStepDefs(World world, ScheduleService scheduleService, LeaveTypeService leaveTypeService, SettingsSteps settingsSteps){
+    public SettingsStepDefs(World world, ScheduleService scheduleService, LeaveTypeService leaveTypeService, CompanyService companyService, SettingsSteps settingsSteps){
         this.world = world;
         this.scheduleService = scheduleService;
         this.leaveTypeService = leaveTypeService;
+        this.companyService = companyService;
         this.settingsSteps = settingsSteps;
     }
 
@@ -67,8 +75,12 @@ public class SettingsStepDefs {
             companySettings.setCompanyTimeZone(form.getTimezone());
             world.editedCompany.setTimezone(form.getTimezone());
         }
+
         log.info("Done editing company settings");
         companySettings.saveCompanySettings();
+        Company actual = companyService.getCompanyWithId(world.editedCompany.getId());
+        log.info("Verifying database contains edited company");
+        assertEquals(world.editedCompany, actual);
     }
 
     @When("I edit weekly schedule to:")
@@ -81,6 +93,7 @@ public class SettingsStepDefs {
         }
         page.saveSchedule();
         log.info("Done to edit weekly schedule");
+        settingsSteps.validateNewSchedule(table.convert(WeeklyScheduleForm.class, false));
     }
 
     private boolean transofrmTrueAndFalseToBool(String s){
@@ -89,8 +102,14 @@ public class SettingsStepDefs {
 
     @When("I edit {string} leave type to:")
     public void iEditLeaveTypeTo(String toEdit, DataTable table) {
-        log.info("Starting to edit leave type with name [{}]", toEdit);
+        log.info("Starting to edit leave type with name [{}] with following \r\n", toEdit, table);
         Map<String, String> data = table.transpose().asMap(String.class, String.class);
+        int toEditLeaveId = leaveTypeService.getLeaveTypesForCompanyWithId(world.currentCompany.getId())
+                .stream()
+                .filter(o -> Objects.equals(o.getName(), toEdit))
+                .collect(Collectors.toList())
+                .get(0)
+                .getId();
         LeaveTypesSettings page = new LeaveTypesSettings(world.driver);
         if(StringUtils.isNotEmpty(data.get("name"))){
             page.editLeaveTypeName(toEdit, data.get("name"));
@@ -117,18 +136,22 @@ public class SettingsStepDefs {
         }
         page.clickSaveButton();
         log.info("Done to edit leave type with name [{}]", toEdit);
+        log.info("Validating edit leave type with name [{}]", toEdit);
+        LeaveTypeForm form = table.convert(LeaveTypeForm.class, false);
+        settingsSteps.validateLeaveType(toEditLeaveId, form);
     }
 
     @When("I add new leave type:")
     public void iAddNewLeaveType(DataTable table) {
         log.info("Start adding new leave type");
-        Map<String, String> map = table.transpose().asMap(String.class, String.class);
+        LeaveTypeForm form = table.convert(LeaveTypeForm.class, false);
         AddNewLeaveTypeModal modal = new GeneralSettingsPage(world.driver).leaveTypesSettings.clickAddButton();
-        modal.setName(map.get("name"));
-        modal.setAllowance(Objects.equals(map.get("use_allowance"), "true"));
-        modal.setLimit(map.get("limit"));
-        modal.setColor(StringUtils.capitalize(map.get("color")));
+        modal.setName(form.getName());
+        modal.setAllowance(form.isUseAllowance());
+        modal.setLimit(form.getLimit());
+        modal.setColor(form.getColor());
         modal.clickCreateButton();
+        settingsSteps.validateLeaveTypeCreated(form);
         log.info("Done adding new leave type");
     }
 
@@ -137,15 +160,23 @@ public class SettingsStepDefs {
         log.info("Start deleting leave type");
         LeaveTypesSettings page = new LeaveTypesSettings(world.driver);
         page.deleteLeave(leaveTypeName);
+        settingsSteps.validateLeaveTypeDoesNotExist(leaveTypeName);
         log.info("Done deleting leave type");
     }
 
     @Given("following leave type is created:")
     public void followingLeaveTypeIsCreated(DataTable table) {
-        log.info("Start inserting leave types");
-        Map<String, String> data = table.transpose().asMap(String.class, String.class);
-        LeaveType leaveType = new LeaveType(data);
-        leaveTypeService.insertLeaveTypes(world.currentCompany.getId(), leaveType);
+        log.info("Start inserting leave types \r\n {}", table);
+        LeaveTypeForm form = table.convert(LeaveTypeForm.class, false);
+        Map<String, String> map = table.transpose().asMap(String.class, String.class);
+        long count = leaveTypeService.getLeaveTypesForCompanyWithId(world.currentCompany.getId())
+                .stream()
+                .filter(o -> StringUtils.equals(o.getName(), form.getName()))
+                .count();
+        if(count == 0){
+            leaveTypeService.insertLeaveTypes(world.currentCompany.getId(),
+                    new LeaveType(map));
+        }
         log.info("Done inserting leave types");
     }
 
@@ -208,7 +239,7 @@ public class SettingsStepDefs {
         log.info("Starting to delete company with name [{}]", arg0);
         RemoveCompanyModal modal = new GeneralSettingsPage(world.driver).clickDeleteCompanyButton();
         modal.fillCompanyName(arg0);
-        modal.clickDeleteButtonExpectingSuccess();
+        modal.clickDeleteButton();
         log.info("Done deleting company with name [{}]", arg0);
     }
 }

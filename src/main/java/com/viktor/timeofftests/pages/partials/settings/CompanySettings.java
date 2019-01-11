@@ -23,9 +23,8 @@ public class CompanySettings extends BasePage {
         this.driver = driver;
     }
 
-    public CompanySettings setCompanyName(String value){
+    public void setCompanyName(String value){
         fillInputField(companyNameInp, value);
-        return this;
     }
 
     public String getCompanyName(){
@@ -60,24 +59,21 @@ public class CompanySettings extends BasePage {
         return findOne(timeZoneLabel).getText();
     }
 
-    public CompanySettings setCompanyCountry (String companyCountry){
+    public void setCompanyCountry (String companyCountry){
         selectOption(countrySelect,companyCountry);
-        return this;
     }
 
-    public CompanySettings setCompanyDateFormat (String companyDateFormat){
+    public void setCompanyDateFormat (String companyDateFormat){
         selectOption(dateFormatSelect, companyDateFormat);
-        return this;
     }
 
-    public CompanySettings setCompanyTimeZone (String timeZone){
+    public void setCompanyTimeZone (String timeZone){
         selectOption(timeZoneSelect, timeZone);
-        return this;
     }
 
-    public GeneralSettingsPage saveCompanySettings(){
+    public void saveCompanySettings(){
         clickButton(saveCompanySettingsButton);
-        return new GeneralSettingsPage(this.driver);
+        new GeneralSettingsPage(this.driver);
     }
 
     @Override

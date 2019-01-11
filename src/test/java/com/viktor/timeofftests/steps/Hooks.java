@@ -23,7 +23,6 @@ public class Hooks {
 
     @After
     public void afterHook(){
-        world.driver.manage().deleteAllCookies();
-        world.driver.navigate().refresh();
+        world.driver.quit();
     }
 }

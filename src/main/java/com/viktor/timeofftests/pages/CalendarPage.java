@@ -6,7 +6,6 @@ import org.openqa.selenium.WebDriver;
 public class CalendarPage extends BasePage {
     private WebDriver driver;
 
-    private By message = By.xpath("//div[@role='alert']");
     private By employeeName = By.xpath("//div[@class='row']/div");
 
     public String getBaseUrl() {
@@ -16,9 +15,6 @@ public class CalendarPage extends BasePage {
     public CalendarPage(WebDriver driver) {
         super(driver);
         this.driver = driver;
-    }
-    public String getAlertMessage(){
-        return findOne(this.message).getText();
     }
     public String getEmployeeGreeting(){
         return findOne(this.employeeName).getText();

@@ -3,12 +3,10 @@ package com.viktor.timeofftests.pages;
 import com.viktor.timeofftests.common.DriverUtil;
 import com.viktor.timeofftests.models.Department;
 import com.viktor.timeofftests.pages.partials.modals.AddNewDepartmentModal;
-import com.viktor.timeofftests.services.DepartmentService;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 
-import java.sql.Driver;
 import java.util.*;
 
 public class DepartmentsPage extends BasePage {
@@ -61,9 +59,8 @@ public class DepartmentsPage extends BasePage {
         return new AddNewDepartmentModal(this.driver);
     }
 
-    public DepartmentPage clickDepartmentLink(String name) {
+    public void clickDepartmentLink(String name) {
         clickButton(By.linkText(name));
-        return new DepartmentPage(this.driver);
     }
     public List<Department> deserializeDepartments(int companyId) {
         List<Department> result = new ArrayList<>();

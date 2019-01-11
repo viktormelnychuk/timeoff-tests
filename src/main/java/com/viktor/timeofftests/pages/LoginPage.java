@@ -20,38 +20,16 @@ public class LoginPage extends BasePage {
         return  "http://localhost:3000/login";
     }
 
-    public LoginPage fillEmail(String value){
+    public void fillEmail(String value){
         fillInputField(this.emailInput, value);
-        return this;
     }
 
-    public LoginPage fillPassword (String value){
+    public void fillPassword (String value){
         fillInputField(this.passwordInput, value);
-        return this;
     }
 
-    public CalendarPage clickLoginButtonExpectingSuccess(){
+    public CalendarPage clickLoginButton(){
         clickButton(loginButton);
         return new CalendarPage(this.driver);
-    }
-
-    public LoginPage clickLoginButtonExpectingFailure(){
-        clickButton(loginButton);
-        return this;
-    }
-
-    public String getAlertMessage (){
-        return findOne(alertMessage).getText();
-    }
-
-    public CalendarPage loginWithDefaultUser(){
-        fillEmail(Constants.DEFAULT_USER_EMAIL);
-        fillPassword(Constants.DEFAULT_USER_PASSWORD);
-        return clickLoginButtonExpectingSuccess();
-    }
-
-    public SignupPage clickRegisterLink() {
-        clickButton(registerLink);
-        return new SignupPage(this.driver);
     }
 }
