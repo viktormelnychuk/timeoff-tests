@@ -176,6 +176,6 @@ public class SettingsSteps {
                 .filter(o -> StringUtils.equals(o.getName(), leaveTypeName))
                 .count();
         String reason = String.format("Leave type with name=[%s] was found", leaveTypeName);
-        assertThat(reason,count, is(0));
+        assertThat(reason,count, is(0L));
     }
 }

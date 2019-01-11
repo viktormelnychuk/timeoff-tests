@@ -15,6 +15,7 @@ public class AddNewLeaveTypeModal extends BasePage {
     private By limitInput = By.id("leave_type_limit_new");
     private By createButton = By.xpath("//form[@id='leave_type_new_form']//button[@type='submit']");
     private By colorPicker = By.xpath("//form[@id='leave_type_new_form']//button[contains(@class,'leave_type_color')]");
+    private String color = "//form[@id='leave_type_new_form']//a[@data-tom-color-picker-css-class='%s']";
     public AddNewLeaveTypeModal (WebDriver driver){
         super(driver);
         this.driver = driver;
@@ -39,7 +40,8 @@ public class AddNewLeaveTypeModal extends BasePage {
 
     public void setColor (String color){
         clickButton(colorPicker);
-        findOne(By.linkText(color)).click();
+        By locator = By.xpath(String.format(this.color, color));
+        findOne(locator).click();
     }
 
     public void setLimit(String limit) {

@@ -144,7 +144,6 @@ public class SettingsStepDefs {
     @When("I add new leave type:")
     public void iAddNewLeaveType(DataTable table) {
         log.info("Start adding new leave type");
-        Map<String, String> map = table.transpose().asMap(String.class, String.class);
         LeaveTypeForm form = table.convert(LeaveTypeForm.class, false);
         AddNewLeaveTypeModal modal = new GeneralSettingsPage(world.driver).leaveTypesSettings.clickAddButton();
         modal.setName(form.getName());
