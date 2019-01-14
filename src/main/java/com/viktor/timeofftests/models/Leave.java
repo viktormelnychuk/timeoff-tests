@@ -7,14 +7,14 @@ import java.util.Date;
 @Data
 public class Leave {
     private int id;
-    private int status;
+    private LeaveStatus status;
     private String employeeComment;
     private String approverComment;
     private Date decidedAt;
     private Date dateStart;
-    private int dayPartStart;
+    private LeaveDayPart dayPartStart;
     private Date dateEnd;
-    private int dayPartEnd;
+    private LeaveDayPart dayPartEnd;
     private int userId;
     private int approverId;
     private int leaveTypeId;

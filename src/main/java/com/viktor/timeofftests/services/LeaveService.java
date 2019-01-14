@@ -3,6 +3,7 @@ package com.viktor.timeofftests.services;
 import com.viktor.timeofftests.common.db.DBUtil;
 import com.viktor.timeofftests.common.db.DbConnection;
 import com.viktor.timeofftests.models.Leave;
+import com.viktor.timeofftests.models.LeaveStatus;
 import lombok.extern.log4j.Log4j2;
 import org.apache.commons.lang3.StringUtils;
 
@@ -23,14 +24,14 @@ public class LeaveService {
                 "VALUES (?,?,?,?,?,?,?,?,?,?,?)";
         try{
             PreparedStatement statement = connection.prepareStatement(sql);
-            statement.setInt(1, leave.getStatus());
+            statement.setInt(1, leave.getStatus().getValue());
             statement.setString(2, leave.getEmployeeComment());
             statement.setString(3, leave.getApproverComment());
             statement.setTimestamp(4, new Timestamp(leave.getDecidedAt().getTime()));
             statement.setTimestamp(5,new Timestamp(leave.getDateStart().getTime()));
-            statement.setInt(6, leave.getDayPartStart());
+            statement.setInt(6, leave.getDayPartStart().getValue());
             statement.setTimestamp(7, new Timestamp(leave.getDateEnd().getTime()));
-            statement.setInt(8, leave.getDayPartEnd());
+            statement.setInt(8, leave.getDayPartEnd().getValue());
             statement.setInt(9,leave.getUserId());
             statement.setInt(10, leave.getApproverId());
             statement.setInt(11, leave.getLeaveTypeId());
