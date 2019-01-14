@@ -9,6 +9,8 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.Select;
 
+import java.util.Objects;
+
 public abstract class BasePage extends ConciseAPI {
     By pageTitle = By.xpath("//h1");
 
@@ -73,6 +75,10 @@ public abstract class BasePage extends ConciseAPI {
     protected String getSelectedOptionValue(By locator){
         Select select = new Select(findOne(locator));
         return select.getFirstSelectedOption().getAttribute("value");
+    }
+
+    protected boolean getBoolFromYesNo(String word){
+        return Objects.equals(word, "Yes");
     }
 
     protected boolean isCheckboxChecked(By locator){

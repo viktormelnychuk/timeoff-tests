@@ -10,6 +10,8 @@ import cucumber.api.java.en.Given;
 import cucumber.api.java.en.Then;
 import lombok.extern.log4j.Log4j2;
 
+import javax.xml.soap.Text;
+import java.util.Calendar;
 import java.util.Objects;
 
 import static org.junit.Assert.*;
@@ -40,6 +42,9 @@ public class NavigationSteps {
                 break;
             case Pages.DEPARTMENTS:
                 navigateToDepartmentsPage();
+                break;
+            case Pages.EMPLOYEES:
+                navigateToEmployeesPage();
                 break;
             default:
                 throw new Exception("Page was not found");
@@ -82,6 +87,15 @@ public class NavigationSteps {
         if(!Objects.equals(currentUrl, TextConstants.DepartmentsConstants.PAGE_URL)){
             CalendarPage calendarPage = login();
             calendarPage.menuBar.navigateToDepartments();
+        }
+    }
+
+    public void navigateToEmployeesPage() {
+        world.driver.get(TextConstants.EmployeesPageConstants.PAGE_URL);
+        String currentUrl = world.driver.getCurrentUrl();
+        if(!Objects.equals(currentUrl, TextConstants.EmployeesPageConstants.PAGE_URL)){
+            CalendarPage calendar = login();
+            calendar.menuBar.clickEmployeesButton();
         }
     }
     private CalendarPage login(){

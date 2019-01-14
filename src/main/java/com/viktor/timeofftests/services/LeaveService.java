@@ -2,18 +2,27 @@ package com.viktor.timeofftests.services;
 
 import com.viktor.timeofftests.common.db.DBUtil;
 import com.viktor.timeofftests.common.db.DbConnection;
+import com.viktor.timeofftests.models.Department;
 import com.viktor.timeofftests.models.Leave;
+import com.viktor.timeofftests.models.LeaveDayPart;
 import com.viktor.timeofftests.models.LeaveStatus;
 import lombok.extern.log4j.Log4j2;
-import org.apache.commons.lang3.StringUtils;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Timestamp;
+import java.util.Calendar;
+import java.util.Date;
 
 @Log4j2
 public class LeaveService {
+
+    private DepartmentService departmentService;
+    public LeaveService(DepartmentService departmentService){
+
+        this.departmentService = departmentService;
+    }
 
     public Leave insertLeave(Leave leave){
         log.debug("Inserting leave {}", leave);
@@ -57,6 +66,22 @@ public class LeaveService {
         } finally {
             DBUtil.closeConnection(connection);
         }
+    }
+
+    public Leave insertLeave (int userId, int leaveTypeId, LeaveStatus status){
+        Leave leave = new Leave();
+        leave.setLeaveTypeId(leaveTypeId);
+        leave.setUserId(userId);
+        // find approver id
+        Department departmentForUserId = departmentService.getDepartmentForUserId(userId);
+        leave.setApproverId(departmentService.getBossId(departmentForUserId.getId()));
+        leave.setDateStart(new Date());
+        Calendar calendar = Calendar.getInstance();
+        calendar.add(Calendar.DAY_OF_MONTH, 5);
+        leave.setDateEnd(calendar.getTime());
+        leave.setDayPartStart(LeaveDayPart.ALL);
+        leave.setDayPartEnd(LeaveDayPart.ALL);
+        return leave;
     }
 
     private Leave deserializeLeave(ResultSet set){

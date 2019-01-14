@@ -361,6 +361,51 @@ public class DepartmentService {
         }
     }
 
+    public Department getDepartmentForUserId(int userId){
+        log.debug("Getting department for user with id=[{}]", userId);
+        Connection connection = DbConnection.getConnection();
+        try{
+            String sql = "SELECT * FROM \"Departments\" WHERE " +
+                    "\"Departments\".id=(SELECT \"DepartmentId\" FROM \"Users\" WHERE \"Users\".id=?)";
+            PreparedStatement statement = connection.prepareStatement(sql);
+            statement.setInt(1, userId);
+            log.debug("Executing {}", statement);
+            ResultSet set = statement.executeQuery();
+            if(set.next()){
+                return deserializeDepartment(set);
+            } else {
+                return null;
+            }
+        } catch (Exception e){
+            log.error("Error occurred", e);
+            return null;
+        } finally {
+            DBUtil.closeConnection(connection);
+        }
+    }
+
+    public int getBossId(int departmentId){
+        log.debug("Getting boss id for department with id=[{}]", departmentId);
+        Connection connection = DbConnection.getConnection();
+        try{
+            String sql = "SELECT \"bossId\" FROM \"Departments\" WHERE id=?";
+            PreparedStatement statement = connection.prepareStatement(sql);
+            statement.setInt(1,departmentId);
+            log.debug("Executing {}", statement);
+            ResultSet set = statement.executeQuery();
+            if(set.next()){
+                return set.getInt("bossId");
+            } else {
+                return 0;
+            }
+        } catch (Exception e){
+            log.error("Error occurred", e);
+            return 0;
+        } finally {
+            DBUtil.closeConnection(connection);
+        }
+    }
+
     private Department deserializeDepartment(ResultSet set){
         try{
             Department department = new Department();
