@@ -14,6 +14,9 @@ import java.time.ZoneId;
 import java.time.temporal.ChronoUnit;
 import java.util.*;
 
+import static java.time.temporal.TemporalAdjusters.firstDayOfYear;
+import static java.time.temporal.TemporalAdjusters.lastDayOfYear;
+
 @Log4j2
 public class LeaveService {
 
@@ -69,12 +72,12 @@ public class LeaveService {
 
     public int amountOfUsedDays (int userId){
         int result = 0;
-        List<LeaveLeaveType> allLeavesForUser = getAllLeavesForUser(userId);
+        List<LeaveLeaveType> allLeavesForUser = getAllLeavesForUserInThisYear(userId);
         for (LeaveLeaveType leaveLeaveType : allLeavesForUser) {
             Leave leave = leaveLeaveType.getLeave();
             LeaveType leaveType = leaveLeaveType.getLeaveType();
-            LocalDate dateStart = leave.getDateStart().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
-            LocalDate dateEnd = leave.getDateEnd().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+            LocalDate dateStart = ((java.util.Date)leave.getDateStart()).toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+            LocalDate dateEnd = ((java.util.Date)leave.getDateEnd()).toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
             double daysBetween = (double) ChronoUnit.DAYS.between(dateStart, dateEnd);
             if(leave.getDayPartStart() != LeaveDayPart.ALL){
                 daysBetween = daysBetween - 0.5;
@@ -84,10 +87,12 @@ public class LeaveService {
             }
             result += daysBetween;
         }
+        // this is total days, including holidays and other stuff. need to find a way to calculate
+        // days that were used excluding bank holidays and non-working days (e.g. schedule settings)
         return result;
     }
 
-    public List<LeaveLeaveType> getAllLeavesForUser(int userId){
+    public List<LeaveLeaveType> getAllLeavesForUserInThisYear(int userId){
         log.debug("Getting all leaves for user with id=[{}]", userId);
         Connection connection = DbConnection.getConnection();
         try{
@@ -110,9 +115,14 @@ public class LeaveService {
                     "       LT.\"companyId\" as leave_type_company_id," +
                     "       LT.sort_order as leave_type_sort_order," +
                     "       LT.\"limit\" as leave_type_limit " +
-                    "FROM \"Leaves\" JOIN \"LeaveTypes\" LT on \"Leaves\".\"leaveTypeId\" = LT.id  WHERE \"userId\"=?";
+                    "FROM \"Leaves\" JOIN \"LeaveTypes\" LT on \"Leaves\".\"leaveTypeId\" = LT.id  " +
+                    "WHERE \"userId\"=? AND date_start>=? AND date_end<=?";
             PreparedStatement statement = connection.prepareStatement(sql);
+            LocalDate firstDay = LocalDate.now().with(firstDayOfYear());
+            LocalDate lastDay = LocalDate.now().with(lastDayOfYear());
             statement.setInt(1, userId);
+            statement.setTimestamp(2, Timestamp.valueOf(firstDay.atStartOfDay()));
+            statement.setTimestamp(3, Timestamp.valueOf(lastDay.atStartOfDay()));
             log.debug("Executing {}", statement);
             ResultSet set = statement.executeQuery();
             if(set.next()){
@@ -140,11 +150,13 @@ public class LeaveService {
                 leave.setEmployeeComment(set.getString("employee_comment"));
                 leave.setApproverComment(set.getString("approver_comment"));
                 leave.setDecidedAt(set.getDate("decided_at"));
-                leave.setDateStart(set.getDate("date_start"));
+
+                // forcing convertion to java.util.Date instead of java.sql.Date to use toInstant() later
+                leave.setDateStart(new Date(set.getTimestamp("date_start").getTime()));
                 leave.setDayPartStart(LeaveDayPart.getValuesOf(set.getInt("day_part_start")));
-                leave.setDateEnd(set.getDate("date_end"));
+                leave.setDateEnd(new Date(set.getTimestamp("date_end").getTime()));
                 leave.setDayPartEnd(LeaveDayPart.getValuesOf(set.getInt("day_part_end")));
-                leave.setUserId(set.getInt("user)id"));
+                leave.setUserId(set.getInt("user_id"));
                 leave.setApproverId(set.getInt("approver_id"));
 
                 leaveType.setId(set.getInt("leave_type_id"));

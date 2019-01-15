@@ -12,3 +12,11 @@ Feature: Check the employees page
     When I am on "employees" page
     
     Then "employees" page should reflect correct information
+
+  Scenario: Some tests
+    Given following users are created:
+      | email              | department |
+      | tester2@viktor.com | Sales      |
+      | tester3@viktor.com | Sales      |
+
+    Then "employees" page should reflect correct information
