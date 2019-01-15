@@ -19,7 +19,7 @@ public class EmployeesSteps {
         this.leaveService = leaveService;
     }
 
-    public void validateEmployeesTable() {
+    public void validateEmployeesTable() throws Exception {
         EmployeesPage page = new EmployeesPage(world.driver);
         List<EmployeeRow> displayedEmployees = page.getAllEmployees();
         List<User> allUsersInCompany = userService.getAllUsersInCompany(world.currentCompany.getId());

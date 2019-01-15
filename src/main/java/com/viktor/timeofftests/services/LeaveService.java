@@ -21,9 +21,13 @@ import static java.time.temporal.TemporalAdjusters.lastDayOfYear;
 public class LeaveService {
 
     private DepartmentService departmentService;
-    public LeaveService(DepartmentService departmentService){
+    private ScheduleService scheduleService;
+    private BankHolidaysService bankHolidaysService;
+    public LeaveService(DepartmentService departmentService, ScheduleService scheduleService, BankHolidaysService bankHolidaysService){
 
         this.departmentService = departmentService;
+        this.scheduleService = scheduleService;
+        this.bankHolidaysService = bankHolidaysService;
     }
 
     public Leave insertLeave(Leave leave){
@@ -70,22 +74,29 @@ public class LeaveService {
         }
     }
 
-    public int amountOfUsedDays (int userId){
+    public int amountOfUsedDays (int userId) throws Exception {
         int result = 0;
         List<LeaveLeaveType> allLeavesForUser = getAllLeavesForUserInThisYear(userId);
         for (LeaveLeaveType leaveLeaveType : allLeavesForUser) {
             Leave leave = leaveLeaveType.getLeave();
             LeaveType leaveType = leaveLeaveType.getLeaveType();
-            LocalDate dateStart = ((java.util.Date)leave.getDateStart()).toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
-            LocalDate dateEnd = ((java.util.Date)leave.getDateEnd()).toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
-            double daysBetween = (double) ChronoUnit.DAYS.between(dateStart, dateEnd);
-            if(leave.getDayPartStart() != LeaveDayPart.ALL){
-                daysBetween = daysBetween - 0.5;
+            LocalDate dateStart = leave.getDateStart().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+            LocalDate dateEnd = leave.getDateEnd().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+            for (LocalDate date = dateStart; date.isBefore(dateEnd); date=date.plusDays(1)){
+                Schedule userSchedule = scheduleService.getScheduleForUserId(userId);
+                if(userSchedule.isWorkingDay(date) && !bankHolidaysService.isHoliday(date, userId)){
+                    result++;
+                }
             }
-            if(leave.getDayPartEnd() != LeaveDayPart.ALL){
-                daysBetween = daysBetween - 0.5;
-            }
-            result += daysBetween;
+//
+//            double daysBetween = (double) ChronoUnit.DAYS.between(dateStart, dateEnd);
+//            if(leave.getDayPartStart() != LeaveDayPart.ALL){
+//                daysBetween = daysBetween - 0.5;
+//            }
+//            if(leave.getDayPartEnd() != LeaveDayPart.ALL){
+//                daysBetween = daysBetween - 0.5;
+//            }
+//            result += daysBetween;
         }
         // this is total days, including holidays and other stuff. need to find a way to calculate
         // days that were used excluding bank holidays and non-working days (e.g. schedule settings)

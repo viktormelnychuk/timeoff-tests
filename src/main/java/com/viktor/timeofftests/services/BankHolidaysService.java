@@ -18,7 +18,10 @@ import java.sql.ResultSet;
 import java.sql.Timestamp;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
@@ -140,6 +143,42 @@ public class BankHolidaysService {
         } catch (Exception exception){
             log.error("Error reading from [localisation.json]",exception);
             return null;
+        }
+    }
+
+    public boolean isHoliday(LocalDate date, int userId) {
+        boolean result = false;
+        List<BankHoliday> holidays = getBankHolidaysForUserWithId(userId);
+        for (BankHoliday holiday : holidays) {
+            // convert to holiday date to LocalDate
+            LocalDate holidayDate = holiday.getDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+            if(holidayDate.isEqual(date)){
+                result = true;
+            }
+        }
+        return result;
+    }
+
+    private List<BankHoliday> getBankHolidaysForUserWithId(int userId) {
+        log.debug("Getting bank holidays for company user with id=[{}] belongs", userId);
+        Connection connection = DbConnection.getConnection();
+        try{
+            String sql = "SELECT * FROM \"BankHolidays\" WHERE \"companyId\"=" +
+                    "(SELECT \"companyId\" FROM \"Users\" WHERE \"Users\".id=?)";
+            PreparedStatement statement = connection.prepareStatement(sql);
+            statement.setInt(1, userId);
+            log.debug( "Executing {}", statement);
+            ResultSet set = statement.executeQuery();
+            if(set.next()){
+                return deserializeBankHolidays(set);
+            } else {
+                return Collections.emptyList();
+            }
+        } catch (Exception e){
+            log.error("Error occurred", e);
+            return Collections.emptyList();
+        } finally {
+            DBUtil.closeConnection(connection);
         }
     }
 }

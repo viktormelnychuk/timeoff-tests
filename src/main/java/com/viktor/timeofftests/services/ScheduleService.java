@@ -108,4 +108,50 @@ public class ScheduleService {
             return 2;
         }
     }
+
+    public Schedule getScheduleForUserId(int userId) {
+        log.debug("Gettign schedule for user [{}]", userId);
+        Connection connection = DbConnection.getConnection();
+        try{
+            String sql = "SELECT * FROM schedule WHERE user_id=?";
+            PreparedStatement statement = connection.prepareStatement(sql);
+            statement.setInt(1, userId);
+            log.debug("Executing {}", statement);
+            ResultSet set = statement.executeQuery();
+            if(set.next()){
+                return deserializeSchedule(set);
+            } else {
+                log.info("User does not have specific schedule. Defaulting to company schedule");
+                return getScheduleForUsersCompany(userId);
+            }
+        } catch (Exception e){
+            log.error("Error occured", e);
+            return null;
+        } finally {
+            DBUtil.closeConnection(connection);
+        }
+    }
+
+    private Schedule getScheduleForUsersCompany(int userId) {
+        log.debug("Getting schedule for company to which user with id=[{}] belongs", userId);
+        Connection connection = DbConnection.getConnection();
+        try{
+            String sql = "SELECT * FROM schedule WHERE company_id=" +
+                    "(SELECT \"companyId\" FROM \"Users\" WHERE \"Users\".id=?)";
+            PreparedStatement statement = connection.prepareStatement(sql);
+            statement.setInt(1, userId);
+            log.debug("Executing {}", statement);
+            ResultSet set = statement.executeQuery();
+            if(set.next()){
+                return deserializeSchedule(set);
+            } else {
+                return null;
+            }
+        } catch (Exception e){
+            log.error("Error occurred", e);
+            return null;
+        } finally {
+            DBUtil.closeConnection(connection);
+        }
+    }
 }
