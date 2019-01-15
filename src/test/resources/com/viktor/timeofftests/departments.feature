@@ -79,9 +79,9 @@ Feature: Tests for departments
     Examples:
     | name         | action    | amount |
     | Department 1 | remove    | 1      |
-    | Department 2 | remove    | 3      |
-    | Department 3 | add       | 1      |
-    | Department 4 | add       | 4      |
+    #| Department 2 | remove    | 3      |
+    #| Department 3 | add       | 1      |
+    #| Department 4 | add       | 4      |
 
 
 

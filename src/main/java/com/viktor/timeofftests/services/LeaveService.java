@@ -2,18 +2,17 @@ package com.viktor.timeofftests.services;
 
 import com.viktor.timeofftests.common.db.DBUtil;
 import com.viktor.timeofftests.common.db.DbConnection;
-import com.viktor.timeofftests.models.Department;
-import com.viktor.timeofftests.models.Leave;
-import com.viktor.timeofftests.models.LeaveDayPart;
-import com.viktor.timeofftests.models.LeaveStatus;
+import com.viktor.timeofftests.models.*;
 import lombok.extern.log4j.Log4j2;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Timestamp;
-import java.util.Calendar;
-import java.util.Date;
+import java.time.LocalDate;
+import java.time.ZoneId;
+import java.time.temporal.ChronoUnit;
+import java.util.*;
 
 @Log4j2
 public class LeaveService {
@@ -65,6 +64,104 @@ public class LeaveService {
             return null;
         } finally {
             DBUtil.closeConnection(connection);
+        }
+    }
+
+    public int amountOfUsedDays (int userId){
+        int result = 0;
+        List<LeaveLeaveType> allLeavesForUser = getAllLeavesForUser(userId);
+        for (LeaveLeaveType leaveLeaveType : allLeavesForUser) {
+            Leave leave = leaveLeaveType.getLeave();
+            LeaveType leaveType = leaveLeaveType.getLeaveType();
+            LocalDate dateStart = leave.getDateStart().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+            LocalDate dateEnd = leave.getDateEnd().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+            double daysBetween = (double) ChronoUnit.DAYS.between(dateStart, dateEnd);
+            if(leave.getDayPartStart() != LeaveDayPart.ALL){
+                daysBetween = daysBetween - 0.5;
+            }
+            if(leave.getDayPartEnd() != LeaveDayPart.ALL){
+                daysBetween = daysBetween - 0.5;
+            }
+            result += daysBetween;
+        }
+        return result;
+    }
+
+    public List<LeaveLeaveType> getAllLeavesForUser(int userId){
+        log.debug("Getting all leaves for user with id=[{}]", userId);
+        Connection connection = DbConnection.getConnection();
+        try{
+            String sql = "SELECT\n" +
+                    "       \"Leaves\".id as leave_id," +
+                    "       \"Leaves\".status as leave_status," +
+                    "       \"Leaves\".employee_comment as employee_comment," +
+                    "       \"Leaves\".approver_comment as approver_comment," +
+                    "       \"Leaves\".decided_at as decided_at," +
+                    "       \"Leaves\".date_start as date_start," +
+                    "       \"Leaves\".day_part_start as day_part_start," +
+                    "       \"Leaves\".date_end as date_end," +
+                    "       \"Leaves\".day_part_end as day_part_end," +
+                    "       \"Leaves\".\"userId\" as user_id," +
+                    "       \"Leaves\".\"approverId\" as approver_id," +
+                    "       LT.id as leave_type_id," +
+                    "       LT.name as leave_type_name," +
+                    "       LT.color as leave_type_color," +
+                    "       LT.use_allowance as leave_type_use_allowance," +
+                    "       LT.\"companyId\" as leave_type_company_id," +
+                    "       LT.sort_order as leave_type_sort_order," +
+                    "       LT.\"limit\" as leave_type_limit " +
+                    "FROM \"Leaves\" JOIN \"LeaveTypes\" LT on \"Leaves\".\"leaveTypeId\" = LT.id  WHERE \"userId\"=?";
+            PreparedStatement statement = connection.prepareStatement(sql);
+            statement.setInt(1, userId);
+            log.debug("Executing {}", statement);
+            ResultSet set = statement.executeQuery();
+            if(set.next()){
+                return deserializeLeaveLeaveType(set);
+            } else {
+                return Collections.emptyList();
+            }
+        } catch (Exception e){
+            log.error("Error occurred", e);
+            return Collections.emptyList();
+        } finally {
+            DBUtil.closeConnection(connection);
+        }
+    }
+
+    private List<LeaveLeaveType> deserializeLeaveLeaveType(ResultSet set) {
+        List<LeaveLeaveType> result = new ArrayList<>();
+        try{
+            do {
+                LeaveLeaveType leaveLeaveType = new LeaveLeaveType();
+                LeaveType leaveType = new LeaveType();
+                Leave leave = new Leave();
+                leave.setId(set.getInt("leave_id"));
+                leave.setStatus(LeaveStatus.getByValue(set.getInt("leave_status")));
+                leave.setEmployeeComment(set.getString("employee_comment"));
+                leave.setApproverComment(set.getString("approver_comment"));
+                leave.setDecidedAt(set.getDate("decided_at"));
+                leave.setDateStart(set.getDate("date_start"));
+                leave.setDayPartStart(LeaveDayPart.getValuesOf(set.getInt("day_part_start")));
+                leave.setDateEnd(set.getDate("date_end"));
+                leave.setDayPartEnd(LeaveDayPart.getValuesOf(set.getInt("day_part_end")));
+                leave.setUserId(set.getInt("user)id"));
+                leave.setApproverId(set.getInt("approver_id"));
+
+                leaveType.setId(set.getInt("leave_type_id"));
+                leaveType.setName(set.getString("leave_type_name"));
+                leaveType.setColorHex(set.getString("leave_type_color"));
+                leaveType.setUseAllowance(set.getBoolean("leave_type_use_allowance"));
+                leaveType.setCompanyId(set.getInt("leave_type_company_id"));
+                leaveType.setSortOrder(set.getInt("leave_type_sort_order"));
+                leaveType.setLimit(set.getInt("leave_type_limit"));
+                leaveLeaveType.setLeave(leave);
+                leaveLeaveType.setLeaveType(leaveType);
+                result.add(leaveLeaveType);
+            } while (set.next());
+            return result;
+        } catch (Exception e){
+            log.error("Error deserializing objects", e);
+            return Collections.emptyList();
         }
     }
 
