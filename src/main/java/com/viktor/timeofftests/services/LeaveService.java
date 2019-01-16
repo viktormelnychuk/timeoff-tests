@@ -73,25 +73,6 @@ public class LeaveService {
             DBUtil.closeConnection(connection);
         }
     }
-
-    public int amountOfUsedDays (int userId) throws Exception {
-        int result = 0;
-        List<LeaveLeaveType> allLeavesForUser = getAllLeavesForUserInThisYear(userId);
-        for (LeaveLeaveType leaveLeaveType : allLeavesForUser) {
-            Leave leave = leaveLeaveType.getLeave();
-            LeaveType leaveType = leaveLeaveType.getLeaveType();
-            LocalDate dateStart = leave.getDateStart().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
-            LocalDate dateEnd = leave.getDateEnd().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
-            Schedule userSchedule = scheduleService.getScheduleForUserId(userId);
-            for (LocalDate date = dateStart; date.isBefore(dateEnd.plusDays(1)); date=date.plusDays(1)){
-                if(userSchedule.isWorkingDay(date) && !bankHolidaysService.isHoliday(date, userId)){
-                    result++;
-                }
-            }
-        }
-        return result;
-    }
-
     public List<LeaveLeaveType> getAllLeavesForUserInThisYear(int userId){
         log.debug("Getting all leaves for user with id=[{}]", userId);
         Connection connection = DbConnection.getConnection();

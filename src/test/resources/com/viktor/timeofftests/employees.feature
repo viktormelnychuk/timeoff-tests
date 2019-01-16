@@ -14,4 +14,9 @@ Feature: Check the employees page
     Then "employees" page should reflect correct information
 
   Scenario: Some tests
+    Given following users are created:
+      | email              | password |
+      | tester2@viktor.com | 1234     |
+      | tester3@viktor.com | 1234     |
+
     Then "employees" page should reflect correct information
