@@ -7,8 +7,10 @@ import com.viktor.timeofftests.pools.UserPool;
 import cucumber.api.TypeRegistry;
 import cucumber.api.TypeRegistryConfigurer;
 import io.cucumber.datatable.DataTableType;
+import net.sf.cglib.core.Local;
 import org.apache.commons.lang3.StringUtils;
 
+import java.time.LocalDate;
 import java.util.*;
 
 public class DataTableConfigurer implements TypeRegistryConfigurer {
@@ -25,6 +27,7 @@ public class DataTableConfigurer implements TypeRegistryConfigurer {
         typeRegistry.defineDataTableType(new DataTableType(NewDepartmentForm.class, this::transformToNewDepartmentForm));
         typeRegistry.defineDataTableType(new DataTableType(WeeklyScheduleForm.class, this::transformToWeeklyScheduleForm));
         typeRegistry.defineDataTableType(new DataTableType(LeaveTypeForm.class, this::transformToLeaveTypeForm));
+        typeRegistry.defineDataTableType(new DataTableType(InsertLeaveForm.class, this::transformToInsertLeaveForm));
     }
 
     private LeaveTypeForm transformToLeaveTypeForm (Map<String,String> entry){
@@ -40,7 +43,22 @@ public class DataTableConfigurer implements TypeRegistryConfigurer {
         form.setUseAllowance(transformToBoolean(entry.get("use_allowance"), true));
         return form;
     }
-
+    private InsertLeaveForm transformToInsertLeaveForm (Map<String, String> entry){
+        InsertLeaveForm form = new InsertLeaveForm();
+        form.setUserEmail(entry.get("user_email"));
+        form.setLeaveName(entry.get("leave_type"));
+        form.setAmountOfDays(Integer.parseInt(entry.get("amount_of_days")));
+        form.setStatus(entry.get("status"));
+        form.setApproverComment(entry.get("approver_comment"));
+        form.setEmployeeComment(entry.get("employee_comment"));
+        String decidedAt = entry.get("decided_at");
+        if(StringUtils.isEmpty(decidedAt)){
+            form.setDecidedAt(LocalDate.now());
+        } else {
+            form.setDecidedAt(LocalDate.parse(decidedAt));
+        }
+        return form;
+    }
     private WeeklyScheduleForm transformToWeeklyScheduleForm(Map<String, String> entry){
         WeeklyScheduleForm form = new WeeklyScheduleForm();
         form.setMonday(transformToIntForWeeklySchedule(entry.get("monday")));
@@ -53,7 +71,6 @@ public class DataTableConfigurer implements TypeRegistryConfigurer {
 
         return form;
     }
-
     private NewDepartmentForm transformToNewDepartmentForm(Map<String, String> entry) {
         NewDepartmentForm form = new NewDepartmentForm();
         form.setName(entry.get("name"));
@@ -73,7 +90,6 @@ public class DataTableConfigurer implements TypeRegistryConfigurer {
         }
         return form;
     }
-
     private CompanySettingsForm transformToForm(Map<String, String> entry){
         CompanySettingsForm form = new CompanySettingsForm();
         form.setCompanyName(entry.get("company_name"));
@@ -132,7 +148,6 @@ public class DataTableConfigurer implements TypeRegistryConfigurer {
         form.setTimezone(timezone);
         return form;
     }
-
     private User transformUser (Map<String, String> entry){
         try {
             String email = entry.get("email");
@@ -189,14 +204,12 @@ public class DataTableConfigurer implements TypeRegistryConfigurer {
             return null;
         }
     }
-
     private boolean transformToBoolean(String s, boolean defaultNull){
         if(s == null){
             return defaultNull;
         }
         return Objects.equals(s, "true");
     }
-
     private int transformToIntForWeeklySchedule(String s){
         if(Objects.equals(s,"true")){
             return 1;

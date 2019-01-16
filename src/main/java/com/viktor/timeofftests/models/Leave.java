@@ -2,6 +2,7 @@ package com.viktor.timeofftests.models;
 
 import lombok.Data;
 
+import java.time.LocalDate;
 import java.util.Date;
 
 @Data
@@ -10,10 +11,10 @@ public class Leave {
     private LeaveStatus status;
     private String employeeComment;
     private String approverComment;
-    private Date decidedAt;
-    private Date dateStart;
+    private LocalDate decidedAt;
+    private LocalDate dateStart;
     private LeaveDayPart dayPartStart;
-    private Date dateEnd;
+    private LocalDate dateEnd;
     private LeaveDayPart dayPartEnd;
     private int userId;
     private int approverId;

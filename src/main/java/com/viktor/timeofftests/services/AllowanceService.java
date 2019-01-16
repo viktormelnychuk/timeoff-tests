@@ -30,8 +30,8 @@ public class AllowanceService {
             Leave leave = leaveLeaveType.getLeave();
             LeaveType leaveType = leaveLeaveType.getLeaveType();
             if(!leaveType.isUseAllowance()){ continue; }
-            LocalDate dateStart = leave.getDateStart().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
-            LocalDate dateEnd = leave.getDateEnd().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+            LocalDate dateStart = leave.getDateStart();
+            LocalDate dateEnd = leave.getDateEnd();
             Schedule userSchedule = scheduleService.getScheduleForUserId(userId);
             for (LocalDate date = dateStart; date.isBefore(dateEnd.plusDays(1)); date=date.plusDays(1)){
                 if(userSchedule.isWorkingDay(date) && !bankHolidaysService.isHoliday(date, userId)){

@@ -174,4 +174,24 @@ public class LeaveTypeService {
     }
 
 
+    public LeaveType getLeaveTypeByNameAndCompanyId(String leaveName, int companyId) {
+        log.debug("Getting leave type with name=[{}] and companyId=[{}]", leaveName, companyId);
+        Connection connection = DbConnection.getConnection();
+        try {
+            String sql = "SELECT * FROM \"LeaveTypes\" WHERE \"companyId\"=? AND name=?";
+            PreparedStatement statement = connection.prepareStatement(sql);
+            statement.setInt(1, companyId);
+            statement.setString(2, leaveName);
+            log.debug("Executing {}", statement);
+            ResultSet set = statement.executeQuery();
+            if(set.next()){
+                return deserializeLeaveType(set);
+            } else {
+                return null;
+            }
+        } catch (Exception e){
+            log.error("Error occurred", e);
+            return null;
+        }
+    }
 }

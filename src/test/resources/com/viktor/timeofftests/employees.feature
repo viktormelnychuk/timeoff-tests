@@ -19,4 +19,10 @@ Feature: Check the employees page
       | tester2@viktor.com | 1234     |
       | tester3@viktor.com | 1234     |
 
+    And following leaves are created:
+      | user_email         | leave_type | amount_of_days | status   |
+      | tester@viktor.com  | Holiday    | 5              | approved |
+      | tester2@viktor.com | Holiday    | 8              | approved |
+      | tester3@viktor.com | Holiday    | 2              | approved |
+
     Then "employees" page should reflect correct information

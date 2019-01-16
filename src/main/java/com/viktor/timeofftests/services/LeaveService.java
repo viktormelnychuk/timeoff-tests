@@ -35,21 +35,24 @@ public class LeaveService {
         Connection connection = DbConnection.getConnection();
         String sql = "INSERT INTO \"Leaves\" " +
                 "(status, employee_comment, approver_comment, decided_at, date_start," +
-                " day_part_start, date_end, day_part_end, \"userId\", \"approverId\", \"leaveTypeId\")" +
-                "VALUES (?,?,?,?,?,?,?,?,?,?,?)";
+                " day_part_start, date_end, day_part_end, \"userId\", \"approverId\", \"leaveTypeId\"," +
+                " \"createdAt\", \"updatedAt\")" +
+                "VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)";
         try{
             PreparedStatement statement = connection.prepareStatement(sql);
             statement.setInt(1, leave.getStatus().getValue());
             statement.setString(2, leave.getEmployeeComment());
             statement.setString(3, leave.getApproverComment());
-            statement.setTimestamp(4, new Timestamp(leave.getDecidedAt().getTime()));
-            statement.setTimestamp(5,new Timestamp(leave.getDateStart().getTime()));
+            statement.setTimestamp(4, Timestamp.valueOf(leave.getDecidedAt().atStartOfDay()));
+            statement.setTimestamp(5, Timestamp.valueOf(leave.getDateStart().atStartOfDay()));
             statement.setInt(6, leave.getDayPartStart().getValue());
-            statement.setTimestamp(7, new Timestamp(leave.getDateEnd().getTime()));
+            statement.setTimestamp(7, Timestamp.valueOf(leave.getDateEnd().atStartOfDay()));
             statement.setInt(8, leave.getDayPartEnd().getValue());
             statement.setInt(9,leave.getUserId());
             statement.setInt(10, leave.getApproverId());
             statement.setInt(11, leave.getLeaveTypeId());
+            statement.setTimestamp(12, new Timestamp(new Date().getTime()));
+            statement.setTimestamp(13, new Timestamp(new Date().getTime()));
             log.debug("Executing {}", statement);
             int rowsAffected = statement.executeUpdate();
             if(rowsAffected != 1){
@@ -130,12 +133,12 @@ public class LeaveService {
                 leave.setStatus(LeaveStatus.getByValue(set.getInt("leave_status")));
                 leave.setEmployeeComment(set.getString("employee_comment"));
                 leave.setApproverComment(set.getString("approver_comment"));
-                leave.setDecidedAt(set.getDate("decided_at"));
+                leave.setDecidedAt(set.getTimestamp("decided_at").toLocalDateTime().toLocalDate());
 
                 // forcing convertion to java.util.Date instead of java.sql.Date to use toInstant() later
-                leave.setDateStart(new Date(set.getTimestamp("date_start").getTime()));
+                leave.setDateStart(set.getTimestamp("date_start").toLocalDateTime().toLocalDate());
                 leave.setDayPartStart(LeaveDayPart.getValuesOf(set.getInt("day_part_start")));
-                leave.setDateEnd(new Date(set.getTimestamp("date_end").getTime()));
+                leave.setDateEnd(set.getTimestamp("date_end").toLocalDateTime().toLocalDate());
                 leave.setDayPartEnd(LeaveDayPart.getValuesOf(set.getInt("day_part_end")));
                 leave.setUserId(set.getInt("user_id"));
                 leave.setApproverId(set.getInt("approver_id"));
@@ -165,10 +168,8 @@ public class LeaveService {
         // find approver id
         Department departmentForUserId = departmentService.getDepartmentForUserId(userId);
         leave.setApproverId(departmentService.getBossId(departmentForUserId.getId()));
-        leave.setDateStart(new Date());
-        Calendar calendar = Calendar.getInstance();
-        calendar.add(Calendar.DAY_OF_MONTH, 5);
-        leave.setDateEnd(calendar.getTime());
+        leave.setDateStart(LocalDate.now());
+        leave.setDateEnd(LocalDate.now().plusDays(5));
         leave.setDayPartStart(LeaveDayPart.ALL);
         leave.setDayPartEnd(LeaveDayPart.ALL);
         return leave;
