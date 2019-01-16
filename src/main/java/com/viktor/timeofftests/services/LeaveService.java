@@ -82,24 +82,13 @@ public class LeaveService {
             LeaveType leaveType = leaveLeaveType.getLeaveType();
             LocalDate dateStart = leave.getDateStart().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
             LocalDate dateEnd = leave.getDateEnd().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
-            for (LocalDate date = dateStart; date.isBefore(dateEnd); date=date.plusDays(1)){
-                Schedule userSchedule = scheduleService.getScheduleForUserId(userId);
+            Schedule userSchedule = scheduleService.getScheduleForUserId(userId);
+            for (LocalDate date = dateStart; date.isBefore(dateEnd.plusDays(1)); date=date.plusDays(1)){
                 if(userSchedule.isWorkingDay(date) && !bankHolidaysService.isHoliday(date, userId)){
                     result++;
                 }
             }
-//
-//            double daysBetween = (double) ChronoUnit.DAYS.between(dateStart, dateEnd);
-//            if(leave.getDayPartStart() != LeaveDayPart.ALL){
-//                daysBetween = daysBetween - 0.5;
-//            }
-//            if(leave.getDayPartEnd() != LeaveDayPart.ALL){
-//                daysBetween = daysBetween - 0.5;
-//            }
-//            result += daysBetween;
         }
-        // this is total days, including holidays and other stuff. need to find a way to calculate
-        // days that were used excluding bank holidays and non-working days (e.g. schedule settings)
         return result;
     }
 
