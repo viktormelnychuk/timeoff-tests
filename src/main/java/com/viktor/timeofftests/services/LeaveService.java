@@ -88,18 +88,8 @@ public class LeaveService {
                     result++;
                 }
             }
-//
-//            double daysBetween = (double) ChronoUnit.DAYS.between(dateStart, dateEnd);
-//            if(leave.getDayPartStart() != LeaveDayPart.ALL){
-//                daysBetween = daysBetween - 0.5;
-//            }
-//            if(leave.getDayPartEnd() != LeaveDayPart.ALL){
-//                daysBetween = daysBetween - 0.5;
-//            }
-//            result += daysBetween;
         }
-        // this is total days, including holidays and other stuff. need to find a way to calculate
-        // days that were used excluding bank holidays and non-working days (e.g. schedule settings)
+        // for some reason calculates incorrectly. Need to check this
         return result;
     }
 
