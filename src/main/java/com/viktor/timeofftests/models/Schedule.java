@@ -2,10 +2,10 @@ package com.viktor.timeofftests.models;
 
 import lombok.Data;
 
-import java.sql.Timestamp;
+
 import java.time.DayOfWeek;
 import java.time.LocalDate;
-import java.util.Date;
+
 @Data
 public class Schedule {
     private int id;

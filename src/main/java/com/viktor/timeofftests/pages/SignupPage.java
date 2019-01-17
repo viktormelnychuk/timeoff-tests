@@ -1,8 +1,4 @@
 package com.viktor.timeofftests.pages;
-
-import com.viktor.timeofftests.common.Constants;
-import com.viktor.timeofftests.models.User;
-import com.viktor.timeofftests.services.UserService;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 

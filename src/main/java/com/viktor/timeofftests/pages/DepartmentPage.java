@@ -1,6 +1,5 @@
 package com.viktor.timeofftests.pages;
 
-import com.viktor.timeofftests.models.Department;
 import com.viktor.timeofftests.pages.partials.modals.AddSupervisorsModal;
 import org.openqa.selenium.By;
 import org.openqa.selenium.TimeoutException;

@@ -4,8 +4,6 @@ import com.viktor.timeofftests.models.User;
 import com.viktor.timeofftests.pools.UserPool;
 import io.cucumber.datatable.DataTable;
 
-import java.util.List;
-
 public class UserSteps {
     public static User createUser(DataTable table){
 

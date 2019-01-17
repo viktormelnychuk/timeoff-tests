@@ -8,7 +8,6 @@ import com.viktor.timeofftests.models.User;
 import com.viktor.timeofftests.services.CompanyService;
 import com.viktor.timeofftests.services.DepartmentService;
 import com.viktor.timeofftests.services.UserService;
-import cucumber.api.java.en.And;
 import cucumber.api.java.en.Given;
 import io.cucumber.datatable.DataTable;
 import lombok.extern.log4j.Log4j2;

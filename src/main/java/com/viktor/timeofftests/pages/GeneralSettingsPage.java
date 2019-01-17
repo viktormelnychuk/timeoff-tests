@@ -1,6 +1,5 @@
 package com.viktor.timeofftests.pages;
 
-import com.viktor.timeofftests.common.DriverUtil;
 import com.viktor.timeofftests.pages.partials.modals.RemoveCompanyModal;
 import com.viktor.timeofftests.pages.partials.settings.BankHolidaySettings;
 import com.viktor.timeofftests.pages.partials.settings.CompanyScheduleSettings;
@@ -8,7 +7,6 @@ import com.viktor.timeofftests.pages.partials.settings.CompanySettings;
 import com.viktor.timeofftests.pages.partials.settings.LeaveTypesSettings;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebElement;
 
 public class GeneralSettingsPage extends BasePage {
     private WebDriver driver;

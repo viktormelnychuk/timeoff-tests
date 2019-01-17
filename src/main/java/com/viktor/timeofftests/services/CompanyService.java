@@ -4,7 +4,6 @@ import com.viktor.timeofftests.common.Constants;
 import com.viktor.timeofftests.common.db.DBUtil;
 import com.viktor.timeofftests.common.db.DbConnection;
 import com.viktor.timeofftests.models.Company;
-import com.viktor.timeofftests.models.LeaveType;
 import lombok.extern.log4j.Log4j2;
 
 import java.sql.*;

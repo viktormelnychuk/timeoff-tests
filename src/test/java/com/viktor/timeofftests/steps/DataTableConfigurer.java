@@ -7,7 +7,6 @@ import com.viktor.timeofftests.pools.UserPool;
 import cucumber.api.TypeRegistry;
 import cucumber.api.TypeRegistryConfigurer;
 import io.cucumber.datatable.DataTableType;
-import net.sf.cglib.core.Local;
 import org.apache.commons.lang3.StringUtils;
 
 import java.time.LocalDate;

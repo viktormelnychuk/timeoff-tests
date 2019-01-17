@@ -5,8 +5,6 @@ import org.apache.logging.log4j.core.config.Configurator;
 import org.apache.logging.log4j.core.config.builder.api.*;
 import org.apache.logging.log4j.core.config.builder.impl.BuiltConfiguration;
 
-import java.util.Properties;
-
 public class LogConfigurer {
 
     public static void configureLogger(String dirPath){

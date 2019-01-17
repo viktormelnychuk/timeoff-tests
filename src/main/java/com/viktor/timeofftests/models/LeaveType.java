@@ -3,7 +3,6 @@ package com.viktor.timeofftests.models;
 import lombok.Data;
 import org.apache.commons.lang3.StringUtils;
 
-import java.sql.Timestamp;
 import java.util.Map;
 
 @Data

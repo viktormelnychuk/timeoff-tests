@@ -9,9 +9,6 @@ import com.viktor.timeofftests.pages.LoginPage;
 import cucumber.api.java.en.Given;
 import cucumber.api.java.en.Then;
 import lombok.extern.log4j.Log4j2;
-
-import javax.xml.soap.Text;
-import java.util.Calendar;
 import java.util.Objects;
 
 import static org.junit.Assert.*;

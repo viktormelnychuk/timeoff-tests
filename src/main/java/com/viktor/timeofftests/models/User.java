@@ -1,8 +1,6 @@
 package com.viktor.timeofftests.models;
 
 import com.viktor.timeofftests.common.Constants;
-import com.viktor.timeofftests.services.CompanyService;
-import com.viktor.timeofftests.services.DepartmentService;
 import lombok.Data;
 import lombok.extern.log4j.Log4j2;
 import org.apache.commons.codec.digest.DigestUtils;
