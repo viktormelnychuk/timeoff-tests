@@ -7,8 +7,10 @@ import com.viktor.timeofftests.services.DepartmentService;
 import com.viktor.timeofftests.services.EmployeeService;
 import cucumber.api.java.en.Then;
 import cucumber.api.java.en.When;
+import lombok.extern.log4j.Log4j2;
 import org.apache.commons.lang3.StringUtils;
 
+@Log4j2
 public class EmployeesStepDefs {
 
     private World world;
@@ -21,6 +23,7 @@ public class EmployeesStepDefs {
 
     @When("I filter list of employees by {string} department")
     public void iFilterListOfEmployeesByDepartment(String departmentName) {
+       log.info("Filtering employess by department name [{}]", departmentName);
         EmployeesPage page = new EmployeesPage(world.driver);
         page.filterByDepartmentName(departmentName);
     }
