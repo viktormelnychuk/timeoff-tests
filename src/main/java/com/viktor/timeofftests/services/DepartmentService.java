@@ -305,6 +305,7 @@ public class DepartmentService {
         List<Department> departments = getAllDepartmentsForCompany(companyID);
         for (Department department : departments) {
             List<Integer> allUsers = getAllUsersInDepartment(department.getId());
+            if(allUsers.isEmpty()) continue;
             assignBossUserId(department, allUsers.get(allUsers.size()/2));
         }
     }

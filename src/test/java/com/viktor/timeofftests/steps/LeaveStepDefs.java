@@ -10,11 +10,13 @@ import com.viktor.timeofftests.services.LeaveTypeService;
 import com.viktor.timeofftests.services.UserService;
 import cucumber.api.java.en.Given;
 import io.cucumber.datatable.DataTable;
+import lombok.extern.log4j.Log4j2;
 import org.apache.commons.lang3.StringUtils;
 
 import java.time.LocalDate;
 import java.util.List;
 
+@Log4j2
 public class LeaveStepDefs {
     private UserService userService;
     private World world;
@@ -32,6 +34,7 @@ public class LeaveStepDefs {
 
     @Given("following leaves are created:")
     public void followingLeavesAreCreated(DataTable dataTable) {
+        log.info("Inserting multiple leave types\n\r{}",dataTable);
         List<InsertLeaveForm> list = dataTable.asList(InsertLeaveForm.class);
         for (InsertLeaveForm form : list) {
             Leave leave = new Leave();
@@ -59,8 +62,9 @@ public class LeaveStepDefs {
                     world.currentCompany.getId());
             leave.setLeaveTypeId(leaveType.getId());
             leave.setDecidedAt(form.getDecidedAt());
-            Leave inserted = leaveService.insertLeave(leave);
+            leaveService.insertLeave(leave);
+            log.info("Done inserting leave=[{}]", leave);
         }
-
+        log.info("Done inserting multiple leave types");
     }
 }
