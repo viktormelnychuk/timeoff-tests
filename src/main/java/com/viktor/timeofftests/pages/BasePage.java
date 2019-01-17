@@ -2,6 +2,7 @@ package com.viktor.timeofftests.pages;
 
 import com.viktor.timeofftests.common.ConciseAPI;
 import com.viktor.timeofftests.pages.partials.MenuBar;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.openqa.selenium.By;
@@ -9,6 +10,7 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.Select;
 
+import java.util.List;
 import java.util.Objects;
 
 public abstract class BasePage extends ConciseAPI {
@@ -47,12 +49,39 @@ public abstract class BasePage extends ConciseAPI {
         logger.debug("Filling [{}] found [{}] with value '{}'", element.getTagName(), locator.toString(), value);
     }
 
-    protected void selectOption(By locator, String text){
+    protected void selectOption(By locator, String text) throws Exception {
         WebElement element = findOne(locator);
         Logger logger = LogManager.getLogger(this.getClass());
-        logger.debug("Filling [{}] found [{}] with value '{}'", element.getTagName(), locator.toString(), text);
         Select select = new Select(element);
-        select.selectByValue(text);
+
+        List<WebElement> allOptions = select.getOptions();
+        boolean selected = false;
+        for (WebElement option : allOptions) {
+            if(StringUtils.equals(option.getAttribute("value"), text)){
+                select.selectByValue(text);
+                logger.debug("Filling [{}] found [{}] with value [{}]", element.getTagName(), locator.toString(), text);
+                selected = true;
+                break;
+            }
+            if(StringUtils.equals(option.getText(), text)){
+                select.selectByVisibleText(text);
+                logger.debug("Filling [{}] found [{}] with text [{}]", element.getTagName(), locator.toString(), text);
+                selected = true;
+                break;
+            }
+        }
+        if(!selected){
+            throw new Exception("Could not find option");
+        }
+    }
+
+    protected void setCheckBox(By locator, boolean b){
+        Logger logger = LogManager.getLogger(this.getClass());
+        logger.debug("Setting checkbox found [{}] to [{}]", locator, b);
+        WebElement element = findOne(locator);
+        if(element.isSelected() != b){
+            clickButton(locator);
+        }
     }
 
    protected void clickButton(By locator){
@@ -79,9 +108,5 @@ public abstract class BasePage extends ConciseAPI {
 
     protected boolean getBoolFromYesNo(String word){
         return Objects.equals(word, "Yes");
-    }
-
-    protected boolean isCheckboxChecked(By locator){
-        return findOne(locator).isSelected();
     }
 }

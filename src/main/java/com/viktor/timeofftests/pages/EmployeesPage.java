@@ -16,6 +16,9 @@ public class EmployeesPage extends BasePage {
 
     private By employeesTable = By.xpath("//table[@class='table table-hover']//tbody/tr");
     private String departmentNameFilterQuery = "//div[@class='col-md-3 list-group all-departments']//a[text()='%s']";
+    private By addNewEmployeeButton = By.xpath("//button[@data-toggle='dropdown'][contains(text(),'Add new employee')]");
+    private By addSingleEmployeeButton = By.linkText("Add single employee");
+    private By importEmployeesButton = By.id("import_users_btn");
 
     @Override
     public String getBaseUrl() {
@@ -61,6 +64,11 @@ public class EmployeesPage extends BasePage {
     public void filterByDepartmentName(String departmentName) {
         By locator = By.xpath(String.format(departmentNameFilterQuery, departmentName));
         clickButton(locator);
+    }
+
+    public void clickAddSingleEmployeeButton() {
+        clickButton(addNewEmployeeButton);
+        clickButton(addSingleEmployeeButton);
     }
 }
 

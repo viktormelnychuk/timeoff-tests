@@ -52,11 +52,11 @@ public class SignupPage extends BasePage{
         fillInputField(this.confirmPassword, value);
     }
 
-    public void selectCountry(String value) {
+    public void selectCountry(String value) throws Exception {
         selectOption(this.country, value);
     }
 
-    public void  selectTimeZone(String value){
+    public void  selectTimeZone(String value) throws Exception {
         selectOption(this.timezone, value);
     }
 

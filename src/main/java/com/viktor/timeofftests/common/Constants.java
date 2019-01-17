@@ -18,4 +18,5 @@ public class Constants {
         new LeaveType("Holiday", "leave_type_color_1", true, 0, 0, 0),
         new LeaveType("Sick Leave", "leave_type_color_3", false, 10, 0, 0)
     };
+    public static final long DEFAULT_MINUS_DATES_FOR_STARTED_ON_DATE = 10;
 }

@@ -34,7 +34,7 @@ public class DepartmentPage extends BasePage {
         fillInputField(nameInp, value);
     }
 
-    public void selectManger(int userId){
+    public void selectManger(int userId) throws Exception {
         selectOption(managerSelect, String.valueOf(userId));
     }
 
@@ -61,7 +61,7 @@ public class DepartmentPage extends BasePage {
         }
     }
 
-    public void setAllowance(int allowance){
+    public void setAllowance(int allowance) throws Exception {
         selectOption(allowanceSelect, String.valueOf(allowance));
     }
 

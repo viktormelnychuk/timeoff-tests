@@ -2,11 +2,12 @@ package com.viktor.timeofftests.steps;
 
 import com.viktor.timeofftests.common.World;
 import com.viktor.timeofftests.constants.TextConstants;
+import com.viktor.timeofftests.forms.NewEmployeeForm;
 import com.viktor.timeofftests.pages.EmployeesPage;
-import com.viktor.timeofftests.services.DepartmentService;
-import com.viktor.timeofftests.services.EmployeeService;
+import com.viktor.timeofftests.pages.NewEmployeePage;
 import cucumber.api.java.en.Then;
 import cucumber.api.java.en.When;
+import io.cucumber.datatable.DataTable;
 import lombok.extern.log4j.Log4j2;
 import org.apache.commons.lang3.StringUtils;
 
@@ -15,10 +16,12 @@ public class EmployeesStepDefs {
 
     private World world;
     private EmployeesSteps employeesSteps;
+    private NavigationSteps navigationSteps;
 
-    public EmployeesStepDefs(World world, EmployeesSteps employeesSteps) {
+    public EmployeesStepDefs(World world, EmployeesSteps employeesSteps, NavigationSteps navigationSteps) {
         this.world = world;
         this.employeesSteps = employeesSteps;
+        this.navigationSteps = navigationSteps;
     }
 
     @When("I filter list of employees by {string} department")
@@ -35,5 +38,24 @@ public class EmployeesStepDefs {
         } else {
             employeesSteps.validateFilteredEmployeesTable(departmentName);
         }
+    }
+
+    @When("I create an employee with following:")
+    public void iCreateAnEmployeeWithFollowing(DataTable table) throws Exception {
+        NewEmployeeForm form = table.convert(NewEmployeeForm.class, false);
+        navigationSteps.navigateToAddEmployeePage();
+        NewEmployeePage page = new NewEmployeePage(world.driver);
+        page.fillFirstName(form.getFirstName());
+        page.fillLastName(form.getLastName());
+        page.fillEmailField(form.getEmail());
+        page.selectDepartment(form.getDepartmentName());
+        page.setAdmin(form.isAdmin());
+        page.setAutoApprove(form.isAutoApprove());
+        page.fillStartedOn(form.getStartedOn());
+        page.fillEndedOn(form.getEndedOn());
+        page.fillPassword(form.getPassword());
+        page.fillPasswordConfirmation(form.getPasswordConfirmation());
+        page.clickCreateButton();
+        employeesSteps.validateEmployeeCreated(form, world.currentCompany.getId());
     }
 }

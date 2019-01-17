@@ -1,5 +1,6 @@
 package com.viktor.timeofftests.steps;
 
+import com.sun.xml.internal.bind.v2.runtime.reflect.opt.Const;
 import com.viktor.timeofftests.common.Constants;
 import com.viktor.timeofftests.forms.*;
 import com.viktor.timeofftests.models.User;
@@ -27,6 +28,7 @@ public class DataTableConfigurer implements TypeRegistryConfigurer {
         typeRegistry.defineDataTableType(new DataTableType(WeeklyScheduleForm.class, this::transformToWeeklyScheduleForm));
         typeRegistry.defineDataTableType(new DataTableType(LeaveTypeForm.class, this::transformToLeaveTypeForm));
         typeRegistry.defineDataTableType(new DataTableType(InsertLeaveForm.class, this::transformToInsertLeaveForm));
+        typeRegistry.defineDataTableType(new DataTableType(NewEmployeeForm.class, this::transformToNewEmployeeForm));
     }
 
     private LeaveTypeForm transformToLeaveTypeForm (Map<String,String> entry){
@@ -42,6 +44,60 @@ public class DataTableConfigurer implements TypeRegistryConfigurer {
         form.setUseAllowance(transformToBoolean(entry.get("use_allowance"), true));
         return form;
     }
+
+    private NewEmployeeForm transformToNewEmployeeForm (Map<String, String> entry){
+        NewEmployeeForm form = new NewEmployeeForm();
+        if(StringUtils.isEmpty(entry.get("first_name"))){
+            form.setFirstName(UserPool.getName());
+        } else {
+            form.setFirstName(entry.get("first_name"));
+        }
+        if(StringUtils.isEmpty(entry.get("last_name"))){
+            form.setLastName(UserPool.getLastName());
+        } else {
+            form.setLastName(entry.get("last_name"));
+        }
+        if(StringUtils.isEmpty(entry.get("email"))){
+            form.setEmail(UserPool.getEmail());
+        } else {
+            form.setEmail(entry.get("email"));
+        }
+        if(StringUtils.isEmpty(entry.get("department"))){
+            form.setDepartmentName(Constants.DEFAULT_DEPARTMENT_NAME);
+        } else {
+            form.setDepartmentName(entry.get("department"));
+        }
+        form.setAdmin(transformToBoolean(entry.get("admin"), false));
+        form.setAutoApprove(transformToBoolean(entry.get("auto_approve"), false));
+        if(StringUtils.isEmpty(entry.get("started_on"))){
+            form.setStartedOn(LocalDate.now());
+        } else {
+            String ephiDate = entry.get("started_on");
+            if(StringUtils.equals(ephiDate,"today")){
+                form.setStartedOn(LocalDate.now());
+            } else if(StringUtils.equals(ephiDate, "in past")){
+                LocalDate started = LocalDate.now().minusDays(Constants.DEFAULT_MINUS_DATES_FOR_STARTED_ON_DATE);
+                form.setStartedOn(started);
+            }
+        }
+        if(StringUtils.isEmpty(entry.get("ended_on"))){
+            form.setEndedOn(null);
+        } else {
+            form.setEndedOn(LocalDate.parse(entry.get("ended_on")));
+        }
+        if(StringUtils.isEmpty(entry.get("password"))){
+            form.setPassword(Constants.DEFAULT_USER_PASSWORD);
+            form.setPasswordConfirmation(Constants.DEFAULT_USER_PASSWORD);
+        } else if(StringUtils.isNotEmpty(entry.get("password")) && StringUtils.isEmpty(entry.get("password_confirmation"))) {
+            form.setPassword(entry.get("password"));
+            form.setPasswordConfirmation(entry.get("password"));
+        } else {
+            form.setPassword(entry.get("password"));
+            form.setPasswordConfirmation(entry.get("password_confirmation"));
+        }
+        return form;
+    }
+
     private InsertLeaveForm transformToInsertLeaveForm (Map<String, String> entry){
         InsertLeaveForm form = new InsertLeaveForm();
         form.setUserEmail(entry.get("user_email"));
@@ -80,7 +136,7 @@ public class DataTableConfigurer implements TypeRegistryConfigurer {
         }
         form.setPublicHolidays(transformToBoolean(entry.get("include_pub_holidays"), true));
         form.setAccruedAllowance(transformToBoolean(entry.get("accrued_allowance"), false));
-        form.setNumberOfUsers(Integer.parseInt(entry.get("num_of_users")));
+        form.setNumberOfUsers(transformToInt(entry.get("num_of_users")));
         if(StringUtils.equals(entry.get("multiple_supervisors"), "do")){
             form.setSecondarySupervisors(true);
         }
@@ -225,5 +281,13 @@ public class DataTableConfigurer implements TypeRegistryConfigurer {
             return new Date();
         }
 
+    }
+
+    private int transformToInt (String s){
+        if(s==null){
+            return 0;
+        } else {
+            return Integer.parseInt(s);
+        }
     }
 }

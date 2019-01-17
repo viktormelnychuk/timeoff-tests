@@ -28,4 +28,8 @@ public class TextConstants {
         public static final String ALL_DEPARTMENTS_NAME = "All departments";
         public static final String PAGE_URL = "http://localhost:3000/users/";
     }
+
+    public class AddNewEmployeePage {
+        public static final String PAGE_URL = "http://localhost:3000/users/add/";
+    }
 }

@@ -36,3 +36,23 @@ Feature: Check the employees page
      | Department 2    |
      | Sales           |
      | All departments |
+
+  Scenario Outline: I create new employee
+    Given I am on "employees" page
+    And following departments are created:
+    | name         |
+    | Department 1 |
+
+    When I create an employee with following:
+     | first_name   | last_name   | email   | department     | started_on   | ended_on   | password   | auto_approve   | admin   |
+     | <first_name> | <last_name> | <email> | <department>   | <started_on> | <ended_on> | <password> | <auto_approve> | <admin> |
+
+    Then "employees" page should reflect correct information
+
+    And I can login as user with "<email>" email and "<password>" password
+
+    Examples:
+      | first_name | last_name | email            | department   | started_on | ended_on | password | auto_approve | admin |
+      | James      | Smith     | james@viktor.com | Sales        | today      |          | 1234     | true         | true  |
+      | James      | Smith     | james@viktor.com | Department 1 | in past    |          | 1234     | false        | true  |
+      | James      | Smith     | james@viktor.com | Department 1 | today      |          | 1234     | false        | false  |

@@ -23,7 +23,7 @@ public class AddNewDepartmentModal extends BasePage {
         fillInputField(nameInput, name);
     }
 
-    public void selectAllowance(String allowance){
+    public void selectAllowance(String allowance) throws Exception {
         selectOption(allowanceSelect, allowance);
     }
 
@@ -41,7 +41,7 @@ public class AddNewDepartmentModal extends BasePage {
         }
     }
 
-    public AddNewDepartmentModal setBoss (int userId){
+    public AddNewDepartmentModal setBoss (int userId) throws Exception {
         selectOption(bossSelect, String.valueOf(userId));
         return this;
     }

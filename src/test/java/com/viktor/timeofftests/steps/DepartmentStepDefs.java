@@ -76,7 +76,7 @@ public class DepartmentStepDefs {
     }
 
     @When("I create following department:")
-    public void iCreateFollowingDepartment(DataTable table) {
+    public void iCreateFollowingDepartment(DataTable table) throws Exception {
         log.info("Creating department via UI");
         Map<String, String> data = table.transpose().asMap(String.class, String.class);
         AddNewDepartmentModal modal = new DepartmentsPage(world.driver).clickAddNewDepartmentButton();

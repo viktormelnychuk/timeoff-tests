@@ -52,7 +52,7 @@ public class SettingsStepDefs {
 
 
     @When("I edit company settings with following:")
-    public void iEditCompanySettingsWithFollowing(DataTable dataTable) {
+    public void iEditCompanySettingsWithFollowing(DataTable dataTable) throws Exception {
         log.info("Starting to edit company settings");
         world.editedCompany = world.currentCompany;
         CompanySettings companySettings = new CompanySettings(world.driver);
