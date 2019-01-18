@@ -40,9 +40,20 @@ public class EmployeesStepDefs {
         }
     }
 
-    @When("I create an employee with following:")
-    public void iCreateAnEmployeeWithFollowing(DataTable table) throws Exception {
+    @When("^I create an employee with following:$")
+    public void iCreateAnEmployeeWithFollowing(String trying, DataTable table) throws Exception {
         NewEmployeeForm form = table.convert(NewEmployeeForm.class, false);
+        fillNewEmployeeForm(form);
+        employeesSteps.validateEmployeeCreated(form, world.currentCompany.getId());
+    }
+
+    @When("I try to create an employee with following:")
+    public void iTryToCreateAnEmployeeWithFollowing(DataTable table) throws Exception{
+        NewEmployeeForm form = table.convert(NewEmployeeForm.class, false);
+        fillNewEmployeeForm(form);
+    }
+
+    private void fillNewEmployeeForm (NewEmployeeForm form) throws Exception {
         navigationSteps.navigateToAddEmployeePage();
         NewEmployeePage page = new NewEmployeePage(world.driver);
         page.fillFirstName(form.getFirstName());
@@ -56,6 +67,5 @@ public class EmployeesStepDefs {
         page.fillPassword(form.getPassword());
         page.fillPasswordConfirmation(form.getPasswordConfirmation());
         page.clickCreateButton();
-        employeesSteps.validateEmployeeCreated(form, world.currentCompany.getId());
     }
 }

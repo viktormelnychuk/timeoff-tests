@@ -82,7 +82,13 @@ public class DataTableConfigurer implements TypeRegistryConfigurer {
         if(StringUtils.isEmpty(entry.get("ended_on"))){
             form.setEndedOn(null);
         } else {
-            form.setEndedOn(LocalDate.parse(entry.get("ended_on")));
+            String ephiDate = entry.get("ended_on");
+            if(StringUtils.equals(ephiDate,"today")){
+                form.setEndedOn(LocalDate.now());
+            } else if(StringUtils.equals(ephiDate, "in past")){
+                LocalDate ended = LocalDate.now().minusDays(Constants.DEFAULT_MINUS_DATES_FOR_STARTED_ON_DATE);
+                form.setEndedOn(ended);
+            }
         }
         if(StringUtils.isEmpty(entry.get("password"))){
             form.setPassword(Constants.DEFAULT_USER_PASSWORD);
