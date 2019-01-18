@@ -42,6 +42,7 @@ public class EmployeesStepDefs {
 
     @When("^I create an employee with following:$")
     public void iCreateAnEmployeeWithFollowing(String trying, DataTable table) throws Exception {
+        log.info("Creating employee with following \n{}", table);
         NewEmployeeForm form = table.convert(NewEmployeeForm.class, false);
         fillNewEmployeeForm(form);
         employeesSteps.validateEmployeeCreated(form, world.currentCompany.getId());
@@ -49,8 +50,10 @@ public class EmployeesStepDefs {
 
     @When("I try to create an employee with following:")
     public void iTryToCreateAnEmployeeWithFollowing(DataTable table) throws Exception{
+        log.info("Creating employee with following \n{}", table);
         NewEmployeeForm form = table.convert(NewEmployeeForm.class, false);
         fillNewEmployeeForm(form);
+        employeesSteps.validateEmployeeIsNotCreated(form, world.currentCompany.getId());
     }
 
     private void fillNewEmployeeForm (NewEmployeeForm form) throws Exception {

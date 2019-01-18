@@ -14,6 +14,7 @@ import org.apache.commons.lang3.StringUtils;
 
 
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 import static com.viktor.timeofftests.matcher.CollectionMatchers.containsAllItems;
@@ -64,5 +65,18 @@ public class EmployeesSteps {
         // TODO: Uncomment after migrating to LocalDate
 
         //  assertThat(createdUser.getStartDate(), is(form.getStartedOn()));
+    }
+
+    public void validateEmployeeIsNotCreated(NewEmployeeForm form, int companyId) {
+        List<User> allUsersInCompany = userService.getAllUsersInCompany(companyId);
+        User createdUser = allUsersInCompany.stream().filter((u)-> StringUtils.equals(u.getEmail(),form.getEmail()))
+                .findFirst()
+                .orElse(null);
+        if(!Objects.isNull(createdUser)){
+            assertThat(createdUser.getName(), is(not(form.getFirstName())));
+            assertThat(createdUser.getLastName(), is(not(form.getLastName())));
+
+        }
+
     }
 }
