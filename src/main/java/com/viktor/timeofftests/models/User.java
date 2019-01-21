@@ -7,6 +7,8 @@ import org.apache.commons.codec.digest.DigestUtils;
 
 import java.nio.charset.StandardCharsets;
 import java.sql.Timestamp;
+import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.Date;
 
 @Data
@@ -133,6 +135,14 @@ public class User {
             this.startDate = new Timestamp(date.getTime());
             return this;
         }
+        public Builder startedOn (LocalDate date){
+            if(date == null){
+                this.startDate = new Timestamp(new Date().getTime());
+                return this;
+            }
+            this.startDate = Timestamp.valueOf(date.atStartOfDay());
+            return this;
+        }
 
         public Builder endedOn (Date date){
             if(date == null){
@@ -140,6 +150,15 @@ public class User {
                 return this;
             }
             this.endDate = new Timestamp(date.getTime());
+            return this;
+        }
+
+        public Builder endedOn (LocalDate date){
+            if(date == null){
+                this.endDate = new Timestamp(new Date().getTime());
+                return this;
+            }
+            this.endDate = Timestamp.valueOf(date.atStartOfDay());
             return this;
         }
 

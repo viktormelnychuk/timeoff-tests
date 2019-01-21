@@ -2,6 +2,7 @@ package com.viktor.timeofftests.services;
 
 import com.viktor.timeofftests.common.db.DBUtil;
 import com.viktor.timeofftests.common.db.DbConnection;
+import com.viktor.timeofftests.forms.NewEmployeeForm;
 import com.viktor.timeofftests.models.Company;
 import com.viktor.timeofftests.models.Department;
 import com.viktor.timeofftests.models.User;
@@ -255,4 +256,13 @@ public class UserService {
         }
         return result;
     }
+
+    public List<User> insertMultipleUsers(List<User> usersToInsert) {
+        List<User> result = new ArrayList<>();
+        for (User user : usersToInsert) {
+            result.add(createNewUser(user));
+        }
+        return result;
+    }
+
 }

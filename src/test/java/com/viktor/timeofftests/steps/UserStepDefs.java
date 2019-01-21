@@ -2,6 +2,7 @@ package com.viktor.timeofftests.steps;
 
 import com.viktor.timeofftests.common.Constants;
 import com.viktor.timeofftests.common.World;
+import com.viktor.timeofftests.forms.NewEmployeeForm;
 import com.viktor.timeofftests.models.Company;
 import com.viktor.timeofftests.models.Department;
 import com.viktor.timeofftests.models.User;
@@ -73,7 +74,23 @@ public class UserStepDefs {
     public void followingUsersAreCreated(DataTable table) {
         log.info("Starting to create multiple users");
         List<User> users = table.asList(User.class);
-        world.allUsers.addAll(userService.createUsersInDepartmentAndCompany(users, world.currentUserDepartment.getId(), world.currentCompany.getId()));
+        List<NewEmployeeForm> usersToInsert = table.asList(NewEmployeeForm.class);
+        for (NewEmployeeForm form: usersToInsert) {
+            Department department = departmentService.getDepartmentWithNameAndCompanyId(form.getDepartmentName(), world.currentCompany.getId());
+            User user = new User.Builder()
+                    .withName(form.getFirstName())
+                    .withEmail(form.getEmail())
+                    .withLastName(form.getLastName())
+                    .withPassword(form.getPassword())
+                    .inCompany(world.currentCompany)
+                    .inDepartment(department.getId())
+                    .admin(form.isAdmin())
+                    .autoApproved(form.isAutoApprove())
+                    .startedOn(form.getStartedOn())
+                    .endedOn(form.getEndedOn())
+                    .build();
+            world.allUsers.add(userService.createNewUser(user));
+        }
         log.info("Done creating multiple users");
     }
 }

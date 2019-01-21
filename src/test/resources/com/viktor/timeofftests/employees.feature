@@ -76,3 +76,15 @@ Feature: Check the employees page
       | James      | Smith     | tester@viktor.com | Sales        | today      |          | 1234     | 1234                  | Email is already in use                       |
       | James      | Smith     | james@viktor.com  | Department 1 | in past    |          | 1234     | 4321                  | Confirmed password does not match initial one |
       | James      | Smith     | james@viktor.com  | Department 1 | today      | in past  | 1234     | 1234                  | End date for user is before start date        |
+
+    Scenario Outline: Edit employee information
+      Given I am on "employees" page
+      And following users are created:
+      | email              | last_name           | first_name            | department            | admin             | auto_approve            | started_on          | ended_on           | password            | password_confirmation            |
+      | <original_email>   | <original_last_name>| <original_first_name> | <original_department> | <original_admin>  | <original_auto_approve> |<orignal_started_on> | <orignal_ended_on> | <original_password> | <original_password_confirmation> |
+
+
+      Examples:
+        | original_email     | original_last_name  | original_first_name   | original_department   | original_admin    | original_auto_approve   |orignal_started_on   | orignal_ended_on   | original_password   | original_password_confirmation   |
+        | tester2@viktor.com | James               | Brown                 | Department 1          | true              | true                    | in past             |                    | 1234                |                                  |
+
