@@ -10,6 +10,8 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Timestamp;
 import java.time.LocalDate;
+import java.time.ZoneId;
+import java.time.ZoneOffset;
 import java.util.*;
 
 import static java.time.temporal.TemporalAdjusters.firstDayOfYear;
@@ -41,10 +43,11 @@ public class LeaveService {
             statement.setInt(1, leave.getStatus().getValue());
             statement.setString(2, leave.getEmployeeComment());
             statement.setString(3, leave.getApproverComment());
-            statement.setTimestamp(4, Timestamp.valueOf(leave.getDecidedAt().atStartOfDay()));
-            statement.setTimestamp(5, Timestamp.valueOf(leave.getDateStart().atStartOfDay()));
+            // need to convert to instant because Timestamp.valueOf gets system default timezone regardless
+            statement.setTimestamp(4, Timestamp.from(leave.getDecidedAt().atStartOfDay().toInstant(ZoneOffset.UTC)));
+            statement.setTimestamp(5, Timestamp.from(leave.getDateStart().atStartOfDay().toInstant(ZoneOffset.UTC)));
             statement.setInt(6, leave.getDayPartStart().getValue());
-            statement.setTimestamp(7, Timestamp.valueOf(leave.getDateEnd().atStartOfDay()));
+            statement.setTimestamp(7,  Timestamp.from(leave.getDateEnd().atStartOfDay().toInstant(ZoneOffset.UTC)));
             statement.setInt(8, leave.getDayPartEnd().getValue());
             statement.setInt(9,leave.getUserId());
             statement.setInt(10, leave.getApproverId());

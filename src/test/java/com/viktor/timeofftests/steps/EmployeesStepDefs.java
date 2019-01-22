@@ -41,7 +41,7 @@ public class EmployeesStepDefs {
     }
 
     @When("^I create an employee with following:$")
-    public void iCreateAnEmployeeWithFollowing(String trying, DataTable table) throws Exception {
+    public void iCreateAnEmployeeWithFollowing(DataTable table) throws Exception {
         log.info("Creating employee with following \n{}", table);
         NewEmployeeForm form = table.convert(NewEmployeeForm.class, false);
         fillNewEmployeeForm(form);

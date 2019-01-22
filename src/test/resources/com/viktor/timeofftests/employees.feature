@@ -17,6 +17,10 @@ Feature: Check the employees page
 
     Then "employees" page should reflect correct information
 
+    # rewrite this to check filtering without just restarting browser
+    # For example: add step that accepts argument with separator (e.g. ":") and click on dep names one by one
+    # validate page after each click
+
   Scenario Outline: Filter employees by department
     Given following departments are created:
       | name         |  num_of_users |
@@ -79,6 +83,11 @@ Feature: Check the employees page
 
     Scenario Outline: Edit employee information
       Given I am on "employees" page
+
+      And following departments are created:
+      | name         |
+      | Department 1 |
+
       And following users are created:
       | email              | last_name           | first_name            | department            | admin             | auto_approve            | started_on          | ended_on           | password            | password_confirmation            |
       | <original_email>   | <original_last_name>| <original_first_name> | <original_department> | <original_admin>  | <original_auto_approve> |<orignal_started_on> | <orignal_ended_on> | <original_password> | <original_password_confirmation> |

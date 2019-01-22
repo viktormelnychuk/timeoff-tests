@@ -155,7 +155,7 @@ public class User {
 
         public Builder endedOn (LocalDate date){
             if(date == null){
-                this.endDate = new Timestamp(new Date().getTime());
+                this.endDate = null;
                 return this;
             }
             this.endDate = Timestamp.valueOf(date.atStartOfDay());
