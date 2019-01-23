@@ -89,11 +89,18 @@ Feature: Check the employees page
       | Department 1 |
 
       And following users are created:
-      | email              | last_name           | first_name            | department            | admin             | auto_approve            | started_on          | ended_on           | password            | password_confirmation            |
-      | <original_email>   | <original_last_name>| <original_first_name> | <original_department> | <original_admin>  | <original_auto_approve> |<orignal_started_on> | <orignal_ended_on> | <original_password> | <original_password_confirmation> |
+      | email              | last_name           | first_name            | department            | admin             | auto_approve            | started_on          | ended_on           | password            |
+      | <original_email>   | <original_last_name>| <original_first_name> | <original_department> | <original_admin>  | <original_auto_approve> |<orignal_started_on> | <orignal_ended_on> | <original_password> |
 
+      When I edit user with email "<original_email>" to have:
+      | email   | last_name   | first_name   | department   | admin   | auto_approve   | started_on   | ended_on   | password   | password_confirmation   |
+      | <email> | <last_name> | <first_name> | <department> | <admin> | <auto_approve> | <started_on> | <ended_on> | <password> | <password_confirmation> |
 
+      Then user page should reflect correct information
+
+      Then "employees" page should reflect correct information
       Examples:
-        | original_email     | original_last_name  | original_first_name   | original_department   | original_admin    | original_auto_approve   |orignal_started_on   | orignal_ended_on   | original_password   | original_password_confirmation   |
-        | tester2@viktor.com | James               | Brown                 | Department 1          | true              | true                    | in past             |                    | 1234                |                                  |
+        | original_email     | original_last_name  | original_first_name   | original_department   | original_admin    | original_auto_approve   |orignal_started_on   | orignal_ended_on   | original_password || email   | last_name   | first_name   | department   | admin   | auto_approve   | started_on   | ended_on   | password   | password_confirmation   |
+        | tester2@viktor.com | James               | Brown                 | Department 1          | true              | true                    | in past             |                    | 1234              |
+
 
