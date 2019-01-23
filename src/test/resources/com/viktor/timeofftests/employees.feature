@@ -82,25 +82,27 @@ Feature: Check the employees page
       | James      | Smith     | james@viktor.com  | Department 1 | today      | in past  | 1234     | 1234                  | End date for user is before start date        |
 
     Scenario Outline: Edit employee information
-      Given I am on "employees" page
-
-      And following departments are created:
+      Given following departments are created:
       | name         |
       | Department 1 |
 
       And following users are created:
       | email              | last_name           | first_name            | department            | admin             | auto_approve            | started_on          | ended_on           | password            |
       | <original_email>   | <original_last_name>| <original_first_name> | <original_department> | <original_admin>  | <original_auto_approve> |<orignal_started_on> | <orignal_ended_on> | <original_password> |
-
+      And I am on "employees" page
       When I edit user with email "<original_email>" to have:
       | email   | last_name   | first_name   | department   | admin   | auto_approve   | started_on   | ended_on   | password   | password_confirmation   |
       | <email> | <last_name> | <first_name> | <department> | <admin> | <auto_approve> | <started_on> | <ended_on> | <password> | <password_confirmation> |
 
-      Then user page should reflect correct information
+      Then user with email "<original_email>" should see correct info
 
       Then "employees" page should reflect correct information
       Examples:
-        | original_email     | original_last_name  | original_first_name   | original_department   | original_admin    | original_auto_approve   |orignal_started_on   | orignal_ended_on   | original_password || email   | last_name   | first_name   | department   | admin   | auto_approve   | started_on   | ended_on   | password   | password_confirmation   |
-        | tester2@viktor.com | James               | Brown                 | Department 1          | true              | true                    | in past             |                    | 1234              |
+        | original_email     | original_last_name  | original_first_name   | original_department   | original_admin    | original_auto_approve   |orignal_started_on   | orignal_ended_on   | original_password | email              | last_name   | first_name   | department   | admin   | auto_approve   | started_on   | ended_on   | password   | password_confirmation   |
+        | tester2@viktor.com | James               | Brown                 | Department 1          | true              | true                    | in past             |                    | 1234              | tester3@viktor.com | Black       |  John        |              |         |                |              |            |            |                         |
+        #| tester2@viktor.com | James               | Brown                 | Sales                 | false             | false                   | in past             |                    | 1234              |                    |             |              | Department 1 |         |                |              |            |            |                         |
+        #| tester2@viktor.com | James               | Brown                 | Sales                 | false             | false                   | in past             |                    | 1234              |                    |             |              |              | true    |                |              |            |            |                         |
+        #| tester2@viktor.com | James               | Brown                 | Sales                 | false             | false                   | in past             |                    | 1234              |                    |             |              |              |         |                |              |  today     |            |                         |
+        #| tester2@viktor.com | James               | Brown                 | Sales                 | false             | false                   | in past             |                    | 1234              |                    |             |              |              |         |                |    in past   |            | 4321       | 4321                    |
 
 

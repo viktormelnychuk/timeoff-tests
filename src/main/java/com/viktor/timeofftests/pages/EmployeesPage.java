@@ -19,7 +19,7 @@ public class EmployeesPage extends BasePage {
     private By addNewEmployeeButton = By.xpath("//button[@data-toggle='dropdown'][contains(text(),'Add new employee')]");
     private By addSingleEmployeeButton = By.linkText("Add single employee");
     private By importEmployeesButton = By.id("import_users_btn");
-
+    private String employeeLinkQuery = "//table//tbody//tr[@data-vpp-user-row='%s']//td[@class='user-link-cell']//a";
     @Override
     public String getBaseUrl() {
         return null;
@@ -69,6 +69,12 @@ public class EmployeesPage extends BasePage {
     public void clickAddSingleEmployeeButton() {
         clickButton(addNewEmployeeButton);
         clickButton(addSingleEmployeeButton);
+    }
+
+    public EmployeePage navigateToEditEmployeePageForUser(int userId) {
+        By locator = By.xpath(String.format(employeeLinkQuery, userId));
+        clickButton(locator);
+        return new EmployeePage(this.driver);
     }
 }
 

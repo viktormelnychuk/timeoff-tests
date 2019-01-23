@@ -2,7 +2,7 @@ package com.viktor.timeofftests.steps;
 
 import com.viktor.timeofftests.common.World;
 import com.viktor.timeofftests.forms.EmployeeRow;
-import com.viktor.timeofftests.forms.NewEmployeeForm;
+import com.viktor.timeofftests.forms.EmployeeForm;
 import com.viktor.timeofftests.models.Department;
 import com.viktor.timeofftests.models.User;
 import com.viktor.timeofftests.pages.EmployeesPage;
@@ -51,7 +51,7 @@ public class EmployeesSteps {
         assertThat(displayedEmployees, containsAllItems(inDb));
     }
 
-    public void validateEmployeeCreated(NewEmployeeForm form, int companyId) {
+    public void validateEmployeeCreated(EmployeeForm form, int companyId) {
         List<User> allUsersInCompany = userService.getAllUsersInCompany(companyId);
         Optional<User> optionalUser = allUsersInCompany.stream().filter((u)-> StringUtils.equals(u.getEmail(),form.getEmail())).findFirst();
         assertThat(optionalUser.isPresent(), is(true));
@@ -67,7 +67,7 @@ public class EmployeesSteps {
         //  assertThat(createdUser.getStartDate(), is(form.getStartedOn()));
     }
 
-    public void validateEmployeeIsNotCreated(NewEmployeeForm form, int companyId) {
+    public void validateEmployeeIsNotCreated(EmployeeForm form, int companyId) {
         List<User> allUsersInCompany = userService.getAllUsersInCompany(companyId);
         User createdUser = allUsersInCompany.stream().filter((u)-> StringUtils.equals(u.getEmail(),form.getEmail()))
                 .findFirst()

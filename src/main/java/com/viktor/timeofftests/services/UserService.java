@@ -2,7 +2,6 @@ package com.viktor.timeofftests.services;
 
 import com.viktor.timeofftests.common.db.DBUtil;
 import com.viktor.timeofftests.common.db.DbConnection;
-import com.viktor.timeofftests.forms.NewEmployeeForm;
 import com.viktor.timeofftests.models.Company;
 import com.viktor.timeofftests.models.Department;
 import com.viktor.timeofftests.models.User;

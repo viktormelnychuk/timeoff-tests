@@ -1,6 +1,7 @@
 package com.viktor.timeofftests.steps;
 
 import com.viktor.timeofftests.common.Constants;
+import com.viktor.timeofftests.common.DateUtil;
 import com.viktor.timeofftests.forms.*;
 import com.viktor.timeofftests.models.User;
 import com.viktor.timeofftests.pools.UserPool;
@@ -27,7 +28,8 @@ public class DataTableConfigurer implements TypeRegistryConfigurer {
         typeRegistry.defineDataTableType(new DataTableType(WeeklyScheduleForm.class, this::transformToWeeklyScheduleForm));
         typeRegistry.defineDataTableType(new DataTableType(LeaveTypeForm.class, this::transformToLeaveTypeForm));
         typeRegistry.defineDataTableType(new DataTableType(InsertLeaveForm.class, this::transformToInsertLeaveForm));
-        typeRegistry.defineDataTableType(new DataTableType(NewEmployeeForm.class, this::transformToNewEmployeeForm));
+        typeRegistry.defineDataTableType(new DataTableType(EmployeeForm.class, this::transformToNewEmployeeForm));
+        typeRegistry.defineDataTableType(new DataTableType(EditEmployeeForm.class, this::transformToEditEmployeeForm));
     }
 
     private LeaveTypeForm transformToLeaveTypeForm (Map<String,String> entry){
@@ -44,8 +46,8 @@ public class DataTableConfigurer implements TypeRegistryConfigurer {
         return form;
     }
 
-    private NewEmployeeForm transformToNewEmployeeForm (Map<String, String> entry){
-        NewEmployeeForm form = new NewEmployeeForm();
+    private EmployeeForm transformToNewEmployeeForm (Map<String, String> entry){
+        EmployeeForm form = new EmployeeForm();
         if(StringUtils.isEmpty(entry.get("first_name"))){
             form.setFirstName(UserPool.getName());
         } else {
@@ -71,24 +73,12 @@ public class DataTableConfigurer implements TypeRegistryConfigurer {
         if(StringUtils.isEmpty(entry.get("started_on"))){
             form.setStartedOn(LocalDate.now());
         } else {
-            String ephiDate = entry.get("started_on");
-            if(StringUtils.equals(ephiDate,"today")){
-                form.setStartedOn(LocalDate.now());
-            } else if(StringUtils.equals(ephiDate, "in past")){
-                LocalDate started = LocalDate.now().minusDays(Constants.DEFAULT_MINUS_DATES_FOR_STARTED_ON_DATE);
-                form.setStartedOn(started);
-            }
+           form.setStartedOn(DateUtil.selectDateBasedOnString(entry.get("started_on")));
         }
         if(StringUtils.isEmpty(entry.get("ended_on"))){
             form.setEndedOn(null);
         } else {
-            String ephiDate = entry.get("ended_on");
-            if(StringUtils.equals(ephiDate,"today")){
-                form.setEndedOn(LocalDate.now());
-            } else if(StringUtils.equals(ephiDate, "in past")){
-                LocalDate ended = LocalDate.now().minusDays(Constants.DEFAULT_MINUS_DATES_FOR_STARTED_ON_DATE);
-                form.setEndedOn(ended);
-            }
+            form.setEndedOn(DateUtil.selectDateBasedOnString(entry.get("ended_on")));
         }
         if(StringUtils.isEmpty(entry.get("password"))){
             form.setPassword(Constants.DEFAULT_USER_PASSWORD);
@@ -102,7 +92,20 @@ public class DataTableConfigurer implements TypeRegistryConfigurer {
         }
         return form;
     }
-
+    private EditEmployeeForm transformToEditEmployeeForm(Map<String,String> entry){
+        EditEmployeeForm form = new EditEmployeeForm();
+        form.setFirstName(entry.get("first_name"));
+        form.setLastName(entry.get("last_name"));
+        form.setPassword(entry.get("password"));
+        form.setPasswordConfirmation(entry.get("password_confirmation"));
+        form.setEmail(entry.get("email"));
+        form.setDepartmentName(entry.get("department"));
+        form.setAdmin(transformToBoolean(entry.get("admin"), false));
+        form.setAutoApprove(transformToBoolean(entry.get("auto_approve"), false));
+        form.setStartedOn(DateUtil.selectDateBasedOnString(entry.get("started_on")));
+        form.setEndedOn(DateUtil.selectDateBasedOnString(entry.get("ended_on")));
+        return form;
+    }
     private InsertLeaveForm transformToInsertLeaveForm (Map<String, String> entry){
         InsertLeaveForm form = new InsertLeaveForm();
         form.setUserEmail(entry.get("user_email"));

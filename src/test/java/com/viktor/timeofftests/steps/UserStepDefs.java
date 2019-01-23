@@ -2,7 +2,7 @@ package com.viktor.timeofftests.steps;
 
 import com.viktor.timeofftests.common.Constants;
 import com.viktor.timeofftests.common.World;
-import com.viktor.timeofftests.forms.NewEmployeeForm;
+import com.viktor.timeofftests.forms.EmployeeForm;
 import com.viktor.timeofftests.models.Company;
 import com.viktor.timeofftests.models.Department;
 import com.viktor.timeofftests.models.User;
@@ -74,8 +74,8 @@ public class UserStepDefs {
     public void followingUsersAreCreated(DataTable table) {
         log.info("Starting to create multiple users");
         List<User> users = table.asList(User.class);
-        List<NewEmployeeForm> usersToInsert = table.asList(NewEmployeeForm.class);
-        for (NewEmployeeForm form: usersToInsert) {
+        List<EmployeeForm> usersToInsert = table.asList(EmployeeForm.class);
+        for (EmployeeForm form: usersToInsert) {
             Department department = departmentService.getDepartmentWithNameAndCompanyId(form.getDepartmentName(), world.currentCompany.getId());
             User user = new User.Builder()
                     .withName(form.getFirstName())
