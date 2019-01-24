@@ -10,8 +10,10 @@ import com.viktor.timeofftests.services.CompanyService;
 import com.viktor.timeofftests.services.DepartmentService;
 import com.viktor.timeofftests.services.UserService;
 import cucumber.api.java.en.Given;
+import cucumber.api.java.en.Then;
 import io.cucumber.datatable.DataTable;
 import lombok.extern.log4j.Log4j2;
+import org.apache.commons.lang3.StringUtils;
 
 import java.util.List;
 import java.util.Objects;
@@ -21,17 +23,19 @@ public class UserStepDefs {
     private UserService userService;
     private CompanyService companyService;
     private DepartmentService departmentService;
-    public UserStepDefs(World world, UserService userService, CompanyService companyService, DepartmentService departmentService){
+    private NavigationSteps navigationSteps;
+    public UserStepDefs(World world, UserService userService, CompanyService companyService, DepartmentService departmentService, NavigationSteps navigationSteps){
         this.world = world;
         this.userService = userService;
         this.companyService = companyService;
         this.departmentService = departmentService;
+        this.navigationSteps = navigationSteps;
     }
 
     @Given("^following user is created:$")
     public void followingUserIsCreated(DataTable table) {
         log.info("Creating user {}", table);
-        User user = UserSteps.createUser(table);
+        User user = table.convert(User.class, false);
         if(world.currentCompany == null){
             world.currentCompany = companyService.getOrCreateCompanyWithName(user.getCompanyName());
         }
@@ -72,8 +76,7 @@ public class UserStepDefs {
 
     @Given("following users are created:")
     public void followingUsersAreCreated(DataTable table) {
-        log.info("Starting to create multiple users");
-        List<User> users = table.asList(User.class);
+        log.info("Starting to create multiple users\r\n{}", table);
         List<EmployeeForm> usersToInsert = table.asList(EmployeeForm.class);
         for (EmployeeForm form: usersToInsert) {
             Department department = departmentService.getDepartmentWithNameAndCompanyId(form.getDepartmentName(), world.currentCompany.getId());
@@ -92,5 +95,16 @@ public class UserStepDefs {
             world.allUsers.add(userService.createNewUser(user));
         }
         log.info("Done creating multiple users");
+    }
+
+    @Then("user with email {string} should see correct info")
+    public void userWithEmailShouldSeeCorrectInfo(String email) {
+        User user = userService.getUserWithEmail(email);
+        if(StringUtils.isEmpty(world.editedUserForm.getPassword())){
+            navigationSteps.navigateToCalendarPage(user.getEmail(), Constants.DEFAULT_USER_PASSWORD);
+        } else {
+            navigationSteps.navigateToCalendarPage(user.getEmail(), world.editedUserForm.getPassword());
+        }
+        validateCalendarPage()
     }
 }

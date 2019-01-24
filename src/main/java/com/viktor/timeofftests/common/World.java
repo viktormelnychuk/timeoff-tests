@@ -1,5 +1,7 @@
 package com.viktor.timeofftests.common;
 
+import com.viktor.timeofftests.forms.EditEmployeeForm;
+import com.viktor.timeofftests.forms.EmployeeForm;
 import com.viktor.timeofftests.models.*;
 import org.openqa.selenium.WebDriver;
 
@@ -18,4 +20,5 @@ public class World {
     public List<LeaveType> inDbLeaveTypes;
     public List<Department> allDepartments = new ArrayList<>();
     public List<User> allUsers = new ArrayList<>();
+    public EmployeeForm editedUserForm;
 }

@@ -20,12 +20,14 @@ public class EmployeesStepDefs {
     private EmployeesSteps employeesSteps;
     private NavigationSteps navigationSteps;
     private UserService userService;
+    private UserSteps userSteps;
 
-    public EmployeesStepDefs(World world, EmployeesSteps employeesSteps, NavigationSteps navigationSteps, UserService userService) {
+    public EmployeesStepDefs(World world, EmployeesSteps employeesSteps, NavigationSteps navigationSteps, UserService userService, UserSteps userSteps) {
         this.world = world;
         this.employeesSteps = employeesSteps;
         this.navigationSteps = navigationSteps;
         this.userService = userService;
+        this.userSteps = userSteps;
     }
 
     @When("I filter list of employees by {string} department")
@@ -89,5 +91,7 @@ public class EmployeesStepDefs {
         EditEmployeeForm form = table.convert(EditEmployeeForm.class, false);
         EmployeePage filledPage = (EmployeePage) fillEmployeeForm(form, page);
         filledPage.clickSaveChangesButton();
+        userSteps.validateUserEdited(userToEdit.getId(), form);
+        world.editedUserForm = form;
     }
 }

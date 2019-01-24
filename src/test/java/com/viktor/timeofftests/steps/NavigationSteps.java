@@ -117,4 +117,13 @@ public class NavigationSteps {
             employeesPage.clickAddSingleEmployeeButton();
         }
     }
+
+    public void navigateToCalendarPage(String userEmail, String userPassword) {
+        log.info("Logging in as {}@{}", userEmail, userPassword);
+        world.driver.get(TextConstants.LoginPageConstants.PAGE_URL);
+        LoginPage loginPage = new LoginPage(world.driver);
+        loginPage.fillEmail(userEmail);
+        loginPage.fillPassword(userPassword);
+        loginPage.clickLoginButton();
+    }
 }

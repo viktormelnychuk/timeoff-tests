@@ -94,7 +94,7 @@ Feature: Check the employees page
       | email   | last_name   | first_name   | department   | admin   | auto_approve   | started_on   | ended_on   | password   | password_confirmation   |
       | <email> | <last_name> | <first_name> | <department> | <admin> | <auto_approve> | <started_on> | <ended_on> | <password> | <password_confirmation> |
 
-      Then user with email "<original_email>" should see correct info
+      Then user with email "<email>" should see correct info
 
       Then "employees" page should reflect correct information
       Examples:
