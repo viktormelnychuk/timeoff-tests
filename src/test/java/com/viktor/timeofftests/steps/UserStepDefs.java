@@ -24,12 +24,14 @@ public class UserStepDefs {
     private CompanyService companyService;
     private DepartmentService departmentService;
     private NavigationSteps navigationSteps;
-    public UserStepDefs(World world, UserService userService, CompanyService companyService, DepartmentService departmentService, NavigationSteps navigationSteps){
+    private CalendarSteps calendarSteps;
+    public UserStepDefs(World world, UserService userService, CompanyService companyService, DepartmentService departmentService, NavigationSteps navigationSteps, CalendarSteps calendarSteps){
         this.world = world;
         this.userService = userService;
         this.companyService = companyService;
         this.departmentService = departmentService;
         this.navigationSteps = navigationSteps;
+        this.calendarSteps = calendarSteps;
     }
 
     @Given("^following user is created:$")
@@ -105,6 +107,6 @@ public class UserStepDefs {
         } else {
             navigationSteps.navigateToCalendarPage(user.getEmail(), world.editedUserForm.getPassword());
         }
-        validateCalendarPage()
+        calendarSteps.validateCalendarPage(user);
     }
 }
