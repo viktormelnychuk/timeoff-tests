@@ -39,5 +39,19 @@ public class CalendarSteps {
         assertThat(calendarPage.getTitle(), is(TextConstants.CalendarPageConstants.PAGE_TITLE));
         String expectedGreeting = String.format(TextConstants.CalendarPageConstants.EMPLOYEE_GREETING_F,user.getName(), user.getLastName());
         assertThat(calendarPage.getEmployeeGreeting(), is(expectedGreeting));
+        assertThat(calendarPage.getAvailableAllowance(), is(availableAllowance-usedDays));
+        assertThat(calendarPage.getDaysAvailable(), is(availableAllowance));
+
+        // allowance breakdown section validation
+        assertThat((double)calendarPage.getNominalAllowance(), is((department.getAllowance())));
+        assertThat((double)calendarPage.getStartEndOfYear(), is(availableAllowance - department.getAllowance()));
+
+        // validate used so far
+        //TODO: Validate that correct leave types are displayed
+
+        //validate details page
+        User departmentAdmin = userService.getUserWithId(department.getBossId());
+        assertThat(calendarPage.getSupervisorEmail(), is(departmentAdmin.getEmail()));
+        assertThat(calendarPage.getSupervisorName(), is(departmentAdmin.getFullName()));
     }
 }

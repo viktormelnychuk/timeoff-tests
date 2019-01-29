@@ -83,20 +83,23 @@ Feature: Check the employees page
 
     Scenario Outline: Edit employee information
       Given following departments are created:
-      | name         |
-      | Department 1 |
+      | name         | num_of_users |
+      | Department 1 | 2            |
 
       And following users are created:
       | email              | last_name           | first_name            | department            | admin             | auto_approve            | started_on          | ended_on           | password            |
       | <original_email>   | <original_last_name>| <original_first_name> | <original_department> | <original_admin>  | <original_auto_approve> |<orignal_started_on> | <orignal_ended_on> | <original_password> |
+
       And I am on "employees" page
+
       When I edit user with email "<original_email>" to have:
       | email   | last_name   | first_name   | department   | admin   | auto_approve   | started_on   | ended_on   | password   | password_confirmation   |
       | <email> | <last_name> | <first_name> | <department> | <admin> | <auto_approve> | <started_on> | <ended_on> | <password> | <password_confirmation> |
 
+      Then "employees" page should reflect correct information
+
       Then user with email "<email>" should see correct info
 
-      Then "employees" page should reflect correct information
       Examples:
         | original_email     | original_last_name  | original_first_name   | original_department   | original_admin    | original_auto_approve   |orignal_started_on   | orignal_ended_on   | original_password | email              | last_name   | first_name   | department   | admin   | auto_approve   | started_on   | ended_on   | password   | password_confirmation   |
         | tester2@viktor.com | James               | Brown                 | Department 1          | true              | true                    | in past             |                    | 1234              | tester3@viktor.com | Black       |  John        |              |         |                |              |            |            |                         |

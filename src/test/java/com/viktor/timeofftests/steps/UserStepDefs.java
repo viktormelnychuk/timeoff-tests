@@ -100,7 +100,7 @@ public class UserStepDefs {
     }
 
     @Then("user with email {string} should see correct info")
-    public void userWithEmailShouldSeeCorrectInfo(String email) {
+    public void userWithEmailShouldSeeCorrectInfo(String email) throws Exception {
         User user = userService.getUserWithEmail(email);
         if(StringUtils.isEmpty(world.editedUserForm.getPassword())){
             navigationSteps.navigateToCalendarPage(user.getEmail(), Constants.DEFAULT_USER_PASSWORD);
