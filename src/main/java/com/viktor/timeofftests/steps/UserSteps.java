@@ -46,7 +46,7 @@ public class UserSteps {
         if(Objects.nonNull(form.getStartedOn())){
             assertThat(userToEdit.getStartDate(), is(form.getStartedOn()));
         }
-        assertThat(userToEdit.getEndDate(), is(Timestamp.valueOf(form.getEndedOn().atStartOfDay())));
+        assertThat(userToEdit.getEndDate(), is(form.getEndedOn()));
         assertThat(userToEdit.isAdmin(), is(form.isAdmin()) );
         assertThat(userToEdit.isAutoApprove(), is(form.isAutoApprove()));
     }

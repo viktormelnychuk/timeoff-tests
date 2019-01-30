@@ -63,8 +63,8 @@ public abstract class BasePage extends ConciseAPI {
                 selected = true;
                 break;
             }
-            if(StringUtils.equals(option.getText(), text)){
-                select.selectByVisibleText(text);
+            if(StringUtils.startsWith(option.getText(), text)){
+                select.selectByValue(option.getAttribute("value"));
                 logger.debug("Filling [{}] found [{}] with text [{}]", element.getTagName(), locator.toString(), text);
                 selected = true;
                 break;
