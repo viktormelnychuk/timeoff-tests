@@ -220,8 +220,8 @@ public class DataTableConfigurer implements TypeRegistryConfigurer {
             boolean activated = transformToBoolean(entry.get("activated"), true);
             boolean admin = transformToBoolean(entry.get("admin"), false);
             boolean autoApprove = transformToBoolean(entry.get("auto_approve"), true);
-            Date startDate = transformToDate(entry.get("started_on"));
-            Date endDate = transformToDate(entry.get("ended_on"));
+            LocalDate startDate = transformToDate(entry.get("started_on"));
+            LocalDate endDate = transformToDate(entry.get("ended_on"));
             String departmentName = entry.get("department");
             String companyName = entry.get("currentCompany");
             if (email == null) {
@@ -240,13 +240,12 @@ public class DataTableConfigurer implements TypeRegistryConfigurer {
                 Calendar calendar = Calendar.getInstance();
                 calendar.roll(Calendar.DAY_OF_YEAR, -10);
                 // Roll 10 days back from today
-                startDate = calendar.getTime();
+                startDate = LocalDate.now().minusDays(10);
                 // Roll 9 days from startedOn
-                calendar.roll(Calendar.DAY_OF_YEAR, 9);
-                endDate = calendar.getTime();
+                endDate = LocalDate.now().minusDays(1);
             }
             if(startDate == null){
-                startDate = new Date();
+                startDate = LocalDate.now();
             }
             User user = new User.Builder()
                     .withEmail(email)
@@ -281,12 +280,13 @@ public class DataTableConfigurer implements TypeRegistryConfigurer {
         }
     }
 
-    private Date transformToDate(String s){
+    private LocalDate transformToDate(String s){
         if(s == null){
             return null;
         } else {
             // add logic to parse string
-            return new Date();
+            return LocalDate.parse(s);
+
         }
 
     }

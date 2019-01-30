@@ -8,6 +8,7 @@ import com.viktor.timeofftests.services.UserService;
 import lombok.extern.log4j.Log4j2;
 import org.apache.commons.lang3.StringUtils;
 
+import java.sql.Timestamp;
 import java.util.Objects;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -45,7 +46,7 @@ public class UserSteps {
         if(Objects.nonNull(form.getStartedOn())){
             assertThat(userToEdit.getStartDate(), is(form.getStartedOn()));
         }
-        assertThat(userToEdit.getEndDate(), is(form.getEndedOn()));
+        assertThat(userToEdit.getEndDate(), is(Timestamp.valueOf(form.getEndedOn().atStartOfDay())));
         assertThat(userToEdit.isAdmin(), is(form.isAdmin()) );
         assertThat(userToEdit.isAutoApprove(), is(form.isAutoApprove()));
     }

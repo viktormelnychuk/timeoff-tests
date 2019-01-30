@@ -49,12 +49,12 @@ public class AllowanceService {
         */
         double nominalAllowance = departmentService.getDepartmentWithId(user.getDepartmentID()).getAllowance();
         // find start day
-        LocalDate userStartDate = user.getStartDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+        LocalDate userStartDate = user.getStartDate();
         LocalDate userEndDate;
         if(user.getEndDate() == null){
             userEndDate = LocalDate.now().with(lastDayOfYear());
         } else {
-            userEndDate = user.getEndDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+            userEndDate = user.getEndDate();
             if(userEndDate.getYear() != LocalDate.now().getYear()){
                 userEndDate = LocalDate.now().with(lastDayOfYear());
             }
