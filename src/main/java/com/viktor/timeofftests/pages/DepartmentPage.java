@@ -1,6 +1,5 @@
 package com.viktor.timeofftests.pages;
 
-import com.viktor.timeofftests.models.Department;
 import com.viktor.timeofftests.pages.partials.modals.AddSupervisorsModal;
 import org.openqa.selenium.By;
 import org.openqa.selenium.TimeoutException;
@@ -35,7 +34,7 @@ public class DepartmentPage extends BasePage {
         fillInputField(nameInp, value);
     }
 
-    public void selectManger(int userId){
+    public void selectManger(int userId) throws Exception {
         selectOption(managerSelect, String.valueOf(userId));
     }
 
@@ -62,7 +61,7 @@ public class DepartmentPage extends BasePage {
         }
     }
 
-    public void setAllowance(int allowance){
+    public void setAllowance(int allowance) throws Exception {
         selectOption(allowanceSelect, String.valueOf(allowance));
     }
 

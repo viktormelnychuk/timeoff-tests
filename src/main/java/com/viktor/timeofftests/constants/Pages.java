@@ -6,4 +6,5 @@ public class Pages {
     public final static String REGISTER = "register";
     public final static String SETTINGS = "settings";
     public final static String DEPARTMENTS = "departments";
+    public static final String EMPLOYEES = "employees";
 }

@@ -13,7 +13,6 @@ public class DbConnection {
         String user = "timeoff";
         String url = "jdbc:postgresql://localhost:5432/timeoff";
         try {
-            log.info("Connecting to db as {}:{}", user, password);
             return DriverManager.getConnection(url, user, password);
         } catch (Exception e){
             log.error("Error connecting to database as {}:{} on url={}",user, password, url, e);

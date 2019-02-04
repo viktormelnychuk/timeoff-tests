@@ -5,10 +5,12 @@ import com.viktor.timeofftests.constants.Pages;
 import com.viktor.timeofftests.constants.TextConstants;
 import com.viktor.timeofftests.pages.CalendarPage;
 import com.viktor.timeofftests.pages.DepartmentsPage;
+import com.viktor.timeofftests.pages.EmployeesPage;
 import com.viktor.timeofftests.pages.LoginPage;
 import cucumber.api.java.en.Given;
 import cucumber.api.java.en.Then;
 import lombok.extern.log4j.Log4j2;
+import org.apache.commons.lang3.StringUtils;
 
 import java.util.Objects;
 
@@ -40,6 +42,9 @@ public class NavigationSteps {
                 break;
             case Pages.DEPARTMENTS:
                 navigateToDepartmentsPage();
+                break;
+            case Pages.EMPLOYEES:
+                navigateToEmployeesPage();
                 break;
             default:
                 throw new Exception("Page was not found");
@@ -84,6 +89,15 @@ public class NavigationSteps {
             calendarPage.menuBar.navigateToDepartments();
         }
     }
+
+    public void navigateToEmployeesPage() {
+        world.driver.get(TextConstants.EmployeesPageConstants.PAGE_URL);
+        String currentUrl = world.driver.getCurrentUrl();
+        if(!Objects.equals(currentUrl, TextConstants.EmployeesPageConstants.PAGE_URL)){
+            CalendarPage calendar = login();
+            calendar.menuBar.clickEmployeesButton();
+        }
+    }
     private CalendarPage login(){
         log.info("Logging in as {}@{}", world.currentUser.getEmail(), world.currentUser.getRawPassword());
         world.driver.get(TextConstants.GeneralSettingsConstants.PAGE_URL);
@@ -93,4 +107,23 @@ public class NavigationSteps {
         return loginPage.clickLoginButton();
     }
 
+    public void navigateToAddEmployeePage() {
+        world.driver.get(TextConstants.AddNewEmployeePage.PAGE_URL);
+        String currentUrl = world.driver.getCurrentUrl();
+        if(!StringUtils.equals(currentUrl, world.driver.getCurrentUrl())){
+            CalendarPage page = login();
+            page.menuBar.clickEmployeesButton();
+            EmployeesPage employeesPage = new EmployeesPage(world.driver);
+            employeesPage.clickAddSingleEmployeeButton();
+        }
+    }
+
+    public void navigateToCalendarPage(String userEmail, String userPassword) {
+        log.info("Logging in as {}@{}", userEmail, userPassword);
+        world.driver.get(TextConstants.LoginPageConstants.PAGE_URL);
+        LoginPage loginPage = new LoginPage(world.driver);
+        loginPage.fillEmail(userEmail);
+        loginPage.fillPassword(userPassword);
+        loginPage.clickLoginButton();
+    }
 }

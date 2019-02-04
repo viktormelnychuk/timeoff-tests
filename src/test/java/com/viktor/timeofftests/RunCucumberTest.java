@@ -9,4 +9,5 @@ import org.junit.runner.RunWith;
         plugin = {"io.qameta.allure.cucumber3jvm.AllureCucumber3Jvm"}
 )
 public class RunCucumberTest {
+
 }

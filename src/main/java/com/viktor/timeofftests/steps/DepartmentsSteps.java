@@ -16,7 +16,6 @@ import java.util.Objects;
 import static com.viktor.timeofftests.matcher.CollectionMatchers.containsAllItems;
 import static com.viktor.timeofftests.matcher.CollectionMatchers.hasAllItemsExcludingProperties;
 import static com.viktor.timeofftests.matcher.MapMatchers.mapContainsAllElements;
-import static org.hamcrest.CoreMatchers.hasItems;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.fail;

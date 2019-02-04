@@ -59,15 +59,15 @@ public class CompanySettings extends BasePage {
         return findOne(timeZoneLabel).getText();
     }
 
-    public void setCompanyCountry (String companyCountry){
+    public void setCompanyCountry (String companyCountry) throws Exception {
         selectOption(countrySelect,companyCountry);
     }
 
-    public void setCompanyDateFormat (String companyDateFormat){
+    public void setCompanyDateFormat (String companyDateFormat) throws Exception {
         selectOption(dateFormatSelect, companyDateFormat);
     }
 
-    public void setCompanyTimeZone (String timeZone){
+    public void setCompanyTimeZone (String timeZone) throws Exception {
         selectOption(timeZoneSelect, timeZone);
     }
 

@@ -1,7 +1,6 @@
 package com.viktor.timeofftests.pages.partials.modals;
 
 import com.viktor.timeofftests.pages.BasePage;
-import com.viktor.timeofftests.pages.DepartmentsPage;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
@@ -24,7 +23,7 @@ public class AddNewDepartmentModal extends BasePage {
         fillInputField(nameInput, name);
     }
 
-    public void selectAllowance(String allowance){
+    public void selectAllowance(String allowance) throws Exception {
         selectOption(allowanceSelect, allowance);
     }
 
@@ -42,7 +41,7 @@ public class AddNewDepartmentModal extends BasePage {
         }
     }
 
-    public AddNewDepartmentModal setBoss (int userId){
+    public AddNewDepartmentModal setBoss (int userId) throws Exception {
         selectOption(bossSelect, String.valueOf(userId));
         return this;
     }

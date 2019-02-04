@@ -8,13 +8,10 @@ import com.viktor.timeofftests.models.User;
 import com.viktor.timeofftests.pages.DepartmentPage;
 import com.viktor.timeofftests.pages.DepartmentsPage;
 import com.viktor.timeofftests.pages.partials.modals.AddNewDepartmentModal;
-import com.viktor.timeofftests.pages.partials.modals.AddSupervisorsModal;
 import com.viktor.timeofftests.services.CompanyService;
 import com.viktor.timeofftests.services.DepartmentService;
 import com.viktor.timeofftests.services.UserService;
-import cucumber.api.java.en.And;
 import cucumber.api.java.en.Given;
-import cucumber.api.java.en.Then;
 import cucumber.api.java.en.When;
 import io.cucumber.datatable.DataTable;
 import lombok.extern.log4j.Log4j2;
@@ -79,7 +76,7 @@ public class DepartmentStepDefs {
     }
 
     @When("I create following department:")
-    public void iCreateFollowingDepartment(DataTable table) {
+    public void iCreateFollowingDepartment(DataTable table) throws Exception {
         log.info("Creating department via UI");
         Map<String, String> data = table.transpose().asMap(String.class, String.class);
         AddNewDepartmentModal modal = new DepartmentsPage(world.driver).clickAddNewDepartmentButton();

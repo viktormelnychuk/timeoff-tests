@@ -99,9 +99,6 @@ public class DepartmentsPage extends BasePage {
         }
         return result;
     }
-    private boolean getBoolFromYesNo(String word){
-        return Objects.equals(word, "Yes");
-    }
 
     public Map<String, String> getDisplayedManagers() {
         Map<String, String> result = new HashMap<>();

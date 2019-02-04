@@ -2,7 +2,6 @@ package com.viktor.timeofftests.pages.partials.settings;
 
 import com.viktor.timeofftests.models.LeaveType;
 import com.viktor.timeofftests.pages.BasePage;
-import com.viktor.timeofftests.pages.GeneralSettingsPage;
 import com.viktor.timeofftests.pages.partials.modals.AddNewLeaveTypeModal;
 import org.openqa.selenium.By;
 import org.openqa.selenium.TimeoutException;

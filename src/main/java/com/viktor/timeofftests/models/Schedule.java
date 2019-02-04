@@ -2,8 +2,10 @@ package com.viktor.timeofftests.models;
 
 import lombok.Data;
 
-import java.sql.Timestamp;
-import java.util.Date;
+
+import java.time.DayOfWeek;
+import java.time.LocalDate;
+
 @Data
 public class Schedule {
     private int id;
@@ -65,6 +67,27 @@ public class Schedule {
             return 1;
         } else {
             return 2;
+        }
+    }
+
+    public boolean isWorkingDay(LocalDate date) throws Exception {
+        DayOfWeek dayOfWeek = date.getDayOfWeek();
+        switch (dayOfWeek){
+            case MONDAY:
+                return this.getMonday() == 1;
+            case TUESDAY:
+                return this.getTuesday() == 1;
+            case WEDNESDAY:
+                return this.getWednesday() == 1;
+            case THURSDAY:
+                return this.getThursday() == 1;
+            case FRIDAY:
+                return this.getFriday() == 1;
+            case SATURDAY:
+                return this.getSaturday() == 1;
+            case SUNDAY:
+                return this.getSunday() == 1;
+            default: throw new Exception("Unknown day of week found");
         }
     }
 }

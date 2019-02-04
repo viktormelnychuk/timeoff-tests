@@ -30,8 +30,6 @@ import java.util.stream.Collectors;
 
 import static com.viktor.timeofftests.matcher.StringMatchers.stringContainsAllSubstringsInAnyOrder;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.notNullValue;
 import static org.junit.Assert.assertEquals;
 
 @Log4j2
@@ -54,7 +52,7 @@ public class SettingsStepDefs {
 
 
     @When("I edit company settings with following:")
-    public void iEditCompanySettingsWithFollowing(DataTable dataTable) {
+    public void iEditCompanySettingsWithFollowing(DataTable dataTable) throws Exception {
         log.info("Starting to edit company settings");
         world.editedCompany = world.currentCompany;
         CompanySettings companySettings = new CompanySettings(world.driver);

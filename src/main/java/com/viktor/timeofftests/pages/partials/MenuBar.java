@@ -63,4 +63,7 @@ public class MenuBar extends BasePage {
     }
 
 
+    public void clickEmployeesButton() {
+        clickButton(this.employeesButton);
+    }
 }

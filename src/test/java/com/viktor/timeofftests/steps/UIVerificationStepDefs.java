@@ -18,11 +18,13 @@ public class UIVerificationStepDefs {
     private SettingsSteps settingsSteps;
     private NavigationSteps navigationSteps;
     private DepartmentsSteps departmentsSteps;
-    public UIVerificationStepDefs(World world, SettingsSteps settingsSteps, NavigationSteps navigationSteps, DepartmentsSteps departmentsSteps){
+    private EmployeesSteps employeesSteps;
+    public UIVerificationStepDefs(World world, SettingsSteps settingsSteps, NavigationSteps navigationSteps, DepartmentsSteps departmentsSteps, EmployeesSteps employeesSteps){
         this.world = world;
         this.settingsSteps = settingsSteps;
         this.navigationSteps = navigationSteps;
         this.departmentsSteps = departmentsSteps;
+        this.employeesSteps = employeesSteps;
     }
 
     @And("^the \"([^\"]*)\" page should be opened$")
@@ -68,6 +70,10 @@ public class UIVerificationStepDefs {
             case "departments":
                 navigationSteps.navigateToDepartmentsPage();
                 departmentsSteps.validateDepartmentsPage();
+                break;
+            case "employees":
+                navigationSteps.navigateToEmployeesPage();
+                employeesSteps.validateEmployeesTable();
                 break;
             default:
                 throw new Exception("Page is not known");

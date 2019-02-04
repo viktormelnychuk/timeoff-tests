@@ -1,6 +1,5 @@
 package com.viktor.timeofftests.pages;
 
-import com.viktor.timeofftests.common.Constants;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 

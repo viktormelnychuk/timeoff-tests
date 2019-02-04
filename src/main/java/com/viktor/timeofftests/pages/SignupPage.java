@@ -1,8 +1,4 @@
 package com.viktor.timeofftests.pages;
-
-import com.viktor.timeofftests.common.Constants;
-import com.viktor.timeofftests.models.User;
-import com.viktor.timeofftests.services.UserService;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 
@@ -56,11 +52,11 @@ public class SignupPage extends BasePage{
         fillInputField(this.confirmPassword, value);
     }
 
-    public void selectCountry(String value) {
+    public void selectCountry(String value) throws Exception {
         selectOption(this.country, value);
     }
 
-    public void  selectTimeZone(String value){
+    public void  selectTimeZone(String value) throws Exception {
         selectOption(this.timezone, value);
     }
 

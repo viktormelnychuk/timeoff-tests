@@ -1,15 +1,12 @@
 package com.viktor.timeofftests.models;
 
 import com.viktor.timeofftests.common.Constants;
-import com.viktor.timeofftests.services.CompanyService;
-import com.viktor.timeofftests.services.DepartmentService;
 import lombok.Data;
 import lombok.extern.log4j.Log4j2;
 import org.apache.commons.codec.digest.DigestUtils;
 
 import java.nio.charset.StandardCharsets;
-import java.sql.Timestamp;
-import java.util.Date;
+import java.time.LocalDate;
 
 @Data
 @Log4j2
@@ -23,8 +20,8 @@ public class User {
     private boolean activated;
     private boolean admin;
     private boolean autoApprove;
-    private Timestamp startDate;
-    private Timestamp endDate;
+    private LocalDate startDate;
+    private LocalDate endDate;
     private int companyID;
     private int departmentID;
     private String departmentName;
@@ -47,8 +44,8 @@ public class User {
         private boolean activated = true;
         private boolean admin = false;
         private boolean autoApprove = false;
-        private Timestamp startDate = new Timestamp(new Date().getTime());
-        private Timestamp endDate;
+        private LocalDate startDate = LocalDate.now();
+        private LocalDate endDate;
         private int companyID;
         private int departmentID;
 
@@ -127,27 +124,28 @@ public class User {
             return this;
         }
 
-        public Builder startedOn (Date date){
+        public Builder startedOn (LocalDate date){
             if(date == null){
-                this.startDate = new Timestamp(new Date().getTime());
+                this.startDate = LocalDate.now();
                 return this;
             }
-            this.startDate = new Timestamp(date.getTime());
+            this.startDate = date;
             return this;
         }
 
-        public Builder endedOn (Date date){
+
+        public Builder endedOn (LocalDate date){
             if(date == null){
                 this.endDate = null;
                 return this;
             }
-            this.endDate = new Timestamp(date.getTime());
+            this.endDate = date;
             return this;
         }
 
         public User build(){
             if(this.startDate == null){
-                this.startDate = new Timestamp(new Date().getTime());
+                this.startDate = LocalDate.now();
             }
             User user = new User();
             user.setEmail(this.email);

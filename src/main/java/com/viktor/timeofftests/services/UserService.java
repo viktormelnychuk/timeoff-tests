@@ -5,15 +5,14 @@ import com.viktor.timeofftests.common.db.DbConnection;
 import com.viktor.timeofftests.models.Company;
 import com.viktor.timeofftests.models.Department;
 import com.viktor.timeofftests.models.User;
-import com.viktor.timeofftests.pools.DepartmentPool;
 import com.viktor.timeofftests.pools.UserPool;
 import lombok.extern.log4j.Log4j2;
-import org.apache.commons.lang3.StringUtils;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Timestamp;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
@@ -61,8 +60,12 @@ public class UserService {
             insertUser.setBoolean(5,user.isActivated());
             insertUser.setBoolean(6, user.isAdmin());
             insertUser.setBoolean(7, user.isAutoApprove());
-            insertUser.setTimestamp(8,user.getStartDate() );
-            insertUser.setTimestamp(9, user.getEndDate());
+            insertUser.setTimestamp(8,Timestamp.valueOf(user.getStartDate().atStartOfDay()));
+            if(user.getEndDate() != null){
+                insertUser.setTimestamp(9, Timestamp.valueOf(user.getEndDate().atStartOfDay()));
+            } else {
+                insertUser.setTimestamp(9, null);
+            }
             insertUser.setTimestamp(10, new Timestamp(new Date().getTime()));
             insertUser.setTimestamp(11, new Timestamp(new Date().getTime()));
             insertUser.setInt(12, user.getCompanyID());
@@ -206,8 +209,12 @@ public class UserService {
             user.setActivated(set.getBoolean("activated"));
             user.setAdmin(set.getBoolean("admin"));
             user.setAutoApprove(set.getBoolean("auto_approve"));
-            user.setStartDate(set.getTimestamp("start_date"));
-            user.setEndDate(set.getTimestamp("end_date"));
+            user.setStartDate(set.getTimestamp("start_date").toLocalDateTime().toLocalDate());
+            if(set.getTimestamp("end_date")==null){
+                user.setEndDate(null);
+            } else {
+                user.setEndDate(set.getTimestamp("end_date").toLocalDateTime().toLocalDate());
+            }
             user.setCompanyID(set.getInt("companyId"));
             user.setDepartmentID(set.getInt("DepartmentId"));
             return user;
@@ -257,4 +264,13 @@ public class UserService {
         }
         return result;
     }
+
+    public List<User> insertMultipleUsers(List<User> usersToInsert) {
+        List<User> result = new ArrayList<>();
+        for (User user : usersToInsert) {
+            result.add(createNewUser(user));
+        }
+        return result;
+    }
+
 }
