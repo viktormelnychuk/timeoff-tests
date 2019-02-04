@@ -48,8 +48,7 @@ public abstract class BasePage extends ConciseAPI {
         Logger logger = LogManager.getLogger(this.getClass());
         logger.debug("Filling [{}] found [{}] with value '{}'", element.getTagName(), locator.toString(), value);
     }
-
-    protected void selectOption(By locator, String text) throws Exception {
+   protected void selectOption(By locator, String text) throws Exception {
         WebElement element = findOne(locator);
         Logger logger = LogManager.getLogger(this.getClass());
         Select select = new Select(element);
@@ -73,40 +72,40 @@ public abstract class BasePage extends ConciseAPI {
         if(!selected){
             throw new Exception("Could not find option");
         }
-    }
+   }
 
-    protected void setCheckBox(By locator, boolean b){
+   protected void setCheckBox(By locator, boolean b){
         Logger logger = LogManager.getLogger(this.getClass());
         logger.debug("Setting checkbox found [{}] to [{}]", locator, b);
         WebElement element = findOne(locator);
         if(element.isSelected() != b){
             clickButton(locator);
         }
-    }
+   }
 
    protected void clickButton(By locator){
         WebElement element = findOne(locator);
         Logger logger = LogManager.getLogger(this.getClass());
         logger.debug("Clicking on the <{}> found by [{}]", element.getTagName(), locator);
         element.click();
-    }
+   }
 
-    protected String getInputValue (By locator) {
+   protected String getInputValue (By locator) {
         Logger logger = LogManager.getLogger(this.getClass());
         logger.debug("Getting value of input field {}",locator);
         return findOne(locator).getAttribute("value");
-    }
-    protected String getSelectedOption(By locator){
+   }
+   protected String getSelectedOption(By locator){
         Select select = new Select(findOne(locator));
         return select.getFirstSelectedOption().getText();
-    }
+   }
 
-    protected String getSelectedOptionValue(By locator){
+   protected String getSelectedOptionValue(By locator){
         Select select = new Select(findOne(locator));
         return select.getFirstSelectedOption().getAttribute("value");
-    }
+   }
 
-    protected boolean getBoolFromYesNo(String word){
+   protected boolean getBoolFromYesNo(String word){
         return Objects.equals(word, "Yes");
     }
 }

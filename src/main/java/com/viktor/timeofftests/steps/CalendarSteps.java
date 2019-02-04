@@ -53,6 +53,10 @@ public class CalendarSteps {
         User departmentAdmin = userService.getUserWithId(department.getBossId());
         assertThat(calendarPage.getSupervisorEmail(), is(departmentAdmin.getEmail()));
         assertThat(calendarPage.getSupervisorName(), is(departmentAdmin.getFullName()));
+        assertThat(calendarPage.getDepartmentName(), is(department.getName()));
         assertThat(calendarPage.menuBar.employeesButtonDisplayed(), is(user.isAdmin()));
+
+        //validate department section
+
     }
 }
