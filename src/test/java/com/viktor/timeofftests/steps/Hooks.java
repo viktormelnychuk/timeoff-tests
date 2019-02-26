@@ -41,7 +41,7 @@ public class Hooks {
 
     @Before
     public void beforeHook(Scenario scenario) {
-        Logger logger = LogManager.getLogger("asd");
+        Logger logger = LogManager.getLogger();
         String l = "=============================";
         logger.info(l+"Running: "+scenario.getName()+l);
         DBUtil.cleanDB();
