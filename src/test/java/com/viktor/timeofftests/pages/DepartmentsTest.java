@@ -25,6 +25,7 @@ public class DepartmentsTest extends BaseTest {
     private DepartmentService departmentService = DepartmentService.getInstance();
     private User user;
     private DepartmentsPage departmentsPage;
+
     @BeforeEach
     void prepare(){
         WebDriver driver = getDriver();
