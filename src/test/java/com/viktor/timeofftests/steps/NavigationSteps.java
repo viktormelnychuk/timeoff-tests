@@ -3,18 +3,16 @@ package com.viktor.timeofftests.steps;
 import com.viktor.timeofftests.common.World;
 import com.viktor.timeofftests.constants.Pages;
 import com.viktor.timeofftests.constants.TextConstants;
-import com.viktor.timeofftests.pages.CalendarPage;
+import com.viktor.timeofftests.models.User;
 import com.viktor.timeofftests.pages.DepartmentsPage;
 import com.viktor.timeofftests.pages.EmployeesPage;
-import com.viktor.timeofftests.pages.LoginPage;
 import cucumber.api.java.en.Given;
 import cucumber.api.java.en.Then;
 import lombok.extern.log4j.Log4j2;
-import org.apache.commons.lang3.StringUtils;
 
-import java.util.Objects;
 
 import static org.junit.Assert.*;
+import static com.viktor.timeofftests.common.DriverUtil.simulateLoginForUser;
 @Log4j2
 public class NavigationSteps {
 
@@ -29,7 +27,7 @@ public class NavigationSteps {
         log.info("Navigating to [{}] page", page);
         switch (page.toLowerCase()){
             case Pages.CALENDAR:
-                world.driver.get(TextConstants.CalendarPageConstants.PAGE_URL);
+                navigateWithoutActualLogin(TextConstants.CalendarPageConstants.PAGE_URL);
                 break;
             case Pages.LOGIN:
                 world.driver.get(TextConstants.LoginPageConstants.PAGE_URL);
@@ -38,13 +36,13 @@ public class NavigationSteps {
                 world.driver.get(TextConstants.RegisterPageConstants.PAGE_URL);
                 break;
             case Pages.SETTINGS:
-                navigateToGeneralSettings();
+                navigateWithoutActualLogin(TextConstants.GeneralSettingsConstants.PAGE_URL);
                 break;
             case Pages.DEPARTMENTS:
-                navigateToDepartmentsPage();
+                navigateWithoutActualLogin(TextConstants.DepartmentsConstants.PAGE_URL);
                 break;
             case Pages.EMPLOYEES:
-                navigateToEmployeesPage();
+                navigateWithoutActualLogin(TextConstants.EmployeesPageConstants.PAGE_URL);
                 break;
             default:
                 throw new Exception("Page was not found");
@@ -70,60 +68,24 @@ public class NavigationSteps {
     }
     @Given("I am on {string} department page")
     public void iAmOnDepartmentPage(String departmentName) {
-        navigateToDepartmentsPage();
+        navigateWithoutActualLogin(TextConstants.DepartmentsConstants.PAGE_URL);
         DepartmentsPage page = new DepartmentsPage(world.driver);
         page.clickDepartmentLink(departmentName);
     }
-    public void navigateToGeneralSettings() {
-        String currentUrl = world.driver.getCurrentUrl();
-        if(!Objects.equals(currentUrl, TextConstants.GeneralSettingsConstants.PAGE_URL)){
-            CalendarPage calendarPage = login();
-            calendarPage.menuBar.navigateToGeneralSettings();
-        }
+    public void navigateWithoutActualLogin(String pageUrl){
+        simulateLoginForUser(world.currentUser.getId(), world.driver);
+        world.driver.get(pageUrl);
     }
-    public void navigateToDepartmentsPage(){
-        world.driver.get(TextConstants.DepartmentsConstants.PAGE_URL);
-        String currentUrl = world.driver.getCurrentUrl();
-        if(!Objects.equals(currentUrl, TextConstants.DepartmentsConstants.PAGE_URL)){
-            CalendarPage calendarPage = login();
-            calendarPage.menuBar.navigateToDepartments();
-        }
-    }
-
-    public void navigateToEmployeesPage() {
-        world.driver.get(TextConstants.EmployeesPageConstants.PAGE_URL);
-        String currentUrl = world.driver.getCurrentUrl();
-        if(!Objects.equals(currentUrl, TextConstants.EmployeesPageConstants.PAGE_URL)){
-            CalendarPage calendar = login();
-            calendar.menuBar.clickEmployeesButton();
-        }
-    }
-    private CalendarPage login(){
-        log.info("Logging in as {}@{}", world.currentUser.getEmail(), world.currentUser.getRawPassword());
-        world.driver.get(TextConstants.GeneralSettingsConstants.PAGE_URL);
-        LoginPage loginPage = new LoginPage(world.driver);
-        loginPage.fillEmail(world.currentUser.getEmail());
-        loginPage.fillPassword(world.currentUser.getRawPassword());
-        return loginPage.clickLoginButton();
-    }
-
     public void navigateToAddEmployeePage() {
-        world.driver.get(TextConstants.AddNewEmployeePage.PAGE_URL);
-        String currentUrl = world.driver.getCurrentUrl();
-        if(!StringUtils.equals(currentUrl, world.driver.getCurrentUrl())){
-            CalendarPage page = login();
-            page.menuBar.clickEmployeesButton();
-            EmployeesPage employeesPage = new EmployeesPage(world.driver);
-            employeesPage.clickAddSingleEmployeeButton();
-        }
+        navigateWithoutActualLogin(TextConstants.AddNewEmployeePage.PAGE_URL);
+        new EmployeesPage(world.driver)
+                .clickAddSingleEmployeeButton();
+
+
     }
 
-    public void navigateToCalendarPage(String userEmail, String userPassword) {
-        log.info("Logging in as {}@{}", userEmail, userPassword);
-        world.driver.get(TextConstants.LoginPageConstants.PAGE_URL);
-        LoginPage loginPage = new LoginPage(world.driver);
-        loginPage.fillEmail(userEmail);
-        loginPage.fillPassword(userPassword);
-        loginPage.clickLoginButton();
+    public void navigateWithoutActualLogin(User user, String pageUrl) {
+        simulateLoginForUser(user.getId(), world.driver);
+        world.driver.get(pageUrl);
     }
 }

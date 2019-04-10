@@ -2,6 +2,7 @@ package com.viktor.timeofftests.steps;
 
 import com.viktor.timeofftests.common.World;
 import com.viktor.timeofftests.constants.Pages;
+import com.viktor.timeofftests.constants.TextConstants;
 import com.viktor.timeofftests.pages.GeneralSettingsPage;
 import com.viktor.timeofftests.pages.partials.modals.NewAbsenceModal;
 import cucumber.api.java.en.And;
@@ -68,11 +69,11 @@ public class UIVerificationStepDefs {
                 settingsSteps.validateDisplayedLeaveTypes(world.currentCompany.getId());
                 break;
             case "departments":
-                navigationSteps.navigateToDepartmentsPage();
+                navigationSteps.navigateWithoutActualLogin(TextConstants.DepartmentsConstants.PAGE_URL);
                 departmentsSteps.validateDepartmentsPage();
                 break;
             case "employees":
-                navigationSteps.navigateToEmployeesPage();
+                navigationSteps.navigateWithoutActualLogin(TextConstants.EmployeesPageConstants.PAGE_URL);
                 employeesSteps.validateEmployeesTable();
                 break;
             default:

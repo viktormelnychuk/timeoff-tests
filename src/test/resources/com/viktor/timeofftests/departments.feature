@@ -31,8 +31,8 @@ Feature: Tests for departments
     Examples:
       | name         | allowance | include_pub_holidays | accrued_allowance | boss               |
       | Department 1 | 10        | true                 | true              | tester@viktor.com  |
-      | Department 2 | 20        | false                | true              | tester2@viktor.com |
-      | Department 3 | 5         | false                | false             | tester3@viktor.com |
+      #| Department 2 | 20        | false                | true              | tester2@viktor.com |
+      #| Department 3 | 5         | false                | false             | tester3@viktor.com |
 
   Scenario Outline: Edit department
 

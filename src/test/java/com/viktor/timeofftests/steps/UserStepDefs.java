@@ -2,6 +2,7 @@ package com.viktor.timeofftests.steps;
 
 import com.viktor.timeofftests.common.Constants;
 import com.viktor.timeofftests.common.World;
+import com.viktor.timeofftests.constants.TextConstants;
 import com.viktor.timeofftests.forms.EmployeeForm;
 import com.viktor.timeofftests.models.Company;
 import com.viktor.timeofftests.models.Department;
@@ -103,9 +104,9 @@ public class UserStepDefs {
     public void userWithEmailShouldSeeCorrectInfo(String email) throws Exception {
         User user = userService.getUserWithEmail(email);
         if(StringUtils.isEmpty(world.editedUserForm.getPassword())){
-            navigationSteps.navigateToCalendarPage(user.getEmail(), Constants.DEFAULT_USER_PASSWORD);
+            navigationSteps.navigateWithoutActualLogin(user, TextConstants.CalendarPageConstants.PAGE_URL);
         } else {
-            navigationSteps.navigateToCalendarPage(user.getEmail(), world.editedUserForm.getPassword());
+            navigationSteps.navigateWithoutActualLogin(user,TextConstants.CalendarPageConstants.PAGE_URL);
         }
         calendarSteps.validateCalendarPage(user);
     }

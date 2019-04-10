@@ -24,7 +24,7 @@ public class DriverUtil {
             } else {
                 ChromeOptions chromeOptions = new ChromeOptions();
                 chromeOptions.addArguments("headless");
-                WebDriver driver = new ChromeDriver(chromeOptions);
+                WebDriver driver = new ChromeDriver();
                 driver.manage().window().maximize();
                 return driver;
             }
@@ -57,8 +57,6 @@ public class DriverUtil {
         log.info("Inserting cookies for user with id={}", userId);
         Session s = sessionService.insertNewSessionForUserId(userId);
         setSessionCookie(s, driver);
-        log.info("Navigating to Calendar page");
-        driver.get("http://localhost:3000/calendar/");
     }
 
     public static void setSessionCookie(Session session, WebDriver driver){
