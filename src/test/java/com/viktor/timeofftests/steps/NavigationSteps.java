@@ -78,10 +78,6 @@ public class NavigationSteps {
     }
     public void navigateToAddEmployeePage() {
         navigateWithoutActualLogin(TextConstants.AddNewEmployeePage.PAGE_URL);
-        new EmployeesPage(world.driver)
-                .clickAddSingleEmployeeButton();
-
-
     }
 
     public void navigateWithoutActualLogin(User user, String pageUrl) {
