@@ -31,8 +31,8 @@ Feature: Tests for departments
     Examples:
       | name         | allowance | include_pub_holidays | accrued_allowance | boss               |
       | Department 1 | 10        | true                 | true              | tester@viktor.com  |
-      #| Department 2 | 20        | false                | true              | tester2@viktor.com |
-      #| Department 3 | 5         | false                | false             | tester3@viktor.com |
+      | Department 2 | 20        | false                | true              | tester2@viktor.com |
+      | Department 3 | 5         | false                | false             | tester3@viktor.com |
 
   Scenario Outline: Edit department
 
@@ -83,5 +83,15 @@ Feature: Tests for departments
     | Department 3 | add       | 1      |
     | Department 4 | add       | 4      |
 
-
+  Scenario: Delete department department
+    Given following departments are created:
+    |name          | num_of_users |
+    | Department 1 | 0            |
+    | Department 2 | 3            |
+    And I am on "departments" page
+    When I delete department with name "Department 1"
+    Then department with name "Department 1" is deleted
+    
+    When I delete department with name "Department 2"
+    Then I should see alert "some alert" on the page
 

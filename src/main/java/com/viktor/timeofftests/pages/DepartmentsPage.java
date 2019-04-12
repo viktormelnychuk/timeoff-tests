@@ -59,8 +59,9 @@ public class DepartmentsPage extends BasePage {
         return new AddNewDepartmentModal(this.driver);
     }
 
-    public void clickDepartmentLink(String name) {
+    public DepartmentPage clickDepartmentLink(String name) {
         clickButton(By.linkText(name));
+        return new DepartmentPage(driver);
     }
     public List<Department> deserializeDepartments(int companyId) {
         List<Department> result = new ArrayList<>();

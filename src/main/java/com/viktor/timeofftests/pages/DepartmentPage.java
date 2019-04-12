@@ -23,6 +23,7 @@ public class DepartmentPage extends BasePage {
     private By alert = By.xpath("//div[@role='alert']");
     private By addNewSecondarySupervisorLink = By.xpath("//form[@id='department_edit_form']//a[@data-vpp-add-new-secondary-supervisor='1']");
     private By allSecondarySupervisors = By.xpath("//form[@id='department_edit_form']//ul//li[descendant::button]");
+    private By deleteButton = By.id("remove_btn");
     private String deleteSecondarySupervisorQuery = "//button[@name='remove_supervisor_id' and @value='%s']";
 
     @Override
@@ -116,5 +117,9 @@ public class DepartmentPage extends BasePage {
 
     public boolean isAccruedAllowance(){
         return findOne(accruedCheck).isSelected();
+    }
+
+    public void clickDeleteButton() {
+        findOne(this.deleteButton).click();
     }
 }

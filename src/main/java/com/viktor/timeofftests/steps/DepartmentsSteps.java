@@ -151,4 +151,11 @@ public class DepartmentsSteps {
         List<Integer> departmentSupervisors = departmentService.getDepartmentSupervisors(department.getId());
         assertThat(displayedSecondaryApprovers, containsAllItems(departmentSupervisors));
     }
+
+    public void removeDepartment(String departmentName) {
+        log.info("Removing department with name {}", departmentName);
+        DepartmentsPage departmentsPage = new DepartmentsPage(world.driver);
+        DepartmentPage departmentPage = departmentsPage.clickDepartmentLink(departmentName);
+        departmentPage.clickDeleteButton();
+    }
 }
