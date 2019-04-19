@@ -21,4 +21,5 @@ public class World {
     public List<Department> allDepartments = new ArrayList<>();
     public List<User> allUsers = new ArrayList<>();
     public EmployeeForm editedUserForm;
+    public int deletedUserId;
 }

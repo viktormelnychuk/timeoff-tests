@@ -7,6 +7,7 @@ public class EmployeePage extends EmployeeBasePage {
     private WebDriver driver;
 
     private By saveButton = By.id("save_changes_btn");
+    private By deleteButton = By.id("remove_btn");
     @Override
     public String getBaseUrl() {
         return null;
@@ -19,5 +20,9 @@ public class EmployeePage extends EmployeeBasePage {
 
     public void clickSaveChangesButton() {
         clickButton(saveButton);
+    }
+
+    public void clickDeleteButton() {
+        clickButton(deleteButton);
     }
 }

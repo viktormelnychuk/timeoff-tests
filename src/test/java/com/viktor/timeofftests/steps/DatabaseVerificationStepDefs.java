@@ -11,6 +11,7 @@ import com.viktor.timeofftests.services.ScheduleService;
 import com.viktor.timeofftests.services.UserService;
 import cucumber.api.java.en.Then;
 import lombok.extern.log4j.Log4j2;
+import org.apache.commons.lang3.StringUtils;
 
 import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.*;
@@ -112,5 +113,17 @@ public class DatabaseVerificationStepDefs {
         log.info("Verifying company with name [{}] exist", arg0);
         Company company = companyService.getCompanyWithName(arg0);
         assertThat(company, is(notNullValue()));
+    }
+
+
+    @Then("user is {string}")
+    public void userIs(String resultOfDeletion) {
+        if(StringUtils.equals(resultOfDeletion,"deleted")){
+            User userWithId = userService.getUserWithId(world.deletedUserId);
+            assertThat(userWithId, nullValue());
+        } else if (StringUtils.equals(resultOfDeletion,"not deleted")){
+            User userWithId = userService.getUserWithId(world.deletedUserId);
+            assertThat(userWithId, notNullValue());
+        }
     }
 }

@@ -83,7 +83,7 @@ Feature: Tests for departments
     | Department 3 | add       | 1      |
     | Department 4 | add       | 4      |
 
-  Scenario: Delete department department
+  Scenario: Delete department
     Given following departments are created:
     |name          | num_of_users |
     | Department 1 | 0            |

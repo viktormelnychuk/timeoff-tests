@@ -109,4 +109,22 @@ Feature: Check the employees page
         | tester2@viktor.com | James               | Brown                 | Sales                 | false             | false                   | in past             |                    | 1234              | tester2@viktor.com |             |              |              |         |                |    in past   |            | 4321       | 4321                    |
         | tester2@viktor.com | James               | Brown                 | Sales                 | false             | false                   | in past             |                    | 1234              | tester2@viktor.com |             |              |              |         |       true     |              |            |            |                         |
 
+    Scenario Outline: Remove employee
+      Given following departments are created:
+      | name         | num_of_users |multiple_supervisors | amount_of_secondary_supervisors |
+      | Department 1 | 3            | do not do           |                                 |
+      | Department 2 | 5            | do                  | 2                               |
+      And I am on "employees" page
+
+      When I delete "<user_role>" user from department with name "<department_name>"
+
+      Then user is "<result>"
+      Then I should see alert "<alert>" on the page
+
+      Examples:
+       | department_name | user_role  | result       | alert                                                  |
+       | Department 1    | regular    | deleted      | Employee records were removed from the system          |
+       | Department 1    | manager    | not deleted  | Failed to remove user. Error: Cannot remove supervisor |
+       | Department 2    | supervisor | not deleted  | Failed to remove user. Error: Cannot remove supervisor |
+
 

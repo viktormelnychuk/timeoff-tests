@@ -184,7 +184,6 @@ public class DepartmentService {
                 if(set.getInt("id")!=departmentAdminId){
                     users.add(set.getInt("id"));
                 }
-
             }
             return users;
         } catch (Exception e){
@@ -223,12 +222,15 @@ public class DepartmentService {
                     " VALUES(?," +
                     "        (SELECT \"Users\".id FROM \"Users\" WHERE" +
                     "              \"Users\".id !=(SELECT \"Departments\".\"bossId\" FROM \"Departments\" WHERE \"Departments\".id = ?) AND" +
-                    "              \"Users\".id NOT IN (SELECT \"DepartmentSupervisor\".user_id FROM \"DepartmentSupervisor\") LIMIT 1)," +
+                    "              \"Users\".id NOT IN (SELECT \"DepartmentSupervisor\".user_id FROM \"DepartmentSupervisor\")" +
+                    "AND \"Users\".\"DepartmentId\" = ?"+
+                    " LIMIT 1)," +
                     "        ?);";
             PreparedStatement statement = connection.prepareStatement(sql);
             statement.setInt(1, departmentID);
             statement.setInt(2, departmentID);
-            statement.setTimestamp(3, new Timestamp(new Date().getTime()));
+            statement.setInt(3, departmentID);
+            statement.setTimestamp(4, new Timestamp(new Date().getTime()));
             log.debug("Executing {}", statement);
             int rowsAffected = statement.executeUpdate();
             if(rowsAffected == 0){
