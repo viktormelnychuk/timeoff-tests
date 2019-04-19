@@ -49,10 +49,9 @@ public class UIVerificationStepDefs {
     @Then("^I should see alert \"([^\"]*)\" on the page$")
     public void iShouldSeeAlertAlertOnThePage(String alert) {
         log.info("Verifying [{}] alert is displayed", alert);
-        String actual = world.driver.findElement(By.xpath("//div[@role='alert' and @class='alert alert-danger']")).getText();
+        String actual = world.driver.findElement(By.xpath("//div[@role='alert' and contains(@class,'alert')]")).getText();
         assertEquals(alert, actual);
     }
-
 
     @Then("^\"([^\"]*)\" page should reflect correct information$")
     public void companySettingsPageShouldReflectCorrectInformation(String page) throws Exception {

@@ -67,6 +67,13 @@ public class DatabaseVerificationStepDefs {
         log.info("Verifying department with name [{}] exists in database", departmentName);
         assertNotNull("department was not found", department);
     }
+    @Then("department with name \"([^\"]*)\" should not be present in database")
+    public void departmentWithNameShouldNotBePresentInDatabase(String departmentName) {
+        Department department = departmentService.getDepartmentWithName(departmentName);
+        log.info("Verifying department with name [{}] does not exist in database", departmentName);
+        assertNotNull("department was found", department);
+    }
+
 
     @Then("^user \"([^\"]*)\" should be in \"([^\"]*)\" company and \"([^\"]*)\" department$")
     public void userShouldBeInCompanyAndDepartment(String email, String companyName, String departmentName) {

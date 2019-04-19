@@ -11,6 +11,7 @@ import com.viktor.timeofftests.pages.partials.modals.AddNewDepartmentModal;
 import com.viktor.timeofftests.services.CompanyService;
 import com.viktor.timeofftests.services.DepartmentService;
 import com.viktor.timeofftests.services.UserService;
+import cucumber.api.java.en.And;
 import cucumber.api.java.en.Given;
 import cucumber.api.java.en.Then;
 import cucumber.api.java.en.When;
@@ -31,13 +32,14 @@ public class DepartmentStepDefs {
     private DepartmentService departmentService;
     private UserService userService;
     private DepartmentsSteps departmentsSteps;
-
-    public DepartmentStepDefs(World world, CompanyService companyService, DepartmentService departmentService, UserService userService, DepartmentsSteps departmentsSteps){
+    private DatabaseVerificationStepDefs databaseVerificationSteps;
+    public DepartmentStepDefs(World world, CompanyService companyService, DepartmentService departmentService, UserService userService, DepartmentsSteps departmentsSteps, DatabaseVerificationStepDefs databaseVerificationSteps){
         this.world = world;
         this.companyService = companyService;
         this.departmentService = departmentService;
         this.userService = userService;
         this.departmentsSteps = departmentsSteps;
+        this.databaseVerificationSteps = databaseVerificationSteps;
     }
 
     @Given("default department {string} in {string} company is created")
@@ -165,6 +167,13 @@ public class DepartmentStepDefs {
 
     @Then("department with name {string} is deleted")
     public void departmentWithNameIsDeleted(String departmentName) {
+        departmentsSteps.validateDepartmentIsNotPreset(departmentName);
+        departmentsSteps.validateDepartmentsPage();
 
+    }
+
+    @And("department with name {string} is not deleted")
+    public void departmentWithNameIsNotDeleted(String departmentName) {
+        departmentsSteps.validateDepartmentIsPresent(departmentName);
     }
 }

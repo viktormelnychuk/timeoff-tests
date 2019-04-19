@@ -91,7 +91,9 @@ Feature: Tests for departments
     And I am on "departments" page
     When I delete department with name "Department 1"
     Then department with name "Department 1" is deleted
-    
+    And I should see alert "Department was successfully removed" on the page
+
     When I delete department with name "Department 2"
-    Then I should see alert "some alert" on the page
+    Then I should see alert "Cannot remove department Department 2 as it still has 3 users." on the page
+    And department with name "Department 2" is not deleted
 

@@ -16,9 +16,8 @@ import java.util.Objects;
 import static com.viktor.timeofftests.matcher.CollectionMatchers.containsAllItems;
 import static com.viktor.timeofftests.matcher.CollectionMatchers.hasAllItemsExcludingProperties;
 import static com.viktor.timeofftests.matcher.MapMatchers.mapContainsAllElements;
-import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.assertThat;
-import static org.junit.Assert.fail;
+import static org.hamcrest.CoreMatchers.*;
+import static org.junit.Assert.*;
 
 @Log4j2
 public class DepartmentsSteps {
@@ -157,5 +156,17 @@ public class DepartmentsSteps {
         DepartmentsPage departmentsPage = new DepartmentsPage(world.driver);
         DepartmentPage departmentPage = departmentsPage.clickDepartmentLink(departmentName);
         departmentPage.clickDeleteButton();
+    }
+
+    public void validateDepartmentIsNotPreset(String departmentName) {
+        log.info("Validaitng department [{}] does not exist in database", departmentName);
+        Department department = departmentService.getDepartmentWithName(departmentName);
+        assertThat(department, nullValue());
+    }
+
+    public void validateDepartmentIsPresent(String departmentName) {
+        log.info("Validaitng department [{}] exists in database", departmentName);
+        Department department = departmentService.getDepartmentWithName(departmentName);
+        assertThat(department, notNullValue());
     }
 }

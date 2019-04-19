@@ -24,7 +24,7 @@ public class DriverUtil {
             } else {
                 ChromeOptions chromeOptions = new ChromeOptions();
                 chromeOptions.addArguments("headless");
-                WebDriver driver = new ChromeDriver(chromeOptions);
+                WebDriver driver = new ChromeDriver();
                 driver.manage().window().maximize();
                 return driver;
             }
