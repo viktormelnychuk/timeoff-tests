@@ -34,11 +34,7 @@ public class LeaveType {
         }
 
         if(StringUtils.isNotEmpty(data.get("use_allowance"))){
-            if(data.get("use_allowance").equals("true")){
-                this.useAllowance = true;
-            } else {
-                this.useAllowance = false;
-            }
+            this.useAllowance = data.get("use_allowance").equals("true");
         }
 
         if(StringUtils.isNotEmpty(data.get("limit"))){

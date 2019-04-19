@@ -80,7 +80,7 @@ public class SessionService {
             sha256_HMAC.init(secretKey);
             Base64.Encoder encoder = Base64.getEncoder();
             String signature = encoder.encodeToString(sha256_HMAC.doFinal(session.getSid().getBytes(StandardCharsets.UTF_8)));
-            signature = signature.replaceAll("\\=+$","");
+            signature = signature.replaceAll("=+$","");
             String connectionSid = URLEncoder.encode("s:"+session.getSid()+"."+signature,StandardCharsets.UTF_8.toString());
             session.setSid(connectionSid);
         } catch (Exception ex){

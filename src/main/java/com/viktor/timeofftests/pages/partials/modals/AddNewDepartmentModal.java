@@ -6,7 +6,6 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 
 public class AddNewDepartmentModal extends BasePage {
-    private WebDriver driver;
     private By nameInput = By.id("department_name_new");
     private By allowanceSelect = By.xpath("//select[@name='allowance__new']");
     private By includePublicChk = By.id("department_include_public_holiday_new");
@@ -16,7 +15,7 @@ public class AddNewDepartmentModal extends BasePage {
     private By form = By.id("add_new_department_form");
     public AddNewDepartmentModal(WebDriver driver){
         super(driver);
-        this.driver = driver;
+        WebDriver driver1 = driver;
     }
 
     public void fillName(String name){

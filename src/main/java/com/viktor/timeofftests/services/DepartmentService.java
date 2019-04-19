@@ -73,27 +73,6 @@ public class DepartmentService {
             DBUtil.closeConnection(connection);
         }
     }
-    public Department getOneExistingDepartment(int companyID) {
-        log.debug("Getting 1 department in company with id={}", companyID);
-        Connection connection = DbConnection.getConnection();
-        try{
-            String sql = "SELECT * FROM \"Departments\" WHERE \"companyId\"=?";
-            PreparedStatement statement = connection.prepareStatement(sql, ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_READ_ONLY);
-            statement.setInt(1, companyID);
-            log.debug("Executing {}", statement);
-            ResultSet set = statement.executeQuery();
-            set.last();
-            if(set.getRow() > 1){
-                throw new Exception(String.format("Company with id=%d contains more than 1 department." +
-                        " Please set departmentId explicitly", companyID));
-            }
-            set.first();
-            return deserializeDepartment(set);
-        } catch (Exception e){
-            log.error("Error getting department for company with id={}", companyID, e);
-            return null;
-        }
-    }
 
     public List<Department> getAllDepartmentsForCompany(int companyID) {
         log.debug("Getting all departments for company with id={}", companyID);
@@ -138,10 +117,6 @@ public class DepartmentService {
             result.add(createDepartment(department));
         }
         return result;
-    }
-
-    public List<Department> insertDepartments (Department... departments){
-        return insertDepartmentsForCompany(Arrays.asList(departments));
     }
 
     public Integer getAmountOfUserInDepartment(Department department){
@@ -215,7 +190,6 @@ public class DepartmentService {
 
     public void assignSecondarySupervisor(int departmentID) throws Exception {
         log.debug("Starting to assign secondary supervisors");
-        List<Integer> allUsersExcludingAdmin = getAllUsersExcludingAdmin(departmentID);
         Connection connection = DbConnection.getConnection();
         try{
             String sql = "INSERT INTO \"DepartmentSupervisor\" (department_id, user_id, created_at)" +

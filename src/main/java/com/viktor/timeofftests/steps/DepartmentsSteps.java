@@ -120,13 +120,12 @@ public class DepartmentsSteps {
         log.info("Validating secondary supervisors were added");
         List<Integer> departmentSupervisors = departmentService.getDepartmentSupervisors(departmentId);
         if(!departmentSupervisors.containsAll(usersToAdd)){
-            StringBuilder builder = new StringBuilder();
-            builder.append("Not all users were found as department supervisors. Expected to have \r\n");
-            builder.append(usersToAdd);
-            builder.append("\r\n");
-            builder.append("But found ");
-            builder.append(departmentSupervisors);
-            fail(builder.toString());
+            String builder = "Not all users were found as department supervisors. Expected to have \r\n" +
+                    usersToAdd +
+                    "\r\n" +
+                    "But found " +
+                    departmentSupervisors;
+            fail(builder);
         }
     }
 
@@ -159,13 +158,13 @@ public class DepartmentsSteps {
     }
 
     public void validateDepartmentIsNotPreset(String departmentName) {
-        log.info("Validaitng department [{}] does not exist in database", departmentName);
+        log.info("Validating department [{}] does not exist in database", departmentName);
         Department department = departmentService.getDepartmentWithName(departmentName);
         assertThat(department, nullValue());
     }
 
     public void validateDepartmentIsPresent(String departmentName) {
-        log.info("Validaitng department [{}] exists in database", departmentName);
+        log.info("Validating department [{}] exists in database", departmentName);
         Department department = departmentService.getDepartmentWithName(departmentName);
         assertThat(department, notNullValue());
     }

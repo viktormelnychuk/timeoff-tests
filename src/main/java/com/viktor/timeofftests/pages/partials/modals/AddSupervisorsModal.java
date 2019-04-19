@@ -9,7 +9,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class AddSupervisorsModal extends BasePage {
-    private WebDriver driver;
 
     private By modalHeader = By.id("modal_confirmation_reject_la");
     private By listOfAvailableSupervisors = By.xpath("//label[@class='list-group-item label-plain']");
@@ -18,7 +17,6 @@ public class AddSupervisorsModal extends BasePage {
 
     public AddSupervisorsModal (WebDriver driver){
         super(driver);
-        this.driver = driver;
     }
 
     @Override

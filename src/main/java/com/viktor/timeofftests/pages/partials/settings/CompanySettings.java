@@ -12,10 +12,6 @@ public class CompanySettings extends BasePage {
     private By countrySelect = By.id("input_country");
     private By dateFormatSelect = By.id("input_date_format");
     private By timeZoneSelect = By.id("input_time_zone");
-    private By companyLabel = By.xpath("//label[@for='input_company_name']");
-    private By countryLabel = By.xpath("//label[@for='input_country']");
-    private By dateFormatLabel = By.xpath("//label[@for='input_date_format']");
-    private By timeZoneLabel = By.xpath("//label[@for='input_time_zone']");
     private By saveCompanySettingsButton = By.xpath("//form[@id='company_edit_form']//button[@type='submit']");
 
     public CompanySettings (WebDriver driver){
@@ -41,22 +37,6 @@ public class CompanySettings extends BasePage {
 
     public String getTimeZone(){
         return getSelectedOption(timeZoneSelect);
-    }
-
-    public String getCountryLabel(){
-        return findOne(countryLabel).getText();
-    }
-
-    public String getCompanyLabel(){
-        return findOne(companyLabel).getText();
-    }
-
-    public String getDateFormatLabel(){
-        return findOne(dateFormatLabel).getText();
-    }
-
-    public String getTimeZoneLabel(){
-        return findOne(timeZoneLabel).getText();
     }
 
     public void setCompanyCountry (String companyCountry) throws Exception {

@@ -21,7 +21,7 @@ public class LoginStepDefs {
 
 
     @When("^I login as user \"([^\"]*)\" with password \"([^\"]*)\"$")
-    public void iLoginAsUserWithPassword(String email, String password) throws Throwable {
+    public void iLoginAsUserWithPassword(String email, String password){
         log.info("Logging as user {}@{}", email, password);
         LoginPage loginPage = new LoginPage(this.world.driver);
         loginPage.open();

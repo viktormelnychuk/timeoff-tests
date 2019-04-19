@@ -8,7 +8,6 @@ import com.viktor.timeofftests.services.UserService;
 import lombok.extern.log4j.Log4j2;
 import org.apache.commons.lang3.StringUtils;
 
-import java.sql.Timestamp;
 import java.util.Objects;
 
 import static org.hamcrest.MatcherAssert.assertThat;

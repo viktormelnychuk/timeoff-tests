@@ -32,14 +32,12 @@ public class DepartmentStepDefs {
     private DepartmentService departmentService;
     private UserService userService;
     private DepartmentsSteps departmentsSteps;
-    private DatabaseVerificationStepDefs databaseVerificationSteps;
-    public DepartmentStepDefs(World world, CompanyService companyService, DepartmentService departmentService, UserService userService, DepartmentsSteps departmentsSteps, DatabaseVerificationStepDefs databaseVerificationSteps){
+    public DepartmentStepDefs(World world, CompanyService companyService, DepartmentService departmentService, UserService userService, DepartmentsSteps departmentsSteps){
         this.world = world;
         this.companyService = companyService;
         this.departmentService = departmentService;
         this.userService = userService;
         this.departmentsSteps = departmentsSteps;
-        this.databaseVerificationSteps = databaseVerificationSteps;
     }
 
     @Given("default department {string} in {string} company is created")

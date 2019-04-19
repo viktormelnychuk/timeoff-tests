@@ -9,13 +9,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class NewAbsenceModal extends BasePage {
-    private WebDriver driver;
 
     private By leaveTypeSelect = By.xpath("//select[@id='leave_type'][@name='leave_type']");
 
     public NewAbsenceModal(WebDriver driver){
         super(driver);
-        this.driver = driver;
     }
 
     @Override
@@ -26,9 +24,7 @@ public class NewAbsenceModal extends BasePage {
     public List<String> getDisplayedLeaveTypesAsString(){
         List<String> result = new ArrayList<>();
         Select leaveTypesSelect = new Select(findOne(leaveTypeSelect));
-        leaveTypesSelect.getOptions().forEach((element)->{
-            result.add(element.getText());
-        });
+        leaveTypesSelect.getOptions().forEach((element)-> result.add(element.getText()));
         return result;
     }
 }

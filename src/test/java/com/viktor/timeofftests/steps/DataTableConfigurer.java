@@ -13,6 +13,7 @@ import org.apache.commons.lang3.StringUtils;
 import java.time.LocalDate;
 import java.util.*;
 
+@SuppressWarnings("unused")
 public class DataTableConfigurer implements TypeRegistryConfigurer {
     @Override
     public Locale locale() {

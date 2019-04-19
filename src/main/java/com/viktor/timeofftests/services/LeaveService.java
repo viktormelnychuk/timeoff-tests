@@ -10,7 +10,6 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Timestamp;
 import java.time.LocalDate;
-import java.time.ZoneId;
 import java.time.ZoneOffset;
 import java.util.*;
 
@@ -177,7 +176,6 @@ public class LeaveService {
     }
 
     private Leave deserializeLeave(ResultSet set){
-        Leave leave = new Leave();
-        return leave;
+        return new Leave();
     }
 }

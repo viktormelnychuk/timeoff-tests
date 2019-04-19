@@ -4,7 +4,6 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 
 public class EmployeePage extends EmployeeBasePage {
-    private WebDriver driver;
 
     private By saveButton = By.id("save_changes_btn");
     private By deleteButton = By.id("remove_btn");
@@ -15,7 +14,6 @@ public class EmployeePage extends EmployeeBasePage {
 
     public EmployeePage(WebDriver driver){
         super(driver);
-        this.driver = driver;
     }
 
     public void clickSaveChangesButton() {

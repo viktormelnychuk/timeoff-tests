@@ -5,7 +5,6 @@ import com.viktor.timeofftests.constants.Pages;
 import com.viktor.timeofftests.constants.TextConstants;
 import com.viktor.timeofftests.models.User;
 import com.viktor.timeofftests.pages.DepartmentsPage;
-import com.viktor.timeofftests.pages.EmployeesPage;
 import cucumber.api.java.en.Given;
 import cucumber.api.java.en.Then;
 import lombok.extern.log4j.Log4j2;

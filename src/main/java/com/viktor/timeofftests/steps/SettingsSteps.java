@@ -96,34 +96,34 @@ public class SettingsSteps {
     }
 
     public void validateEditedBankHolidays(Map<Integer, String> editedResult) throws Exception {
-        String result = "";
+        StringBuilder result = new StringBuilder();
         boolean fail = false;
         List<BankHoliday> inDb = bankHolidaysService.getAllBankHolidaysForCompany(world.currentCompany.getId());
         inDb.sort(Comparator.comparing(BankHoliday::getDate));
         for (Integer integer : editedResult.keySet()) {
             if(!Objects.equals(editedResult.get(integer), inDb.get(integer).getName())){
-                result += String.format("expected <%s> but was <%s> \n\r", editedResult.get(integer), inDb.get(integer).getName());
+                result.append(String.format("expected <%s> but was <%s> \n\r", editedResult.get(integer), inDb.get(integer).getName()));
                 fail = true;
             }
         }
         if(fail){
-            throw new Exception(result);
+            throw new Exception(result.toString());
         }
     }
 
     public void validateDeletedHolidays(List<String> deleted) throws Exception {
-        String result = "";
+        StringBuilder result = new StringBuilder();
         boolean fail = false;
         List<BankHoliday> inDb = bankHolidaysService.getAllBankHolidaysForCompany(world.currentCompany.getId());
         List<String> allHolidayNames = inDb.stream().map(BankHoliday::getName).collect(Collectors.toList());
         for (String s : deleted) {
             if(allHolidayNames.contains(s)){
-                result += String.format("<%s> bank holiday should not be present in DB", s);
+                result.append(String.format("<%s> bank holiday should not be present in DB", s));
                 fail = true;
             }
         }
         if(fail){
-            throw new Exception(result);
+            throw new Exception(result.toString());
         }
     }
 

@@ -1,12 +1,10 @@
 package com.viktor.timeofftests.common;
 
 import lombok.extern.log4j.Log4j2;
-import net.sf.cglib.core.Local;
 import org.apache.commons.lang3.StringUtils;
 
 import java.time.DayOfWeek;
 import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
 
 @Log4j2
 public class DateUtil {
@@ -51,8 +49,7 @@ public class DateUtil {
         if(StringUtils.equals(s,"today")){
             result = LocalDate.now();
         } else if(StringUtils.equals(s, "in past")){
-            LocalDate date = LocalDate.now().minusDays(Constants.DEFAULT_MINUS_DATES_FOR_STARTED_ON_DATE);
-            result = date;
+            result = LocalDate.now().minusDays(Constants.DEFAULT_MINUS_DATES_FOR_STARTED_ON_DATE);
         }
         return result;
     }

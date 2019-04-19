@@ -32,47 +32,6 @@ public class CompanyService {
             return company;
         }
     }
-    public Company getOneExistingCompany() {
-        Connection connection = DbConnection.getConnection();
-        log.debug("Getting one existing company");
-        try{
-            String sql = "SELECT * FROM \"Companies\"";
-            PreparedStatement statement = connection.prepareStatement(sql, ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_READ_ONLY);
-            log.debug("Executing {}", statement);
-            ResultSet set = statement.executeQuery();
-            set.last();
-            if(set.getRow() > 1){
-                throw new Exception("More than one company was found. Please set companyId explicitly");
-            }
-            set.first();
-            return deserializeCompany(set);
-        } catch (Exception e){
-            log.error("Error getting companies", e);
-            return null;
-        } finally {
-            DBUtil.closeConnection(connection);
-        }
-    }
-
-    public Company getCompanyForDepartmentWithId(int departmentId){
-        Connection connection = DbConnection.getConnection();
-        log.debug("Getting company of department[id={}]", departmentId);
-        try{
-            String sql = "SELECT * FROM \"Companies\" WHERE id=(SELECT \"companyId\" FROM \"Departments\" WHERE id=?)";
-            PreparedStatement statement = connection.prepareStatement(sql);
-            statement.setInt(1, departmentId);
-            log.debug("Executing {}", statement);
-            ResultSet set = statement.executeQuery();
-            if(set.next()){
-                return deserializeCompany(set);
-            } else {
-                return null;
-            }
-        } catch (Exception e){
-            log.error("Error getting company", e);
-            return null;
-        }
-    }
 
     public Company getCompanyWithName (String name){
         log.debug("Getting company with name={}", name);
@@ -121,8 +80,8 @@ public class CompanyService {
     public Company saveCompany (Company company){
         log.info("Prepare to save company with name=\""+company.getName()+ "\"");
         Connection connection = DbConnection.getConnection();
-        String sql = new StringBuilder().append("INSERT INTO \"Companies\" (name, country, start_of_new_year, share_all_absences, ldap_auth_enabled, ldap_auth_config, date_format, company_wide_message, mode, timezone,\"createdAt\",\"updatedAt\")")
-                .append(" VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);").toString();
+        String sql = "INSERT INTO \"Companies\" (name, country, start_of_new_year, share_all_absences, ldap_auth_enabled, ldap_auth_config, date_format, company_wide_message, mode, timezone,\"createdAt\",\"updatedAt\")" +
+                " VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);";
         try {
             PreparedStatement createCompany = connection.prepareStatement(sql);
             createCompany.setString(1,company.getName());

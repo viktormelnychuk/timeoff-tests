@@ -107,9 +107,7 @@ class HasAllIgnoringPros extends TypeSafeDiagnosingMatcher<List>{
         this.actual = actual;
         List<Field> fields = Arrays.asList(expected.get(0).getClass().getDeclaredFields());
         fields = fields.stream().filter(
-                (it)->{
-                    return !prosToIgnore.contains(it.getName());
-                }
+                (it)-> !prosToIgnore.contains(it.getName())
         ).collect(Collectors.toList());
         List<Error> errors = new ArrayList<>();
         for (int i = 0; i < expected.size(); i++){

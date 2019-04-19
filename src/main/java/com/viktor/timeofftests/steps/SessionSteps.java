@@ -23,7 +23,7 @@ public class SessionSteps {
         this.userService = userService;
     }
 
-    public void sessionPresent (String email) throws Exception {
+    public void sessionPresent (String email) {
         String sidFromCookies = DriverUtil.getSidFromCookies(world.driver);
         Session session = sessionService.getSessionWithSid(sidFromCookies);
         String data = session.getData();
@@ -31,7 +31,7 @@ public class SessionSteps {
         assertTrue("session does not contains user id",data.contains(String.valueOf(user.getId())));
     }
 
-    public void sessionIsNotPresent(String email) throws Exception {
+    public void sessionIsNotPresent(String email) {
         String sidFromCoockie = DriverUtil.getSidFromCookies(world.driver);
         Session session = sessionService.getSessionWithSid(sidFromCoockie);
         String data = session.getData();

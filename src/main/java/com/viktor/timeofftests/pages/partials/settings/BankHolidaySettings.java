@@ -20,7 +20,7 @@ public class BankHolidaySettings extends BasePage {
     private WebDriver driver;
     private By rows = By.xpath("//form[@id='update_bankholiday_form']//div[@class='input-append date']/../..");
     private String nameByIndexQuery = "//form[@id='update_bankholiday_form']//input[@name='name__%s']";
-    private String deleteByttonByIndexQuery = "//form[@id='update_bankholiday_form']//button[@value='%s']";
+    private String deleteButtonByIndexQuery = "//form[@id='update_bankholiday_form']//button[@value='%s']";
     private By submitButton = By.xpath("//form[@id='update_bankholiday_form']//button[@type='submit']");
     private By addNewButton = By.id("add_new_bank_holiday_btn");
     private By importDefaultButton = By.id("bankholiday-import-btn");
@@ -35,7 +35,7 @@ public class BankHolidaySettings extends BasePage {
         try {
             return deserializeBankHolidays(rowsList);
         } catch (ParseException e){
-            log.error("Errro when getting bank holidays", e);
+            log.error("Error when getting bank holidays", e);
             return null;
         }
     }
@@ -63,7 +63,7 @@ public class BankHolidaySettings extends BasePage {
     public List<String> deleteMultipleHolidays(int... indexes){
         List<String> result = new ArrayList<>();
         for (int index : indexes) {
-            By locator = By.xpath(String.format(deleteByttonByIndexQuery, index));
+            By locator = By.xpath(String.format(deleteButtonByIndexQuery, index));
             By nameLocator = By.xpath(String.format(nameByIndexQuery, index));
             result.add(findOne(nameLocator).getAttribute("value"));
             clickButton(locator);

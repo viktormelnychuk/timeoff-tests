@@ -81,11 +81,11 @@ public class LeaveTypeService {
             if(set.next()){
                 return deserializeLeaveTypes(set);
             } else {
-                return new ArrayList<LeaveType>();
+                return new ArrayList<>();
             }
         } catch (Exception e){
             log.error("Error getting leave types", e);
-            return new ArrayList<LeaveType>();
+            return new ArrayList<>();
         } finally {
             DBUtil.closeConnection(connection);
         }

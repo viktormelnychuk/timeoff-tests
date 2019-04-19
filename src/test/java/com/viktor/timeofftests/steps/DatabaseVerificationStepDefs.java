@@ -3,7 +3,6 @@ package com.viktor.timeofftests.steps;
 import com.viktor.timeofftests.common.World;
 import com.viktor.timeofftests.models.Company;
 import com.viktor.timeofftests.models.Department;
-import com.viktor.timeofftests.models.Schedule;
 import com.viktor.timeofftests.models.User;
 import com.viktor.timeofftests.services.CompanyService;
 import com.viktor.timeofftests.services.DepartmentService;
@@ -88,17 +87,15 @@ public class DatabaseVerificationStepDefs {
     }
 
     @Then("user \"([^\"]*)\" should not be present in database")
-    public void userShouldNotBePresetnInDatabase(String email) {
+    public void userShouldNotBePresentInDatabase(String email) {
         log.info("Verifying user with email [{}] does not exists in database", email);
         User user = userService.getUserWithEmail(email);
         assertNull("user was found when shouldn't be ",user);
     }
 
     @Then("database should have correct weekly schedule associated with company {string}")
-    public void databaseShouldHaveCorrectWeeklyScheduleAssociatedWithCompany(String arg0) {
-        //TODO: This step does not verify anything
-        Company company = companyService.getCompanyWithName(arg0);
-        Schedule inDbScheule = scheduleService.getScheduleForCompanyId(company.getId());
+    public void databaseShouldHaveCorrectWeeklyScheduleAssociatedWithCompany(String arg0) throws Exception {
+        throw new Exception("Fix this method");
     }
 
     @Then("^company with name \"([^\"]*)\" is deleted$")
