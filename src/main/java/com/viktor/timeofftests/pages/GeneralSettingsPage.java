@@ -1,6 +1,5 @@
 package com.viktor.timeofftests.pages;
 
-import com.viktor.timeofftests.common.DriverUtil;
 import com.viktor.timeofftests.pages.partials.modals.RemoveCompanyModal;
 import com.viktor.timeofftests.pages.partials.settings.BankHolidaySettings;
 import com.viktor.timeofftests.pages.partials.settings.CompanyScheduleSettings;
@@ -8,7 +7,6 @@ import com.viktor.timeofftests.pages.partials.settings.CompanySettings;
 import com.viktor.timeofftests.pages.partials.settings.LeaveTypesSettings;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebElement;
 
 public class GeneralSettingsPage extends BasePage {
     private WebDriver driver;
@@ -26,14 +24,6 @@ public class GeneralSettingsPage extends BasePage {
         this.leaveTypesSettings = new LeaveTypesSettings(driver);
         this.bankHolidaySettings = new BankHolidaySettings(driver);
     }
-
-    GeneralSettingsPage navigate(){
-        if(DriverUtil.sessionCookiePresent(this.driver)){
-            return menuBar.navigateToGeneralSettings();
-        }
-        else return null;
-    }
-
     public RemoveCompanyModal clickDeleteCompanyButton(){
         clickButton(removeCompanyButton);
         return new RemoveCompanyModal(this.driver);
@@ -42,9 +32,6 @@ public class GeneralSettingsPage extends BasePage {
     @Override
     public String getBaseUrl() {
         return "http://localhost:3000/settings/general/";
-    }
-    public String getPageTitle(){
-        return findOne(pageTitle).getText();
     }
     public String getAlertText(){return findOne(alert).getText();}
 

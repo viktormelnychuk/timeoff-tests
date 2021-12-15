@@ -1,9 +1,6 @@
 package com.viktor.timeofftests.pages.partials.modals;
 
-import com.viktor.timeofftests.models.User;
 import com.viktor.timeofftests.pages.BasePage;
-import com.viktor.timeofftests.pages.DepartmentPage;
-import com.viktor.timeofftests.pools.DepartmentPool;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
@@ -12,7 +9,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class AddSupervisorsModal extends BasePage {
-    private WebDriver driver;
 
     private By modalHeader = By.id("modal_confirmation_reject_la");
     private By listOfAvailableSupervisors = By.xpath("//label[@class='list-group-item label-plain']");
@@ -21,7 +17,6 @@ public class AddSupervisorsModal extends BasePage {
 
     public AddSupervisorsModal (WebDriver driver){
         super(driver);
-        this.driver = driver;
     }
 
     @Override
@@ -39,25 +34,22 @@ public class AddSupervisorsModal extends BasePage {
         return userIds;
     }
 
-    public AddSupervisorsModal checkUser(Integer userId){
+    public void checkUser(Integer userId){
         By locator = By.xpath(String.format(userChkQuery,userId));
         clickButton(locator);
-        return this;
     }
 
-    public DepartmentPage clicAddButton(){
+    public void clickAddButton(){
         clickButton(addEmployeesButton);
-        return new DepartmentPage(this.driver);
     }
 
     public String getModalHeader(){
         return findOne(modalHeader).getText();
     }
 
-    public AddSupervisorsModal checkUser(List<Integer> usersToAdd) {
+    public void checkUser(List<Integer> usersToAdd) {
         for (Integer userId : usersToAdd) {
             checkUser(userId);
         }
-        return this;
     }
 }

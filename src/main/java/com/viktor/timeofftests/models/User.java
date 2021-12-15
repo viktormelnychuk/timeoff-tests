@@ -1,15 +1,12 @@
 package com.viktor.timeofftests.models;
 
 import com.viktor.timeofftests.common.Constants;
-import com.viktor.timeofftests.services.CompanyService;
-import com.viktor.timeofftests.services.DepartmentService;
 import lombok.Data;
 import lombok.extern.log4j.Log4j2;
 import org.apache.commons.codec.digest.DigestUtils;
 
 import java.nio.charset.StandardCharsets;
-import java.sql.Timestamp;
-import java.util.Date;
+import java.time.LocalDate;
 
 @Data
 @Log4j2
@@ -23,10 +20,12 @@ public class User {
     private boolean activated;
     private boolean admin;
     private boolean autoApprove;
-    private Timestamp startDate;
-    private Timestamp endDate;
+    private LocalDate startDate;
+    private LocalDate endDate;
     private int companyID;
     private int departmentID;
+    private String departmentName;
+    private String companyName;
 
     public User(){}
 
@@ -45,14 +44,17 @@ public class User {
         private boolean activated = true;
         private boolean admin = false;
         private boolean autoApprove = false;
-        private Timestamp startDate = new Timestamp(new Date().getTime());
-        private Timestamp endDate;
+        private LocalDate startDate = LocalDate.now();
+        private LocalDate endDate;
         private int companyID;
         private int departmentID;
 
         public Builder withEmail (String email){
             this.email = email;
             return this;
+        }
+
+        public Builder(){
         }
 
         public Builder withPassword (String password){
@@ -82,22 +84,8 @@ public class User {
             return this;
         }
 
-        public Builder inCompany(String companyName){
-            Company company = CompanyService.getInstance().getOrCreateCompanyWithName(companyName);
-            this.companyID = company.getId();
-            return this;
-        }
-
         public Builder inDepartment(Department department){
             this.departmentID = department.getId();
-            return this;
-        }
-
-        public Builder inDepartment (String departmentName){
-            if(this.companyID == 0){
-                this.companyID = CompanyService.getInstance().getOneExistingCompany().getId();
-            }
-            this.departmentID = DepartmentService.getInstance().getOrCreateDepartmentWithName(departmentName,this.companyID).getId();
             return this;
         }
 
@@ -111,8 +99,23 @@ public class User {
             return this;
         }
 
+        public Builder admin(boolean b){
+            this.admin = b;
+            return this;
+        }
+
         public Builder isDeactivated(){
             this.activated = false;
+            return this;
+        }
+
+        public Builder activated(boolean b){
+            this.activated = b;
+            return this;
+        }
+
+        public Builder autoApproved(boolean b){
+            this.autoApprove = b;
             return this;
         }
 
@@ -121,22 +124,28 @@ public class User {
             return this;
         }
 
-        public Builder startedOn (Date date){
-            this.startDate = new Timestamp(date.getTime());
+        public Builder startedOn (LocalDate date){
+            if(date == null){
+                this.startDate = LocalDate.now();
+                return this;
+            }
+            this.startDate = date;
             return this;
         }
 
-        public Builder endedOn (Date date){
-            this.endDate = new Timestamp(date.getTime());
+
+        public Builder endedOn (LocalDate date){
+            if(date == null){
+                this.endDate = null;
+                return this;
+            }
+            this.endDate = date;
             return this;
         }
 
         public User build(){
-            if(this.companyID == 0){
-                this.companyID = CompanyService.getInstance().getOneExistingCompany().getId();
-            }
-            if(this.departmentID == 0){
-                this.departmentID = DepartmentService.getInstance().getOneExistingDepartment(this.companyID).getId();
+            if(this.startDate == null){
+                this.startDate = LocalDate.now();
             }
             User user = new User();
             user.setEmail(this.email);
@@ -153,10 +162,6 @@ public class User {
             user.setDepartmentID(this.departmentID);
             return user;
         }
-    }
-
-    public Company getUserCompany(){
-        return CompanyService.getInstance().getCompanyWithId(this.companyID);
     }
 
 }

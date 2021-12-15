@@ -14,30 +14,12 @@ import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 
-enum WeekDays {
-    MONDAY,
-    TUESDAY,
-    WEDNESDAY,
-    THURSDAY,
-    FRIDAY,
-    SATURDAY,
-    SUNDAY
-}
-
 @Log4j2
 public class ScheduleService {
-    private static ScheduleService scheduleService;
-    public static ScheduleService getInstance(){
-        if(scheduleService == null){
-            return new ScheduleService();
-        } else {
-            return scheduleService;
-        }
-    }
-    private ScheduleService (){}
+    public  ScheduleService (){}
 
     public void insertDefaultSchedule( int companyId ){
-        log.info("Preparing to insert default schedule for company with id={}", companyId);
+        log.debug("Preparing to insert default schedule for company with id={}", companyId);
         Connection connection = DbConnection.getConnection();
         String sql = "INSERT INTO \"schedule\" (monday, tuesday, wednesday, thursday, friday, saturday, sunday, created_at, updated_at, company_id, user_id)" +
                 " VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) ";
@@ -55,7 +37,7 @@ public class ScheduleService {
             insert.setTimestamp(9, new Timestamp(new Date().getTime()));
             insert.setObject(10, schedule.getCompanyId());
             insert.setObject(11, schedule.getUserID());
-            log.info("Executing {}", insert);
+            log.debug("Executing {}", insert);
             insert.executeUpdate();
         } catch (Exception e){
             log.error("Error inserting schedule", e);
@@ -65,12 +47,13 @@ public class ScheduleService {
     }
 
     public Schedule getScheduleForCompanyId(int companyId){
-        log.info("Getting schedule for company with id={}", companyId);
+        log.debug("Getting schedule for company with id={}", companyId);
         Connection connection = DbConnection.getConnection();
         String sql = "SELECT * FROM schedule WHERE \"company_id\"=?";
         try {
             PreparedStatement statement = connection.prepareStatement(sql);
             statement.setInt(1, companyId);
+            log.debug("Executing {}", statement);
             ResultSet set = statement.executeQuery();
             if(set.next()){
                 return deserializeSchedule(set);
@@ -91,8 +74,8 @@ public class ScheduleService {
             Schedule schedule = new Schedule();
             schedule.setId(set.getInt("id"));
             schedule.setMonday(set.getInt("monday"));
-            schedule.setTuesday(set.getInt("monday"));
-            schedule.setWednesday(set.getInt("monday"));
+            schedule.setTuesday(set.getInt("tuesday"));
+            schedule.setWednesday(set.getInt("wednesday"));
             schedule.setThursday(set.getInt("thursday"));
             schedule.setFriday(set.getInt("friday"));
             schedule.setSaturday(set.getInt("saturday"));
@@ -123,6 +106,52 @@ public class ScheduleService {
             return 1;
         } else {
             return 2;
+        }
+    }
+
+    public Schedule getScheduleForUserId(int userId) {
+        log.debug("Gettign schedule for user [{}]", userId);
+        Connection connection = DbConnection.getConnection();
+        try{
+            String sql = "SELECT * FROM schedule WHERE user_id=?";
+            PreparedStatement statement = connection.prepareStatement(sql);
+            statement.setInt(1, userId);
+            log.debug("Executing {}", statement);
+            ResultSet set = statement.executeQuery();
+            if(set.next()){
+                return deserializeSchedule(set);
+            } else {
+                log.info("User does not have specific schedule. Defaulting to company schedule");
+                return getScheduleForUsersCompany(userId);
+            }
+        } catch (Exception e){
+            log.error("Error occured", e);
+            return null;
+        } finally {
+            DBUtil.closeConnection(connection);
+        }
+    }
+
+    private Schedule getScheduleForUsersCompany(int userId) {
+        log.debug("Getting schedule for company to which user with id=[{}] belongs", userId);
+        Connection connection = DbConnection.getConnection();
+        try{
+            String sql = "SELECT * FROM schedule WHERE company_id=" +
+                    "(SELECT \"companyId\" FROM \"Users\" WHERE \"Users\".id=?)";
+            PreparedStatement statement = connection.prepareStatement(sql);
+            statement.setInt(1, userId);
+            log.debug("Executing {}", statement);
+            ResultSet set = statement.executeQuery();
+            if(set.next()){
+                return deserializeSchedule(set);
+            } else {
+                return null;
+            }
+        } catch (Exception e){
+            log.error("Error occurred", e);
+            return null;
+        } finally {
+            DBUtil.closeConnection(connection);
         }
     }
 }

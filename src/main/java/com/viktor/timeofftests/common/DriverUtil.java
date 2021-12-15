@@ -10,26 +10,24 @@ import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.firefox.FirefoxDriver;
 
 import java.io.UnsupportedEncodingException;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.Objects;
+import java.util.*;
 
 @Log4j2
 public class DriverUtil {
     private WebDriver driver;
-
-    private DriverUtil(){}
+    private static SessionService sessionService = new SessionService();
 
     public static WebDriver getDriver(DriverEnum driverType){
-        log.info("Starting new {} browser", driverType.toString());
-        if (driverType == DriverEnum.FIREFOX){
-            return new FirefoxDriver();
-        } else if (driverType == DriverEnum.CHROME){
-            ChromeOptions chromeOptions = new ChromeOptions();
-            chromeOptions.addArguments("headless");
-            return new ChromeDriver();
-        }
-        return new FirefoxDriver();
+            log.info("Starting new {} browser", driverType.toString());
+            if (driverType == DriverEnum.FIREFOX){
+                return new FirefoxDriver();
+            } else {
+                ChromeOptions chromeOptions = new ChromeOptions();
+                chromeOptions.addArguments("headless");
+                WebDriver driver = new ChromeDriver(chromeOptions);
+                driver.manage().window().maximize();
+                return driver;
+            }
     }
 
     private static String getDriverCookie(String key, WebDriver driver){
@@ -57,10 +55,8 @@ public class DriverUtil {
 
     public static void simulateLoginForUser(int userId, WebDriver driver){
         log.info("Inserting cookies for user with id={}", userId);
-        Session s = SessionService.getInstance().insertNewSessionForUserId(userId);
+        Session s = sessionService.insertNewSessionForUserId(userId);
         setSessionCookie(s, driver);
-        log.info("Navigating to Calendar page");
-        driver.get("http://localhost:3000/calendar/");
     }
 
     public static void setSessionCookie(Session session, WebDriver driver){

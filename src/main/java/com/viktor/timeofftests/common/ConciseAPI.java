@@ -236,6 +236,7 @@ public abstract class ConciseAPI {
     protected List<WebElement> findAllBy(By locator){
         Logger log = LogManager.getLogger(this.getClass());
         log.debug("Waiting for visibility of elements by {}", locator);
+        //noinspection unchecked
         return (List<WebElement>) newElementsFinderProxyInstance(new ListOfWebElementsBait(), locator);
     }
 }

@@ -15,7 +15,7 @@ public class DBUtil {
             log.info("Begin clearing db tables");
             Connection connection = DbConnection.getConnection();
             Statement statement = connection.createStatement();
-            String sql = "truncate table \"BankHolidays\", \"Leaves\",  \"Companies\", \"DepartmentSupervisor\", \"Departments\", \"EmailAudit\", \"LeaveTypes\", \"Sessions\", \"UserFeeds\", \"Users\", \"schedule\", \"user_allowance_adjustment\";";
+            String sql = "truncate table \"BankHolidays\", \"Leaves\",  \"Companies\", \"DepartmentSupervisor\", \"Departments\", \"EmailAudit\", \"LeaveTypes\", \"Sessions\", \"UserFeeds\", \"Users\", \"schedule\", \"user_allowance_adjustment\" cascade;";
             statement.execute(sql);
             log.info("Done clearing database");
         } catch (SQLException exception){

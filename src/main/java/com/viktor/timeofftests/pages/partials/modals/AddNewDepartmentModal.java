@@ -1,13 +1,11 @@
 package com.viktor.timeofftests.pages.partials.modals;
 
 import com.viktor.timeofftests.pages.BasePage;
-import com.viktor.timeofftests.pages.DepartmentsPage;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 
 public class AddNewDepartmentModal extends BasePage {
-    private WebDriver driver;
     private By nameInput = By.id("department_name_new");
     private By allowanceSelect = By.xpath("//select[@name='allowance__new']");
     private By includePublicChk = By.id("department_include_public_holiday_new");
@@ -17,36 +15,32 @@ public class AddNewDepartmentModal extends BasePage {
     private By form = By.id("add_new_department_form");
     public AddNewDepartmentModal(WebDriver driver){
         super(driver);
-        this.driver = driver;
+        WebDriver driver1 = driver;
     }
 
-    public AddNewDepartmentModal fillName(String name){
+    public void fillName(String name){
         fillInputField(nameInput, name);
-        return this;
     }
 
-    public AddNewDepartmentModal selectAllowance(String allowance){
+    public void selectAllowance(String allowance) throws Exception {
         selectOption(allowanceSelect, allowance);
-        return this;
     }
 
-    public AddNewDepartmentModal setIncludePublicHolidays(boolean include){
+    public void setIncludePublicHolidays(boolean include){
         WebElement element = findOne(includePublicChk);
         if(element.isSelected() != include){
             element.click();
         }
-        return this;
     }
 
-    public AddNewDepartmentModal setAccruedAllowance (boolean include){
+    public void setAccruedAllowance (boolean include){
         WebElement element = findOne(accruedAllowanceChk);
         if(element.isSelected() != include){
             element.click();
         }
-        return this;
     }
 
-    public AddNewDepartmentModal setBoss (int userId){
+    public AddNewDepartmentModal setBoss (int userId) throws Exception {
         selectOption(bossSelect, String.valueOf(userId));
         return this;
     }
@@ -60,14 +54,8 @@ public class AddNewDepartmentModal extends BasePage {
     }
 
 
-    public DepartmentsPage clickCreateButtonExpectingSuccess(){
+    public void clickCreateButtonExpectingSuccess(){
         clickButton(createButton);
-        return new DepartmentsPage(this.driver);
-    }
-
-    public AddNewDepartmentModal clickCreateButtonExpectingFailure(){
-        clickButton(createButton);
-        return this;
     }
 
     public boolean modalDisplayed(){

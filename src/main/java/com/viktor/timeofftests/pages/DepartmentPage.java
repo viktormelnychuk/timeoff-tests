@@ -1,12 +1,14 @@
 package com.viktor.timeofftests.pages;
 
-import com.viktor.timeofftests.models.Department;
 import com.viktor.timeofftests.pages.partials.modals.AddSupervisorsModal;
 import org.openqa.selenium.By;
+import org.openqa.selenium.TimeoutException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
+import org.openqa.selenium.support.ui.Select;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class DepartmentPage extends BasePage {
@@ -20,62 +22,57 @@ public class DepartmentPage extends BasePage {
     private By saveChangesButton = By.id("save_changes_btn");
     private By alert = By.xpath("//div[@role='alert']");
     private By addNewSecondarySupervisorLink = By.xpath("//form[@id='department_edit_form']//a[@data-vpp-add-new-secondary-supervisor='1']");
-    private By allSecondaryApprovers = By.xpath("//form[@id='department_edit_form']//ul//li[descendant::button]");
+    private By allSecondarySupervisors = By.xpath("//form[@id='department_edit_form']//ul//li[descendant::button]");
+    private By deleteButton = By.id("remove_btn");
+    private String deleteSecondarySupervisorQuery = "//button[@name='remove_supervisor_id' and @value='%s']";
+
     @Override
     public String getBaseUrl() {
         return "http://localhost:3000/settings/departments/edit/%s/";
     }
 
-    public DepartmentPage fillName(String value){
+    public void fillName(String value){
         fillInputField(nameInp, value);
-        return this;
     }
 
-    public DepartmentPage selectManger(int userId){
+    public void selectManger(int userId) throws Exception {
         selectOption(managerSelect, String.valueOf(userId));
-        return this;
     }
 
-    public DepartmentPage setIncludePublicHolidays(boolean value){
+    public void setIncludePublicHolidays(boolean value){
         WebElement element = findOne(usePublicHolidayCheck);
         if(element.isSelected()!=value){
             element.click();
         }
-        return this;
     }
 
-    public DepartmentPage setAccruedAllowance(boolean value){
+    public void setAccruedAllowance(boolean value){
         WebElement element = findOne(accruedCheck);
         if(element.isSelected()!=value){
             element.click();
         }
-        return this;
     }
 
-    public DepartmentPage setAllowance(int allowance){
+    public void deleteSecondarySupervisor(int amount){
+        List<Integer> secondaryApproversIds = getSecondaryApproversIds();
+        List<Integer> toDelete = secondaryApproversIds.subList(0, amount);
+        for (Integer userId : toDelete) {
+            By locator = By.xpath(String.format(deleteSecondarySupervisorQuery, userId));
+            clickButton(locator);
+        }
+    }
+
+    public void setAllowance(int allowance) throws Exception {
         selectOption(allowanceSelect, String.valueOf(allowance));
-        return this;
     }
 
-    public DepartmentPage clickSaveButton(){
+    public void clickSaveButton(){
         clickButton(saveChangesButton);
-        return new DepartmentPage(this.driver);
     }
 
     public DepartmentPage (WebDriver driver){
         super(driver);
         this.driver = driver;
-    }
-
-    public Department getDisplayedDepartment(){
-        Department department = new Department();
-        department.setName(getInputValue(nameInp));
-        department.setAllowance(Integer.parseInt(getSelectedOption(allowanceSelect)));
-        department.setBossId(Integer.parseInt(getSelectedOptionValue(managerSelect)));
-        department.setIncludePublicHolidays(isCheckboxChecked(usePublicHolidayCheck));
-        department.setAccuredAllowance(isCheckboxChecked(accruedCheck));
-        department.setId(Integer.parseInt(findOne(addNewSecondarySupervisorLink).getAttribute("data-department_id")));
-        return department;
     }
 
     public AddSupervisorsModal clickAddSecondarySupervisors(){
@@ -89,10 +86,40 @@ public class DepartmentPage extends BasePage {
 
     public List<Integer> getSecondaryApproversIds() {
         List<Integer> result = new ArrayList<>();
-        List<WebElement> elements = findAllBy(allSecondaryApprovers);
-        for (WebElement element : elements) {
-            result.add(Integer.parseInt(element.findElement(By.xpath(".//button")).getAttribute("value")));
+        try {
+            List<WebElement> elements = findAllBy(allSecondarySupervisors);
+            for (WebElement element : elements) {
+                result.add(Integer.parseInt(element.findElement(By.xpath(".//button")).getAttribute("value")));
+            }
+            return result;
+        } catch (TimeoutException e){
+            return Collections.emptyList();
         }
-        return result;
+    }
+
+    public String getDepartmentName(){
+        return findOne(nameInp).getAttribute("value");
+    }
+
+    public int getManagerId(){
+        Select manger = new Select(findOne(managerSelect));
+        return Integer.parseInt(manger.getFirstSelectedOption().getAttribute("value"));
+    }
+
+    public double getAllowance(){
+        Select allowance = new Select(findOne(allowanceSelect));
+        return Double.parseDouble(allowance.getFirstSelectedOption().getAttribute("value"));
+    }
+
+    public boolean isPublicHolidaysIncluded(){
+        return findOne(usePublicHolidayCheck).isSelected();
+    }
+
+    public boolean isAccruedAllowance(){
+        return findOne(accruedCheck).isSelected();
+    }
+
+    public void clickDeleteButton() {
+        findOne(this.deleteButton).click();
     }
 }

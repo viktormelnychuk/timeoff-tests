@@ -10,15 +10,16 @@ import java.sql.*;
 
 @Log4j2
 public class CompanyService {
-    private static CompanyService companyService;
-    public static CompanyService getInstance(){
-        if(companyService == null){
-            return new CompanyService();
-        } else {
-            return companyService;
-        }
+    private LeaveTypeService leaveTypeService;
+    private BankHolidaysService bankHolidayService;
+    private ScheduleService scheduleService;
+
+    public CompanyService(LeaveTypeService leaveTypeService, BankHolidaysService bankHolidayService,
+                          ScheduleService scheduleService){
+        this.leaveTypeService = leaveTypeService;
+        this.bankHolidayService = bankHolidayService;
+        this.scheduleService = scheduleService;
     }
-    private CompanyService(){}
 
     public  Company getOrCreateCompanyWithName(String name){
         Company company = getCompanyWithName(name);
@@ -31,56 +32,15 @@ public class CompanyService {
             return company;
         }
     }
-    public Company getOneExistingCompany() {
-        Connection connection = DbConnection.getConnection();
-        log.info("Getting company");
-        try{
-            String sql = "SELECT * FROM \"Companies\"";
-            PreparedStatement statement = connection.prepareStatement(sql, ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_READ_ONLY);
-            log.info("Executing {}", statement);
-            ResultSet set = statement.executeQuery();
-            set.last();
-            if(set.getRow() > 1){
-                throw new Exception("More than one company was found. Please set companyId explicitly");
-            }
-            set.first();
-            return deserializeCompany(set);
-        } catch (Exception e){
-            log.error("Error getting companies", e);
-            return null;
-        } finally {
-            DBUtil.closeConnection(connection);
-        }
-    }
-
-    public Company getCompanyForDepartmentWithId(int departmentId){
-        Connection connection = DbConnection.getConnection();
-        log.info("Getting company of department[id={}]", departmentId);
-        try{
-            String sql = "SELECT * FROM \"Companies\" WHERE id=(SELECT \"companyId\" FROM \"Departments\" WHERE id=?)";
-            PreparedStatement statement = connection.prepareStatement(sql);
-            statement.setInt(1, departmentId);
-            log.info("Executing {}", statement);
-            ResultSet set = statement.executeQuery();
-            if(set.next()){
-                return deserializeCompany(set);
-            } else {
-                return null;
-            }
-        } catch (Exception e){
-            log.error("Error getting company", e);
-            return null;
-        }
-    }
 
     public Company getCompanyWithName (String name){
-        log.info("Getting company with name={}", name);
+        log.debug("Getting company with name={}", name);
         Connection connection = DbConnection.getConnection();
         String sql = "SELECT * FROM \"Companies\" WHERE name=? LIMIT 1;";
         try {
             PreparedStatement getCompany = connection.prepareStatement(sql);
             getCompany.setString(1, name);
-            log.info("Executing {}", getCompany);
+            log.debug("Executing {}", getCompany);
             ResultSet set = getCompany.executeQuery();
             if(set.next()){
                 return deserializeCompany(set);
@@ -96,13 +56,13 @@ public class CompanyService {
     }
 
     public Company getCompanyWithId (int id){
-        log.info("Getting company with id={}", id);
+        log.debug("Getting company with id={}", id);
         Connection connection = DbConnection.getConnection();
         String sql = "SELECT * FROM \"Companies\" WHERE id=?;";
         try {
             PreparedStatement getCompany = connection.prepareStatement(sql);
             getCompany.setInt(1, id);
-            log.info("Executing {}", getCompany);
+            log.debug("Executing {}", getCompany);
             ResultSet set = getCompany.executeQuery();
             if (set.next()){
                 return deserializeCompany(set);
@@ -120,8 +80,8 @@ public class CompanyService {
     public Company saveCompany (Company company){
         log.info("Prepare to save company with name=\""+company.getName()+ "\"");
         Connection connection = DbConnection.getConnection();
-        String sql = new StringBuilder().append("INSERT INTO \"Companies\" (name, country, start_of_new_year, share_all_absences, ldap_auth_enabled, ldap_auth_config, date_format, company_wide_message, mode, timezone,\"createdAt\",\"updatedAt\")")
-                .append(" VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);").toString();
+        String sql = "INSERT INTO \"Companies\" (name, country, start_of_new_year, share_all_absences, ldap_auth_enabled, ldap_auth_config, date_format, company_wide_message, mode, timezone,\"createdAt\",\"updatedAt\")" +
+                " VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);";
         try {
             PreparedStatement createCompany = connection.prepareStatement(sql);
             createCompany.setString(1,company.getName());
@@ -136,25 +96,25 @@ public class CompanyService {
             createCompany.setString(10,company.getTimezone());
             createCompany.setTimestamp(11,new Timestamp(new java.util.Date().getTime()));
             createCompany.setTimestamp(12,new Timestamp(new java.util.Date().getTime()));
-            log.info("Executing: "+createCompany.toString());
+            log.debug("Executing: "+createCompany.toString());
             createCompany.executeUpdate();
             log.info("Saved company with name=\""+company.getName()+ "\"");
-            log.info("Getting id of company with name=\""+company.getName()+ "\"");
+            log.debug("Getting id of company with name=\""+company.getName()+ "\"");
 
             String getCompanySql = "SELECT \"Companies\".id FROM \"Companies\" WHERE \"Companies\".name = ?;";
             PreparedStatement getCompany = connection.prepareStatement(getCompanySql);
             getCompany.setString(1, company.getName());
-            log.info("Executing: "+getCompany.toString());
+            log.debug("Executing: "+getCompany.toString());
             ResultSet resultSet = getCompany.executeQuery();
             resultSet.next();
             company.setId(resultSet.getInt(1));
             if (company.getLeaveTypes() != null){
-                LeaveTypeService.getInstance().insertLeaveTypes(company.getLeaveTypes(), company.getName());
+                leaveTypeService.insertLeaveTypes(company.getId(),company.getLeaveTypes());
             } else {
-                LeaveTypeService.getInstance().insertLeaveTypes(Constants.DEFAULT_LEAVE_TYPES, company.getName());
+                leaveTypeService.insertLeaveTypes(company.getId(),Constants.DEFAULT_LEAVE_TYPES);
             }
-            BankHolidaysService.getInstance().populateBankHolidaysForCompany(company.getName());
-            ScheduleService.getInstance().insertDefaultSchedule(company.getId());
+            bankHolidayService.populateBankHolidaysForCompany(company);
+            scheduleService.insertDefaultSchedule(company.getId());
             log.info("Company ID id '"+company.getId()+"'");
             return company;
         } catch (Exception e){

@@ -3,19 +3,14 @@ package com.viktor.timeofftests.pages;
 import com.viktor.timeofftests.common.DriverUtil;
 import com.viktor.timeofftests.models.Department;
 import com.viktor.timeofftests.pages.partials.modals.AddNewDepartmentModal;
-import com.viktor.timeofftests.services.DepartmentService;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 
-import java.sql.Driver;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class DepartmentsPage extends BasePage {
     private WebDriver driver;
-    private DepartmentService departmentService = DepartmentService.getInstance();
     private By departmentsTable = By.xpath("//table[@class='table table-hover']//tbody/tr");
     private By addNewDepartmentButton = By.id("add_new_department_btn");
     public DepartmentsPage (WebDriver driver){
@@ -29,11 +24,6 @@ public class DepartmentsPage extends BasePage {
         }
         else return null;
     }
-
-    public List<Department> getDisplayedDepartments(){
-        List<WebElement> table = findAllBy(departmentsTable);
-        return departmentService.deserializeDepartments(table);
-    }
     @Override
     public String getBaseUrl() {
         return "http://localhost:3000/settings/departments/";
@@ -44,11 +34,14 @@ public class DepartmentsPage extends BasePage {
         return this;
     }
 
-    public String getDisplayedManagerNameForDepartment(Department defaultDep) {
-        By locator = By.xpath(String.format("//table//tbody//a[text()='%s']/../..//td[2]", defaultDep.getName()));
+    public String getDisplayedManagerNameForDepartment(String departmentName) {
+        By locator = By.xpath(String.format("//table//tbody//a[text()='%s']/../..//td[2]", departmentName));
         return findOne(locator).getText();
     }
 
+    public List<Department> getDisplayedDepartments(){
+        return deserializeDepartments(0);
+    }
     public Map<String, Integer> getDisplayedEmployeesNumber() {
         String numberOfUsersQuery = "//table//tbody//a[text()='%s']/../..//td[4]";
         Map<String, Integer> result = new HashMap<>();
@@ -68,6 +61,52 @@ public class DepartmentsPage extends BasePage {
 
     public DepartmentPage clickDepartmentLink(String name) {
         clickButton(By.linkText(name));
-        return new DepartmentPage(this.driver);
+        return new DepartmentPage(driver);
+    }
+    public List<Department> deserializeDepartments(int companyId) {
+        List<Department> result = new ArrayList<>();
+        List<WebElement> table = findAllBy(departmentsTable);
+        for (WebElement row:table) {
+            Department department = new Department();
+            String depLink = row.findElement(By.xpath(".//td[1]/a")).getAttribute("href");
+            String depId = depLink.split("/departments/edit/")[1].split("/")[0];
+            department.setId(Integer.parseInt(depId));
+
+            String bossLink = row.findElement(By.xpath(".//td[2]/a")).getAttribute("href");
+            try {
+                String bossId = bossLink.split("/users/edit/")[1].split("/")[0];
+                department.setBossId(Integer.parseInt(bossId));
+            } catch (IndexOutOfBoundsException e){
+                department.setBossId(0);
+            }
+
+            department.setName(row.findElement(By.xpath(".//td[1]")).getText());
+            String allowanceString = row.findElement(By.xpath(".//td[3]")).getText();
+            int allowance;
+            if(allowanceString.equals("None")){
+                allowance = 0;
+            } else {
+                allowance = Integer.parseInt(allowanceString);
+            }
+            department.setAllowance(allowance);
+
+            String publicHolidays = row.findElement(By.xpath(".//td[5]")).getText();
+            department.setIncludePublicHolidays(getBoolFromYesNo(publicHolidays));
+
+            String accruedAllowance = row.findElement(By.xpath(".//td[6]")).getText();
+            department.setAccuredAllowance(getBoolFromYesNo(accruedAllowance));
+            department.setCompanyId(companyId);
+            result.add(department);
+        }
+        return result;
+    }
+
+    public Map<String, String> getDisplayedManagers() {
+        Map<String, String> result = new HashMap<>();
+        List<Department> allDeps = getDisplayedDepartments();
+        for (Department department : allDeps) {
+            result.put(department.getName(), getDisplayedManagerNameForDepartment(department.getName()));
+        }
+        return result;
     }
 }

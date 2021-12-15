@@ -21,24 +21,15 @@ import java.util.Date;
 
 @Log4j2
 public class SessionService {
-    private static SessionService sessionService;
-    public static SessionService getInstance(){
-        if(sessionService == null){
-            return new SessionService();
-        } else {
-            return sessionService;
-        }
-    }
-    private SessionService(){}
 
     public Session getSessionWithSid(String sid){
         Connection connection = DbConnection.getConnection();
         String sql = "SELECT * FROM \"Sessions\"  WHERE sid=?";
         try {
-            log.info("Getting session with sid=[{}]", sid);
+            log.debug("Getting session with sid=[{}]", sid);
             PreparedStatement preparedStatement = connection.prepareStatement(sql);
             preparedStatement.setString(1, sid);
-            log.info("Executing {}", preparedStatement.toString());
+            log.debug("Executing {}", preparedStatement.toString());
             ResultSet resultSet = preparedStatement.executeQuery();
             resultSet.next();
             return deserializeSession(resultSet);
@@ -53,7 +44,7 @@ public class SessionService {
     public Session insertSession (String sid, String data){
         Connection connection = DbConnection.getConnection();
         try {
-            log.info("Inserting session with sid=[{}]", sid);
+            log.debug("Inserting session with sid=[{}]", sid);
             String sql = "INSERT INTO \"Sessions\" (sid, expires, data, \"createdAt\", \"updatedAt\") VALUES (?,?,?,?,?)";
             PreparedStatement insertSession = connection.prepareStatement(sql);
             insertSession.setString(1, sid);
@@ -64,7 +55,7 @@ public class SessionService {
             insertSession.setString(3, data);
             insertSession.setTimestamp(4, new Timestamp(new Date().getTime()));
             insertSession.setTimestamp(5, new Timestamp(new Date().getTime()));
-            log.info("Executing {}", insertSession);
+            log.debug("Executing {}", insertSession);
             insertSession.executeUpdate();
             return getSessionWithSid(sid);
         } catch (Exception e){
@@ -89,7 +80,7 @@ public class SessionService {
             sha256_HMAC.init(secretKey);
             Base64.Encoder encoder = Base64.getEncoder();
             String signature = encoder.encodeToString(sha256_HMAC.doFinal(session.getSid().getBytes(StandardCharsets.UTF_8)));
-            signature = signature.replaceAll("\\=+$","");
+            signature = signature.replaceAll("=+$","");
             String connectionSid = URLEncoder.encode("s:"+session.getSid()+"."+signature,StandardCharsets.UTF_8.toString());
             session.setSid(connectionSid);
         } catch (Exception ex){

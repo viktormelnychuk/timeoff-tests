@@ -3,27 +3,15 @@ package com.viktor.timeofftests.services;
 import com.viktor.timeofftests.common.db.DBUtil;
 import com.viktor.timeofftests.common.db.DbConnection;
 import com.viktor.timeofftests.models.Department;
-import com.viktor.timeofftests.models.User;
 import lombok.extern.log4j.Log4j2;
-import org.openqa.selenium.By;
-import org.openqa.selenium.WebElement;
+import org.apache.commons.lang3.StringUtils;
 
 import java.sql.*;
 import java.util.*;
-import java.util.stream.Collectors;
+import java.util.Date;
 
 @Log4j2
 public class DepartmentService {
-    private static DepartmentService departmentService;
-    public static DepartmentService getInstance(){
-        if(departmentService == null){
-            return new DepartmentService();
-        } else {
-            return departmentService;
-        }
-    }
-    private DepartmentService(){}
-
     public Department getOrCreateDepartmentWithName(String name, int companyId){
         Department department = getDepartmentWithNameAndCompanyId(name, companyId);
         if (department == null) {
@@ -31,7 +19,7 @@ public class DepartmentService {
                     .withName(name)
                     .inCompany(companyId)
                     .build();
-            return saveDepartment(newDepartment);
+            return createDepartment(newDepartment);
         } else {
             return department;
         }
@@ -40,7 +28,7 @@ public class DepartmentService {
     public Department getDepartmentWithNameAndCompanyId(String name, int companyId){
         Connection connection = DbConnection.getConnection();
         String sql = "SELECT * FROM \"Departments\" WHERE name=? AND \"companyId\"= ? LIMIT 1";
-        log.info("Getting department with name=[{}] and companyId=[{}]",name,companyId);
+        log.debug("Getting department with name=[{}] and companyId=[{}]",name,companyId);
         try {
             PreparedStatement statement = connection.prepareStatement(sql);
             statement.setString(1, name);
@@ -56,7 +44,7 @@ public class DepartmentService {
 
     public Department getDepartmentWithId(int id) {
         Connection connection = DbConnection.getConnection();
-        log.info("Getting department with id={}",id);
+        log.debug("Getting department with id={}",id);
         try{
             String sql = "SELECT * FROM \"Departments\" WHERE id=?";
             PreparedStatement statement = connection.prepareStatement(sql);
@@ -73,7 +61,7 @@ public class DepartmentService {
     public Department getDepartmentWithName (String name){
         Connection connection = DbConnection.getConnection();
         String sql = "SELECT * FROM \"Departments\" WHERE name=? LIMIT 1;";
-        log.info("Getting department with name [{}]", name);
+        log.debug("Getting department with name [{}]", name);
         try {
             PreparedStatement statement = connection.prepareStatement(sql);
             statement.setString(1, name);
@@ -85,37 +73,16 @@ public class DepartmentService {
             DBUtil.closeConnection(connection);
         }
     }
-    public Department getOneExistingDepartment(int companyID) {
-        log.info("Getting 1 department in company with id={}", companyID);
-        Connection connection = DbConnection.getConnection();
-        try{
-            String sql = "SELECT * FROM \"Departments\" WHERE \"companyId\"=?";
-            PreparedStatement statement = connection.prepareStatement(sql, ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_READ_ONLY);
-            statement.setInt(1, companyID);
-            log.info("Executing {}", statement);
-            ResultSet set = statement.executeQuery();
-            set.last();
-            if(set.getRow() > 1){
-                throw new Exception(String.format("Company with id=%d contains more than 1 department." +
-                        " Please set departmentId explicitly", companyID));
-            }
-            set.first();
-            return deserializeDepartment(set);
-        } catch (Exception e){
-            log.error("Error getting department for company with id={}", companyID, e);
-            return null;
-        }
-    }
 
     public List<Department> getAllDepartmentsForCompany(int companyID) {
-        log.info("Getting all departments for company with id={}", companyID);
+        log.debug("Getting all departments for company with id={}", companyID);
         Connection connection = DbConnection.getConnection();
         try{
             List<Department> result = new ArrayList<>();
             String sql = "SELECT * FROM \"Departments\" WHERE \"companyId\"=?";
             PreparedStatement statement = connection.prepareStatement(sql);
             statement.setInt(1, companyID);
-            log.info("Executing {}", statement);
+            log.debug("Executing {}", statement);
             ResultSet set = statement.executeQuery();
             while (set.next()) {
                 result.add(deserializeDepartment(set));
@@ -130,7 +97,7 @@ public class DepartmentService {
     }
 
     private Department getDepartment (PreparedStatement statement){
-        log.info("Executing {}", statement);
+        log.debug("Executing {}", statement);
         try {
             ResultSet resultSet = statement.executeQuery();
             if (resultSet.next()) {
@@ -147,23 +114,19 @@ public class DepartmentService {
     public List<Department> insertDepartmentsForCompany(List<Department> departments){
         List<Department> result = new ArrayList<>();
         for (Department department : departments) {
-            result.add(saveDepartment(department));
+            result.add(createDepartment(department));
         }
         return result;
     }
 
-    public List<Department> insertDepartments (Department... departments){
-        return insertDepartmentsForCompany(Arrays.asList(departments));
-    }
-
     public Integer getAmountOfUserInDepartment(Department department){
-        log.info("Getting amount of users in department {}", department);
+        log.debug("Getting amount of users in department {}", department);
         Connection connection = DbConnection.getConnection();
         try{
             String sql = "SELECT * FROM \"Users\" WHERE \"DepartmentId\"=?";
             PreparedStatement statement = connection.prepareStatement(sql, ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_READ_ONLY);
             statement.setInt(1, department.getId());
-            log.info("Executing {}", statement);
+            log.debug("Executing {}", statement);
             ResultSet set = statement.executeQuery();
             set.last();
             return set.getRow();
@@ -181,22 +144,21 @@ public class DepartmentService {
         return result;
     }
 
-    public List<User> getAllUsersExcludingAdmin(int departmetnId){
-        log.info("Getting all users excluding admin for department id={}", departmetnId);
+    public List<Integer> getAllUsersExcludingAdmin(int departmetnId){
+        log.debug("Getting all users excluding admin for department id={}", departmetnId);
         Connection connection = DbConnection.getConnection();
         try{
             String sql = "SELECT \"Users\".id FROM \"Users\" WHERE \"DepartmentId\"=?";
             PreparedStatement statement = connection.prepareStatement(sql);
             statement.setInt(1, departmetnId);
-            log.info("Executing {}", statement);
+            log.debug("Executing {}", statement);
             ResultSet set = statement.executeQuery();
-            List<User> users = new ArrayList<>();
+            List<Integer> users = new ArrayList<>();
             int departmentAdminId = getDepartmentWithId(departmetnId).getBossId();
             while (set.next()){
                 if(set.getInt("id")!=departmentAdminId){
-                    users.add(UserService.getInstance().getUserWithId(set.getInt("id")));
+                    users.add(set.getInt("id"));
                 }
-
             }
             return users;
         } catch (Exception e){
@@ -205,23 +167,18 @@ public class DepartmentService {
         }
     }
 
-    public List<Integer> getAllUsersIdsExcludingAdmin(int departmentId){
-        List<User> users = getAllUsersExcludingAdmin(departmentId);
-        return users.stream().map(User::getId).collect(Collectors.toList());
-    }
-
-    public List<User> getDepartmentSupervisors(int departmentId){
-        log.info("Getting department supervisors");
+    public List<Integer> getDepartmentSupervisors(int departmentId){
+        log.debug("Getting department supervisors");
         Connection connection = DbConnection.getConnection();
         try{
             String sql = "SELECT * FROM \"DepartmentSupervisor\" WHERE department_id=?";
             PreparedStatement statement = connection.prepareStatement(sql);
             statement.setInt(1, departmentId);
-            log.info("Executing {}", statement);
+            log.debug("Executing {}", statement);
             ResultSet set = statement.executeQuery();
-            List<User> users = new ArrayList<>();
+            List<Integer> users = new ArrayList<>();
             while (set.next()){
-                users.add(UserService.getInstance().getUserWithId(set.getInt("user_id")));
+                users.add(set.getInt("user_id"));
             }
             return users;
         } catch (Exception e){
@@ -230,32 +187,63 @@ public class DepartmentService {
         }
     }
 
-    public List<Integer> getDepartmentSupervisorsIds(int departmentId){
-        return getDepartmentSupervisors(departmentId).stream().map(User::getId).collect(Collectors.toList());
-    }
 
-    public Department saveDepartment(Department department){
+    public void assignSecondarySupervisor(int departmentID) throws Exception {
+        log.debug("Starting to assign secondary supervisors");
+        Connection connection = DbConnection.getConnection();
+        try{
+            String sql = "INSERT INTO \"DepartmentSupervisor\" (department_id, user_id, created_at)" +
+                    " VALUES(?," +
+                    "        (SELECT \"Users\".id FROM \"Users\" WHERE" +
+                    "              \"Users\".id !=(SELECT \"Departments\".\"bossId\" FROM \"Departments\" WHERE \"Departments\".id = ?) AND" +
+                    "              \"Users\".id NOT IN (SELECT \"DepartmentSupervisor\".user_id FROM \"DepartmentSupervisor\")" +
+                    "AND \"Users\".\"DepartmentId\" = ?"+
+                    " LIMIT 1)," +
+                    "        ?);";
+            PreparedStatement statement = connection.prepareStatement(sql);
+            statement.setInt(1, departmentID);
+            statement.setInt(2, departmentID);
+            statement.setInt(3, departmentID);
+            statement.setTimestamp(4, new Timestamp(new Date().getTime()));
+            log.debug("Executing {}", statement);
+            int rowsAffected = statement.executeUpdate();
+            if(rowsAffected == 0){
+                throw new Exception("Error assigning supervisors. Make sure there are non-manager users in company");
+            }
+        } catch (SQLException e){
+            log.error("Error occurred", e);
+        } finally {
+            DBUtil.closeConnection(connection);
+        }
+    }
+    public void assignSecondarySupervisors(int departmentID ,int count) throws Exception {
+        for(int i = 0; i < count; i++){
+            assignSecondarySupervisor(departmentID);
+        }
+    }
+    public Department createDepartment(Department department){
+        log.debug("Inserting new department {}", department);
         Connection connection = DbConnection.getConnection();
         String sql = "INSERT INTO \"Departments\" (name, allowance, include_public_holidays, is_accrued_allowance, \"createdAt\", \"updatedAt\", \"companyId\", \"bossId\") VALUES(?, ?, ?, ?, ?, ?, ?, ?);";
         try{
             PreparedStatement insertDepartment = connection.prepareStatement(sql);
             insertDepartment.setString(1, department.getName());
-            insertDepartment.setInt(2, department.getAllowance());
+            insertDepartment.setDouble(2, department.getAllowance());
             insertDepartment.setBoolean(3,department.isIncludePublicHolidays());
             insertDepartment.setBoolean(4,department.isAccuredAllowance());
             insertDepartment.setTimestamp(5,new Timestamp(new java.util.Date().getTime()));
             insertDepartment.setTimestamp(6,new Timestamp(new java.util.Date().getTime()));
             insertDepartment.setInt(7, department.getCompanyId());
             insertDepartment.setInt(8, department.getBossId());
-            log.info("Executing {}",insertDepartment.toString());
+            log.debug("Executing {}",insertDepartment.toString());
             insertDepartment.executeUpdate();
 
-            log.info("Getting id of department with name {}",department.getName());
+            log.debug("Getting id of department with name {}",department.getName());
 
             String selectSql = "SELECT * FROM \"Departments\" WHERE  \"Departments\".name = ? LIMIT 1";
             PreparedStatement selectDep = connection.prepareStatement(selectSql);
             selectDep.setString(1,department.getName());
-            log.info("Executing {}", selectDep.toString());
+            log.debug("Executing {}", selectDep.toString());
             ResultSet set = selectDep.executeQuery();
             set.next();
             department.setId(set.getInt("id"));
@@ -278,8 +266,8 @@ public class DepartmentService {
             updateDepartmentWithBossId.setInt(1,id);
             updateDepartmentWithBossId.setTimestamp(2, new Timestamp(new java.util.Date().getTime()));
             updateDepartmentWithBossId.setInt(3, department.getId());
-            log.info("Updating department with id={} to have bossId={}", department.getId(), id);
-            log.info("Executing {}",updateDepartmentWithBossId.toString());
+            log.debug("Updating department with id={} to have bossId={}", department.getId(), id);
+            log.debug("Executing {}",updateDepartmentWithBossId.toString());
             updateDepartmentWithBossId.executeUpdate();
 
         } catch (Exception e){
@@ -292,10 +280,106 @@ public class DepartmentService {
     public void setBossesForAllDepartments(int companyID){
         List<Department> departments = getAllDepartmentsForCompany(companyID);
         for (Department department : departments) {
-            List<User> usersInDepartment = UserService.getInstance().getAllUsersInDepartment(department);
-            for (User user : usersInDepartment) {
-                UserService.getInstance().makeDepartmentAdmin(user);
+            List<Integer> allUsers = getAllUsersInDepartment(department.getId());
+            if(allUsers.isEmpty()) continue;
+            assignBossUserId(department, allUsers.get(allUsers.size()/2));
+        }
+    }
+
+    private List<Integer> getAllUsersInDepartment(int departmentId) {
+        Connection connection = DbConnection.getConnection();
+        log.debug("Getting all users in department with id={}", departmentId);
+        try {
+            String sql = "SELECT \"Users\".id FROM \"Users\" WHERE  \"DepartmentId\"=?";
+            PreparedStatement statement = connection.prepareStatement(sql);
+            statement.setInt(1, departmentId);
+            log.debug("Executing {}",statement);
+            ResultSet set = statement.executeQuery();
+            List<Integer> result = new ArrayList<>();
+            while (set.next()){
+                result.add(set.getInt("id"));
             }
+            return result;
+        } catch (Exception e){
+            log.error("Exception occurred", e);
+            return Collections.emptyList();
+        } finally {
+            DBUtil.closeConnection(connection);
+        }
+    }
+
+    public Map<String, String> getManagersForDepartments (List<Department> departments){
+        Map<String, String> result = new HashMap<>();
+        for (Department department : departments) {
+            result.put(department.getName(), getBossName(department.getId()));
+        }
+        return result;
+    }
+    public String getBossName(int departmentId){
+        log.debug("Getting department manager for department with id={}", departmentId);
+        Connection connection = DbConnection.getConnection();
+        try{
+            String sql = "SELECT name, lastname from \"Users\" WHERE id= " +
+                    "(SELECT \"bossId\" FROM \"Departments\" WHERE id=?);";
+            PreparedStatement statement = connection.prepareStatement(sql);
+            statement.setInt(1, departmentId);
+            log.debug("Executing {}", statement);
+            ResultSet set = statement.executeQuery();
+            if(set.next()){
+                return set.getString("name")+" " + set.getString("lastname");
+            } else {
+                return StringUtils.EMPTY;
+            }
+        } catch (Exception e){
+            log.error("Error occurred", e);
+            return StringUtils.EMPTY;
+        } finally {
+            DBUtil.closeConnection(connection);
+        }
+    }
+
+    public Department getDepartmentForUserId(int userId){
+        log.debug("Getting department for user with id=[{}]", userId);
+        Connection connection = DbConnection.getConnection();
+        try{
+            String sql = "SELECT * FROM \"Departments\" WHERE " +
+                    "\"Departments\".id=(SELECT \"DepartmentId\" FROM \"Users\" WHERE \"Users\".id=?)";
+            PreparedStatement statement = connection.prepareStatement(sql);
+            statement.setInt(1, userId);
+            log.debug("Executing {}", statement);
+            ResultSet set = statement.executeQuery();
+            if(set.next()){
+                return deserializeDepartment(set);
+            } else {
+                return null;
+            }
+        } catch (Exception e){
+            log.error("Error occurred", e);
+            return null;
+        } finally {
+            DBUtil.closeConnection(connection);
+        }
+    }
+
+    public int getBossId(int departmentId){
+        log.debug("Getting boss id for department with id=[{}]", departmentId);
+        Connection connection = DbConnection.getConnection();
+        try{
+            String sql = "SELECT \"bossId\" FROM \"Departments\" WHERE id=?";
+            PreparedStatement statement = connection.prepareStatement(sql);
+            statement.setInt(1,departmentId);
+            log.debug("Executing {}", statement);
+            ResultSet set = statement.executeQuery();
+            if(set.next()){
+                return set.getInt("bossId");
+            } else {
+                return 0;
+            }
+        } catch (Exception e){
+            log.error("Error occurred", e);
+            return 0;
+        } finally {
+            DBUtil.closeConnection(connection);
         }
     }
 
@@ -314,46 +398,5 @@ public class DepartmentService {
             log.error("Error deserializing department", e);
             return null;
         }
-    }
-
-    public List<Department> deserializeDepartments(List<WebElement> table) {
-        List<Department> result = new ArrayList<>();
-        for (WebElement row:table) {
-            Department department = new Department();
-            String depLink = row.findElement(By.xpath(".//td[1]/a")).getAttribute("href");
-            String depId = depLink.split("/departments/edit/")[1].split("/")[0];
-            department.setId(Integer.parseInt(depId));
-
-            String bossLink = row.findElement(By.xpath(".//td[2]/a")).getAttribute("href");
-            try {
-                String bossId = bossLink.split("/users/edit/")[1].split("/")[0];
-                department.setBossId(Integer.parseInt(bossId));
-            } catch (IndexOutOfBoundsException e){
-                department.setBossId(0);
-            }
-
-            department.setName(row.findElement(By.xpath(".//td[1]")).getText());
-            String allowanceString = row.findElement(By.xpath(".//td[3]")).getText();
-            int allowance;
-            if(allowanceString.equals("None")){
-                allowance = 0;
-            } else {
-                allowance = Integer.parseInt(allowanceString);
-            }
-            department.setAllowance(allowance);
-
-            String publicHolidays = row.findElement(By.xpath(".//td[5]")).getText();
-            department.setIncludePublicHolidays(getBoolFromYesNo(publicHolidays));
-
-            String accruedAllowance = row.findElement(By.xpath(".//td[6]")).getText();
-            department.setAccuredAllowance(getBoolFromYesNo(accruedAllowance));
-            department.setCompanyId(CompanyService.getInstance().getCompanyForDepartmentWithId(department.getId()).getId());
-            result.add(department);
-        }
-        return result;
-    }
-
-    private boolean getBoolFromYesNo(String word){
-        return Objects.equals(word, "Yes");
     }
 }
